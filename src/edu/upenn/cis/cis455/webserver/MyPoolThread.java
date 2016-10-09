@@ -1,7 +1,7 @@
 package edu.upenn.cis.cis455.webserver;
 import org.apache.log4j.Logger;
 
-qpublic class MyPoolThread extends Thread {
+public class MyPoolThread extends Thread {
 
     static Logger log = Logger.getLogger(MyPoolThread.class);
 
