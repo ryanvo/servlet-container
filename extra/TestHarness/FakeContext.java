@@ -5,8 +5,7 @@ import java.util.*;
  * @author Nick Taylor
  */
 class FakeContext implements ServletContext {
-	private HashMap<String,Object> attributes;
-	private HashMap<String,String> initParams;
+
 	
 	public FakeContext() {
 		attributes = new HashMap<String,Object>();

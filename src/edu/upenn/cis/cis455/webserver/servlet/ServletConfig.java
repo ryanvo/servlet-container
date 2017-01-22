@@ -1,0 +1,43 @@
+package edu.upenn.cis.cis455.webserver.servlet;
+
+import java.util.*;
+
+/**
+ * @author rtv
+ */
+public class ServletConfig {
+
+    private String name;
+    private ServletContext context;
+    private Map<String,String> initParams;
+
+    public ServletConfig(String name, ServletContext context) {
+        this.name = name;
+        this.context = context;
+        initParams = new HashMap<>();
+
+    }
+
+    public String getInitParameter(String name) {
+        return initParams.get(name);
+    }
+
+    public Enumeration getInitParameterNames() {
+        Set<String> keys = initParams.keySet();
+        Vector<String> atts = new Vector<>(keys);
+        return atts.elements();
+    }
+
+    public ServletContext getServletContext() {
+        return context;
+    }
+
+    public String getServletName() {
+        return name;
+    }
+
+    void setInitParam(String name, String value) {
+        initParams.put(name, value);
+    }
+}
+

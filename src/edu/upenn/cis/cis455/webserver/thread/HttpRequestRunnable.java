@@ -1,7 +1,7 @@
 package edu.upenn.cis.cis455.webserver.thread;
 
-import edu.upenn.cis.cis455.webserver.http.HttpRequestMessage;
-import edu.upenn.cis.cis455.webserver.http.HttpResponseMessage;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,7 +33,7 @@ public class HttpRequestRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            servlet.service(new HttpRequestMessage(connection), new HttpResponseMessage
+            servlet.service(new HttpRequest(connection), new HttpResponse
                     (connection));
         } catch (IllegalStateException e) {
             log.error("Invalid Request Ignored", e);

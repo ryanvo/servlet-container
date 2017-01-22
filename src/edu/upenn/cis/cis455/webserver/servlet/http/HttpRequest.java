@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver.http;
+package edu.upenn.cis.cis455.webserver.servlet.http;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,9 +10,9 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-public class HttpRequestMessage {
+public class HttpRequest {
 
-    private static Logger log = LogManager.getLogger(HttpRequestMessage.class);
+    private static Logger log = LogManager.getLogger(HttpRequest.class);
 
     private String method;
     private URI uri;
@@ -23,7 +23,7 @@ public class HttpRequestMessage {
      * @param connection socket to the client
      * @throws URISyntaxException if the uri in the status line of the request is invalid
      */
-    public HttpRequestMessage(Socket connection) throws URISyntaxException {
+    public HttpRequest(Socket connection) throws URISyntaxException {
         parseRequest(connection);
     }
 
@@ -72,7 +72,7 @@ public class HttpRequestMessage {
             type = "get";
         }
 
-        log.info(String.format("HttpRequestMessage Parsed %s Request with URI %s", method, uri));
+        log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
     }
 
 }

@@ -1,9 +1,9 @@
 package edu.upenn.cis.cis455.webserver.servlet;
 
 
-import edu.upenn.cis.cis455.webserver.http.HttpRequestManager;
-import edu.upenn.cis.cis455.webserver.http.HttpRequestMessage;
-import edu.upenn.cis.cis455.webserver.http.HttpResponseMessage;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpConnectionManager;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,14 +22,14 @@ public class DefaultServlet {
     private final String HTTP_VERSION = "HTTP/1.1";
 
     private final String rootDirectory;
-    private HttpRequestManager manager;
+    private HttpConnectionManager manager;
     private ServerSocket serverSocket;
 
     /**
      * @param rootDirectory path to the www folder
      * @param manager needed to shutdown and get status of requests in thread pool
      */
-    public DefaultServlet(String rootDirectory, HttpRequestManager manager) {
+    public DefaultServlet(String rootDirectory, HttpConnectionManager manager) {
         this.rootDirectory = rootDirectory;
         this.manager = manager;
     }
@@ -47,7 +47,7 @@ public class DefaultServlet {
      * @param request
      * @param response
      */
-    public void service(HttpRequestMessage request, HttpResponseMessage response) {
+    public void service(HttpRequest request, HttpResponse response) {
         manager.update(Thread.currentThread().getId(), request.getRequestURI().toString());
 
         log.info(String.format("Thread ID %d is Serving URI %s", Thread.currentThread().getId(),
@@ -73,7 +73,7 @@ public class DefaultServlet {
     }
 
 
-    public void doGet(HttpRequestMessage request, HttpResponseMessage response) {
+    public void doGet(HttpRequest request, HttpResponse response) {
 
         String NOT_FOUND_MESSAGE = "<html><body><h1>404 File Not Found</h1></body></html>";
         File fileRequested = new File(rootDirectory + request.getRequestURI().getPath());
@@ -160,7 +160,7 @@ public class DefaultServlet {
         }
     }
 
-    public void doControl(HttpResponseMessage response) {
+    public void doControl(HttpResponse response) {
 
         log.info("DefaultServlet Serving Control Page Request");
         String controlPageHtml = manager.getHtmlResponse();
@@ -188,7 +188,7 @@ public class DefaultServlet {
      * shutdown to the manager
      * @param response associated with the shutdown request
      */
-    public void doShutdown(HttpResponseMessage response) {
+    public void doShutdown(HttpResponse response) {
 
         String SHUTDOWN_MESSAGE = "<html><body>Server shutting down...</body></html>";
 

@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver.http;
+package edu.upenn.cis.cis455.webserver.servlet.http;
 
 
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-public class HttpResponseMessage {
+public class HttpResponse {
 
     private String version;
     private String statusCode;
@@ -20,7 +20,7 @@ public class HttpResponseMessage {
 
     private final Socket connection;
 
-    public HttpResponseMessage(Socket connection) {
+    public HttpResponse(Socket connection) {
         this.connection = connection;
         date = getHttpDate();
     }

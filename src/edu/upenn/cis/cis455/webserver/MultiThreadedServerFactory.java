@@ -1,6 +1,6 @@
 package edu.upenn.cis.cis455.webserver;
 
-import edu.upenn.cis.cis455.webserver.http.HttpRequestManager;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpConnectionManager;
 import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
 import edu.upenn.cis.cis455.webserver.thread.WorkerPool;
 import edu.upenn.cis.cis455.webserver.thread.WorkExecutorService;
@@ -20,7 +20,7 @@ public class MultiThreadedServerFactory {
 
         WorkerPool workQueue = new WorkerPool(workQueueSize);
         WorkExecutorService exec = new WorkExecutorService(poolSize, workQueue);
-        HttpRequestManager manager = new HttpRequestManager(exec);
+        HttpConnectionManager manager = new HttpConnectionManager(exec);
         DefaultServlet servlet = new DefaultServlet(rootDirectory, manager);
 
         log.info(String.format("Factory Created Server at %s, %d threads, request queue of %d",
