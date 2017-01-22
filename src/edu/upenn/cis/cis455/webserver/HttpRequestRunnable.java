@@ -1,6 +1,7 @@
 package edu.upenn.cis.cis455.webserver;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -8,7 +9,7 @@ import java.net.URISyntaxException;
 
 public class HttpRequestRunnable implements Runnable {
 
-    static Logger log = Logger.getLogger(HttpRequestRunnable.class);
+    static Logger log = LogManager.getLogger(HttpRequestRunnable.class);
 
     private Socket connection;
     private HttpServlet servlet;

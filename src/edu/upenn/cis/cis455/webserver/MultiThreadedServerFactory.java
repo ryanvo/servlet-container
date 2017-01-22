@@ -1,13 +1,16 @@
 package edu.upenn.cis.cis455.webserver;
 
-import org.apache.log4j.Logger;
+import edu.upenn.cis.cis455.webserver.thread.MyBlockingQueue;
+import edu.upenn.cis.cis455.webserver.thread.MyExecutorService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Assembles the components of the multithreaded server
  */
 public class MultiThreadedServerFactory {
 
-    static Logger log = Logger.getLogger(MultiThreadedServerFactory.class);
+    static Logger log = LogManager.getLogger(MultiThreadedServerFactory.class);
 
     static MultiThreadedServer create(String rootDirectory, int poolSize, int workQueueSize) {
 

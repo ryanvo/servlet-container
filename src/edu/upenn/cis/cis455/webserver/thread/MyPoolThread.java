@@ -1,9 +1,11 @@
-package edu.upenn.cis.cis455.webserver;
-import org.apache.log4j.Logger;
+package edu.upenn.cis.cis455.webserver.thread;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class MyPoolThread extends Thread {
 
-    static Logger log = Logger.getLogger(MyPoolThread.class);
+    static Logger log = LogManager.getLogger(MyPoolThread.class);
 
     private final MyBlockingQueue pool;
     private volatile boolean isRunning = true;

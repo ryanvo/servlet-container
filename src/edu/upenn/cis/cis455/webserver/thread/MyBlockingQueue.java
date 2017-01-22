@@ -1,13 +1,15 @@
-package edu.upenn.cis.cis455.webserver;
+package edu.upenn.cis.cis455.webserver.thread;
 
-import org.apache.log4j.Logger;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayDeque;
 import java.util.Queue;
 
 public class MyBlockingQueue {
 
-    static Logger log = Logger.getLogger(MyBlockingQueue.class);
+    static Logger log = LogManager.getLogger(MyBlockingQueue.class);
 
     final private Queue<Runnable> queue = new ArrayDeque<>();
     private int size;

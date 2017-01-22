@@ -1,12 +1,12 @@
 package edu.upenn.cis.cis455.webserver;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class HttpServer {
 
-    static Logger log = Logger.getLogger(HttpServer.class);
+    static Logger log = LogManager.getLogger(HttpServer.class);
 
     public static void main(String args[]) {
 
@@ -25,7 +25,6 @@ public class HttpServer {
         int port = 8080;
         String rootDirectory = "/home/cis555/hw1m1/www";
 
-        BasicConfigurator.configure();
 
         MultiThreadedServer server = MultiThreadedServerFactory.create(rootDirectory, POOL_SIZE,
                 WORK_QUEUE_SIZE);
