@@ -1,6 +1,7 @@
 package edu.upenn.cis.cis455.webserver.servlet;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author rtv
@@ -14,7 +15,7 @@ public class ServletConfig {
     public ServletConfig(String name, ServletContext context) {
         this.name = name;
         this.context = context;
-        initParams = new HashMap<>();
+        initParams = new ConcurrentHashMap<>();
 
     }
 

@@ -7,9 +7,10 @@ import org.apache.logging.log4j.Logger;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author rtv
@@ -18,8 +19,13 @@ public class ServletContext {
 
     private static Logger log = LogManager.getLogger(ServletContext.class);
 
-    private HashMap<String, Object> attributes;
-    private HashMap<String, String> initParams;
+    private Map<String, Object> attributes;
+    private Map<String, String> initParams;
+
+    public ServletContext() {
+        attributes = new ConcurrentHashMap<>();
+        initParams = new ConcurrentHashMap<>();
+    }
 
     void setInitParam(String name, String value) {
         initParams.put(name, value);
@@ -35,7 +41,6 @@ public class ServletContext {
         Vector<String> atts = new Vector<>(keys);
         return atts.elements();
     }
-
 
 
     public void log(String s) {
@@ -76,8 +81,8 @@ The form of the returned string is servername/versionnumber. For example, the Ja
         return null;
     }
 
-/*Returns the name of this web application corresponding to this ServletContext as specified in the deployment descriptor for this web application by the display-name element.
-*/
+    /*Returns the name of this web application corresponding to this ServletContext as specified in the deployment descriptor for this web application by the display-name element.
+    */
     public String getServletContextName() {
         return null;
     }

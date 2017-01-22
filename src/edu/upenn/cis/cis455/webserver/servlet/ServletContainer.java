@@ -1,53 +1,50 @@
 package edu.upenn.cis.cis455.webserver.servlet;
 
-import javax.servlet.http.HttpServlet;
 import java.util.Map;
 
 /**
  * @author rtv
  */
 public class ServletContainer {
-    private WebXml webXml;
+    private ContainerConfig config;
     private Map<String, HttpServlet> servlets;
     private ServletContext context;
 
-    public ServletContainer(WebXml webXml) {
-        this.webXml = webXml;
-        this.servlets = webXml.getServlets();
-        this.context = webXml.getContext();
+    public ServletContainer(ContainerConfig config) {
+        this.config = config;
+        this.servlets = config.getServlets();
+        this.context = config.getContext();
     }
 
     public void start() {
 
-        for (String servletName : webXml.getServlets().keySet()) {
-            for (String param : webXml.initParams.keySet()) {
-                ServletConfig config = new ServletConfig(servletName, context);
-                config.setInitParam(param, webXml.initParams.get(servletName)
+        /* Initialize and start each servlet */
+        for (String servlet : servlets.keySet()) {
+            for (String param : config.initParams.keySet()) {
+                ServletConfig config = new ServletConfig(servlet, context);
+                config.setInitParam(param, this.config.initParams.get(servlet)
                         .get(param));
 
-                servletName.init(config);
-
+                /* Get ServletConfig and init servlet */
+                ServletConfig con = servlets.get(servlet).getServletConfig();
+                servlets.get(servlet).init(con);
             }
         }
     }
 
     public void shutdown() {
 
-        for (String servletName : webXml.getServlets().keySet()) {
-            servletName.shutdown();
+        for (String servletName : config.getServlets().keySet()) {
+            servlets.get(servletName).destroy();
         }
     }
 
-    public Map<String, HttpServlet> getServlets() {
-        return webXml.getServlets();
-    }
-
     public ServletConfig getConfig() {
-        return webXml.getConfig();
+        return new ServletConfig(config.getServletName(), context);
     }
 
     public ServletContext getContext() {
-        return webXml.getContext();
+        return context;
     }
 
 }

@@ -7,6 +7,7 @@ import edu.upenn.cis.cis455.webserver.servlet.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,7 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DefaultServlet {
+public class DefaultServlet implements HttpServlet {
 
     private static Logger log = LogManager.getLogger(DefaultServlet.class);
 
@@ -40,6 +41,16 @@ public class DefaultServlet {
      */
     public void setServerSocket(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
+    }
+
+    @Override
+    public void init(ServletConfig config) throws ServletException {
+
+    }
+
+    @Override
+    public void destroy() {
+
     }
 
     /**
@@ -158,6 +169,26 @@ public class DefaultServlet {
             log.error("Could Not Write GET Response to Socket", e);
 
         }
+    }
+
+    @Override
+    public void doPost(HttpRequest req, HttpResponse resp) {
+
+    }
+
+    @Override
+    public ServletConfig getServletConfig() {
+        return null;
+    }
+
+    @Override
+    public ServletContext getServletContext() {
+        return null;
+    }
+
+    @Override
+    public String getServletName() {
+        return null;
     }
 
     public void doControl(HttpResponse response) {

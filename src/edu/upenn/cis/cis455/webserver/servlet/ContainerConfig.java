@@ -1,11 +1,9 @@
 package edu.upenn.cis.cis455.webserver.servlet;
 
-import org.apache.tools.ant.taskdefs.condition.Http;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import javax.servlet.http.HttpServlet;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -13,23 +11,24 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author rtv
  */
-public class WebXml extends DefaultHandler {
+public class ContainerConfig extends DefaultHandler {
 
     private int m_state = 0;
     private String servletName;
     private String m_paramName;
-    Map<String,String> servletNames = new HashMap<>();
-    Map<String,String> contextParams = new HashMap<>();
-    Map<String,Map<String,String>> initParams = new HashMap<>();
+    Map<String,String> servletNames = new ConcurrentHashMap<>();
+    Map<String,String> contextParams = new ConcurrentHashMap<>();
+    Map<String,Map<String,String>> initParams = new ConcurrentHashMap<>();
 
     private ServletContext context;
-    private Map<String,HttpServlet> servlets = new HashMap<>();
+    private Map<String,HttpServlet> servlets = new ConcurrentHashMap<>();
 
-    public WebXml(String webXmlPath, WebXmlParser parser) throws Exception {
+    public ContainerConfig(String webXmlPath, WebXmlParser parser) throws Exception {
         try {
             File file = new File(webXmlPath);
             if (!file.exists()) {
@@ -52,10 +51,6 @@ public class WebXml extends DefaultHandler {
 
     public Map<String, HttpServlet> getServlets() {
         return servlets;
-    }
-
-    public ServletConfig getConfig() {
-        return new ServletConfig(servletName, context);
     }
 
     public ServletContext getContext() {
