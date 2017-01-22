@@ -1,7 +1,9 @@
 package edu.upenn.cis.cis455.webserver;
 
-import edu.upenn.cis.cis455.webserver.thread.MyBlockingQueue;
-import edu.upenn.cis.cis455.webserver.thread.MyExecutorService;
+import edu.upenn.cis.cis455.webserver.http.HttpRequestManager;
+import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
+import edu.upenn.cis.cis455.webserver.thread.WorkerPool;
+import edu.upenn.cis.cis455.webserver.thread.WorkExecutorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,14 +12,16 @@ import org.apache.logging.log4j.Logger;
  */
 public class MultiThreadedServerFactory {
 
-    static Logger log = LogManager.getLogger(MultiThreadedServerFactory.class);
+    private static Logger log = LogManager.getLogger(MultiThreadedServerFactory.class);
 
-    static MultiThreadedServer create(String rootDirectory, int poolSize, int workQueueSize) {
+    public static MultiThreadedServer create(String rootDirectory, int
+            poolSize,
+                                       int workQueueSize) {
 
-        MyBlockingQueue workQueue = new MyBlockingQueue(workQueueSize);
-        MyExecutorService exec = new MyExecutorService(poolSize, workQueue);
+        WorkerPool workQueue = new WorkerPool(workQueueSize);
+        WorkExecutorService exec = new WorkExecutorService(poolSize, workQueue);
         HttpRequestManager manager = new HttpRequestManager(exec);
-        HttpServlet servlet = new HttpServlet(rootDirectory, manager);
+        DefaultServlet servlet = new DefaultServlet(rootDirectory, manager);
 
         log.info(String.format("Factory Created Server at %s, %d threads, request queue of %d",
                 rootDirectory, poolSize, workQueueSize));

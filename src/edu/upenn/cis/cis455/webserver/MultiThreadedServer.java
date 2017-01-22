@@ -1,6 +1,8 @@
 package edu.upenn.cis.cis455.webserver;
 
-import edu.upenn.cis.cis455.webserver.thread.MyExecutorService;
+import edu.upenn.cis.cis455.webserver.thread.HttpRequestRunnable;
+import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
+import edu.upenn.cis.cis455.webserver.thread.WorkExecutorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,12 +13,12 @@ import java.net.SocketException;
 
 public class MultiThreadedServer {
 
-    static Logger log = LogManager.getLogger(MultiThreadedServer.class);
+    private static Logger log = LogManager.getLogger(MultiThreadedServer.class);
 
-    final private MyExecutorService exec;
-    final private HttpServlet servlet;
+    final private WorkExecutorService exec;
+    final private DefaultServlet servlet;
 
-    public MultiThreadedServer(MyExecutorService exec, HttpServlet servlet) {
+    public MultiThreadedServer(WorkExecutorService exec, DefaultServlet servlet) {
         this.exec = exec;
         this.servlet = servlet;
     }

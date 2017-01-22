@@ -1,6 +1,9 @@
-package edu.upenn.cis.cis455.webserver;
+package edu.upenn.cis.cis455.webserver.servlet;
 
 
+import edu.upenn.cis.cis455.webserver.http.HttpRequestManager;
+import edu.upenn.cis.cis455.webserver.http.HttpRequestMessage;
+import edu.upenn.cis.cis455.webserver.http.HttpResponseMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,9 +15,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class HttpServlet {
+public class DefaultServlet {
 
-    static Logger log = LogManager.getLogger(HttpServlet.class);
+    private static Logger log = LogManager.getLogger(DefaultServlet.class);
 
     private final String HTTP_VERSION = "HTTP/1.1";
 
@@ -26,7 +29,7 @@ public class HttpServlet {
      * @param rootDirectory path to the www folder
      * @param manager needed to shutdown and get status of requests in thread pool
      */
-    public HttpServlet(String rootDirectory, HttpRequestManager manager) {
+    public DefaultServlet(String rootDirectory, HttpRequestManager manager) {
         this.rootDirectory = rootDirectory;
         this.manager = manager;
     }
@@ -61,7 +64,7 @@ public class HttpServlet {
                 doShutdown(response);
                 break;
             default:
-                log.error("HttpServlet Did Not Recognize Request Type");
+                log.error("DefaultServlet Did Not Recognize Request Type");
                 manager.update(Thread.currentThread().getId(), "waiting");
                 throw new IllegalStateException();
         }
@@ -79,7 +82,7 @@ public class HttpServlet {
 
             if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
-                log.info(String.format("HttpServlet Serving GET Request for Directory %s",
+                log.info(String.format("DefaultServlet Serving GET Request for Directory %s",
                         fileRequested
                         .getName()));
 
@@ -110,7 +113,7 @@ public class HttpServlet {
 
             } else if (fileRequested.canRead()) {
 
-                log.info(String.format("HttpServlet Serving GET Request for %s", fileRequested
+                log.info(String.format("DefaultServlet Serving GET Request for %s", fileRequested
                         .getName()));
 
                 response.setVersion(HTTP_VERSION);
@@ -159,7 +162,7 @@ public class HttpServlet {
 
     public void doControl(HttpResponseMessage response) {
 
-        log.info("HttpServlet Serving Control Page Request");
+        log.info("DefaultServlet Serving Control Page Request");
         String controlPageHtml = manager.getHtmlResponse();
         response.setVersion(HTTP_VERSION);
         response.setStatusCode("200");
@@ -189,7 +192,7 @@ public class HttpServlet {
 
         String SHUTDOWN_MESSAGE = "<html><body>Server shutting down...</body></html>";
 
-        log.info("HttpServlet Serving Shutdown Request");
+        log.info("DefaultServlet Serving Shutdown Request");
 
         try {
             serverSocket.close();

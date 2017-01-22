@@ -1,20 +1,20 @@
-package edu.upenn.cis.cis455.webserver;
+package edu.upenn.cis.cis455.webserver.http;
 
-import edu.upenn.cis.cis455.webserver.thread.MyExecutorService;
+import edu.upenn.cis.cis455.webserver.thread.WorkExecutorService;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Manages the HTTP requests delegated to MyExecutorService. Maintains the status of each thread
+ * Manages the HTTP requests delegated to WorkExecutorService. Maintains the status of each thread
  * and can issue a shutdown of the entire thread pool. Used for the Control Page
  */
 public class HttpRequestManager {
 
     private final Map<Long, String> idToUri;
-    private final MyExecutorService executorService;
+    private final WorkExecutorService executorService;
 
-    public HttpRequestManager(MyExecutorService executorService) {
+    public HttpRequestManager(WorkExecutorService executorService) {
         idToUri = new ConcurrentHashMap<>();
         this.executorService = executorService;
         for (Thread thread : executorService.threadPool()) {

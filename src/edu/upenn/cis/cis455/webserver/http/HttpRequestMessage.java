@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver;
+package edu.upenn.cis.cis455.webserver.http;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 
 public class HttpRequestMessage {
 
-    static Logger log = LogManager.getLogger(HttpRequestMessage.class);
+    private static Logger log = LogManager.getLogger(HttpRequestMessage.class);
 
     private String method;
     private URI uri;

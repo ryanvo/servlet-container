@@ -1,5 +1,8 @@
-package edu.upenn.cis.cis455.webserver;
+package edu.upenn.cis.cis455.webserver.thread;
 
+import edu.upenn.cis.cis455.webserver.http.HttpRequestMessage;
+import edu.upenn.cis.cis455.webserver.http.HttpResponseMessage;
+import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,17 +12,17 @@ import java.net.URISyntaxException;
 
 public class HttpRequestRunnable implements Runnable {
 
-    static Logger log = LogManager.getLogger(HttpRequestRunnable.class);
+    private static Logger log = LogManager.getLogger(HttpRequestRunnable.class);
 
     private Socket connection;
-    private HttpServlet servlet;
+    private DefaultServlet servlet;
 
     /**
      * Carries a connection to a client with a request
      * @param connection socket to client
      * @param servlet to handle request
      */
-    public HttpRequestRunnable(Socket connection, HttpServlet servlet) {
+    public HttpRequestRunnable(Socket connection, DefaultServlet servlet) {
         this.servlet = servlet;
         this.connection = connection;
     }

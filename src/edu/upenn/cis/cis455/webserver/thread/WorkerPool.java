@@ -7,14 +7,14 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
-public class MyBlockingQueue {
+public class WorkerPool {
 
-    static Logger log = LogManager.getLogger(MyBlockingQueue.class);
+    private static Logger log = LogManager.getLogger(WorkerPool.class);
 
     final private Queue<Runnable> queue = new ArrayDeque<>();
     private int size;
 
-    public MyBlockingQueue(int size) {
+    public WorkerPool(int size) {
         this.size = size;
     }
 

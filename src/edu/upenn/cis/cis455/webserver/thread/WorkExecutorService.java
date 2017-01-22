@@ -7,19 +7,19 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashSet;
 import java.util.Set;
 
-public class MyExecutorService {
+public class WorkExecutorService {
 
-    static Logger log = LogManager.getLogger(MyPoolThread.class);
+    private static Logger log = LogManager.getLogger(WorkExecutorService.class);
 
     private volatile boolean isRunning = true;
-    private MyBlockingQueue queue;
-    private Set<MyPoolThread> threadPool = new HashSet<>();
+    private WorkerPool queue;
+    private Set<WorkerThread> threadPool = new HashSet<>();
 
-    public MyExecutorService(int poolSize, MyBlockingQueue queue) {
+    public WorkExecutorService(int poolSize, WorkerPool queue) {
         this.queue = queue;
 
         for (int i = 0; i < poolSize; i++) {
-            threadPool.add(new MyPoolThread(queue));
+            threadPool.add(new WorkerThread(queue));
         }
 
         for (Thread thread : threadPool) {
@@ -43,14 +43,14 @@ public class MyExecutorService {
             } catch (InterruptedException ignore) {}
         }
 
-        for (MyPoolThread thread : threadPool) {
+        for (WorkerThread thread : threadPool) {
                 thread.interrupt();
         }
 
         log.info("All threads stopped");
     }
 
-    public Set<MyPoolThread> threadPool() {
+    public Set<WorkerThread> threadPool() {
         return threadPool;
     }
 
