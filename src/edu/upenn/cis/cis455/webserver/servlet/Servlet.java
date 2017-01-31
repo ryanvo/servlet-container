@@ -6,7 +6,7 @@ import edu.upenn.cis.cis455.webserver.servlet.http.HttpResponse;
 /**
  * @author rtv
  */
-public interface HttpServlet {
+public interface Servlet {
 
     void init(ServletConfig config);
     void destroy();
