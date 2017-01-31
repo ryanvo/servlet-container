@@ -7,7 +7,6 @@ import edu.upenn.cis.cis455.webserver.servlet.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -44,7 +43,7 @@ public class DefaultServlet implements HttpServlet {
     }
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) {
 
     }
 
@@ -182,7 +181,7 @@ public class DefaultServlet implements HttpServlet {
     }
 
     @Override
-    public ServletContext getServletContext() {
+    public ContainerContext getServletContext() {
         return null;
     }
 

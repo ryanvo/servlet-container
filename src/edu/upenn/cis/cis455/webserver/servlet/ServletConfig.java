@@ -9,10 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServletConfig {
 
     private String name;
-    private ServletContext context;
+    private ContainerContext context;
     private Map<String,String> initParams;
 
-    public ServletConfig(String name, ServletContext context) {
+    public ServletConfig(String name, ContainerContext context) {
         this.name = name;
         this.context = context;
         initParams = new ConcurrentHashMap<>();
@@ -29,7 +29,7 @@ public class ServletConfig {
         return atts.elements();
     }
 
-    public ServletContext getServletContext() {
+    public ContainerContext getContext() {
         return context;
     }
 

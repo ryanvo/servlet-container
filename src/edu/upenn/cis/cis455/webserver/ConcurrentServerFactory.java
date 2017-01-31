@@ -10,13 +10,11 @@ import org.apache.logging.log4j.Logger;
 /**
  * Assembles the components of the multithreaded server
  */
-public class MultiThreadedServerFactory {
+public class ConcurrentServerFactory {
 
-    private static Logger log = LogManager.getLogger(MultiThreadedServerFactory.class);
+    private static Logger log = LogManager.getLogger(ConcurrentServerFactory.class);
 
-    public static MultiThreadedServer create(String rootDirectory, int
-            poolSize,
-                                       int workQueueSize) {
+    public static ConcurrentServer create(String rootDirectory, int poolSize, int workQueueSize) {
 
         WorkerPool workQueue = new WorkerPool(workQueueSize);
         WorkExecutorService exec = new WorkExecutorService(poolSize, workQueue);
@@ -26,7 +24,7 @@ public class MultiThreadedServerFactory {
         log.info(String.format("Factory Created Server at %s, %d threads, request queue of %d",
                 rootDirectory, poolSize, workQueueSize));
 
-        return new MultiThreadedServer(exec, servlet);
+        return new ConcurrentServer(exec, servlet);
     }
 
 }

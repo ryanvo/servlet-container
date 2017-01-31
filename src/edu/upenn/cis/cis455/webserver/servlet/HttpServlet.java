@@ -14,8 +14,7 @@ public interface HttpServlet {
     void doGet(HttpRequest req, HttpResponse resp);
     void doPost(HttpRequest req, HttpResponse resp);
     ServletConfig getServletConfig();
-    ServletContext getServletContext();
+    ContainerContext getServletContext();
     String getServletName();
-
 
 }

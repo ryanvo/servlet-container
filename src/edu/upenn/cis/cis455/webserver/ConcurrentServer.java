@@ -11,14 +11,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class MultiThreadedServer {
+public class ConcurrentServer {
 
-    private static Logger log = LogManager.getLogger(MultiThreadedServer.class);
+    private static Logger log = LogManager.getLogger(ConcurrentServer.class);
 
     final private WorkExecutorService exec;
     final private DefaultServlet servlet;
 
-    public MultiThreadedServer(WorkExecutorService exec, DefaultServlet servlet) {
+    public ConcurrentServer(WorkExecutorService exec, DefaultServlet servlet) {
         this.exec = exec;
         this.servlet = servlet;
     }
