@@ -181,7 +181,7 @@ public class DefaultServlet implements Servlet {
     }
 
     @Override
-    public ServletContext getServletContext() {
+    public ContainerContext getServletContext() {
         return null;
     }
 

@@ -1,7 +1,7 @@
 package edu.upenn.cis.cis455.webserver;
 
-import edu.upenn.cis.cis455.webserver.servlet.ServletContainer;
 import edu.upenn.cis.cis455.webserver.thread.HttpRequestRunnable;
+import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
 import edu.upenn.cis.cis455.webserver.thread.WorkExecutorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,16 +11,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class HttpServer {
+public class ConcurrentServer {
 
-    private static Logger log = LogManager.getLogger(HttpServer.class);
+    private static Logger log = LogManager.getLogger(ConcurrentServer.class);
 
     final private WorkExecutorService exec;
-    final private ServletContainer container;
+    final private DefaultServlet servlet;
 
-    public HttpServer(WorkExecutorService exec, ServletContainer container) {
+    public ConcurrentServer(WorkExecutorService exec, DefaultServlet servlet) {
         this.exec = exec;
-        this.container = container;
+        this.servlet = servlet;
     }
 
     /**
@@ -32,12 +32,12 @@ public class HttpServer {
 
         try {
             ServerSocket socket = new ServerSocket(port);
-            container.setServerSocket(socket);
+            servlet.setServerSocket(socket);
             log.info(String.format("HTTP Server Started on Port %d", port));
             while (exec.isRunning()) {
                 try {
                     Socket connection = socket.accept();
-                    exec.execute(new HttpRequestRunnable(connection, container));
+                    exec.execute(new HttpRequestRunnable(connection, servlet));
                 } catch (IllegalStateException e) {
                     log.error("Socket Created Between Client But Executor is Stopped");
                 }

@@ -13,6 +13,7 @@ import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 /**
@@ -22,32 +23,53 @@ public class ServletContainer {
 
     private static Logger log = LogManager.getLogger(ServletContainer.class);
 
-    private ServletContainerConfig config;
-    private Map<String, Servlet> servlets;
-    private ServletContext context;
-
     private ServerSocket serverSocket;
 
-    public ServletContainer(ServletContainerConfig config) {
-        this.config = config;
-        this.servlets = config.getServlets();
+    private ContainerConfig containerConfig;
+    private ContainerContext context;
+    private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
+
+    public ServletContainer(ContainerConfig config) {
+        this.containerConfig = config;
         this.context = config.getContext();
     }
 
     public void start() {
 
-        /* Initialize and start each servlet */
-        for (String servlet : servlets.keySet()) {
-            for (String param : config.initParams.keySet()) {
-                ServletConfig config = new ServletConfig(servlet, context);
-                config.setInitParam(param, this.config.initParams.get(servlet)
-                        .get(param));
+        /* Create a servlet for each mapping defined in web.xml */
+        for (String servletName : containerConfig.getServletNames()) {
 
-                /* Get ServletConfig and init servlet */
-                ServletConfig con = servlets.get(servlet).getServletConfig();
-                servlets.get(servlet).init(con);
+            String className = containerConfig.getClassByServletName(servletName);
+            Class servletClass = null;
+            try {
+                servletClass = Class.forName(className);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
+
+            /* Create a servletConfig for each servlet by copying the init params parsed from web.xml */
+            ServletConfig servletConfig = new ServletConfig(servletName, containerConfig.getContext());
+            Map<String, String> servletParams = containerConfig.getInitParmsByServletName(servletName);
+            if (servletParams != null) {
+                for (String param : servletParams.keySet()) {
+                    servletConfig.setInitParam(param, servletParams.get(param));
+                }
+            }
+
+            /* Create servlet instance using the config and keep track in map */
+            HttpServlet servlet = null;
+            try {
+                servlet = (HttpServlet) servletClass.newInstance();
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+
+            servlet.init(servletConfig);
+            servlets.put(servletName, servlet);
         }
+
     }
 
     public void setServerSocket(ServerSocket serverSocket) {
@@ -72,7 +94,7 @@ public class ServletContainer {
             throw new IOException();
         }
 
-        Servlet servlet = null;
+        HttpServlet servlet = null;
         String type = null;
         if (uri.getPath().matches("/+control/*$")) {
             type = "control";
@@ -101,16 +123,17 @@ public class ServletContainer {
 
     public void shutdown() {
 
-        for (String servletName : config.getServlets().keySet()) {
+        for (String servletName : servlets.keySet()) {
             servlets.get(servletName).destroy();
         }
+
     }
 
-    public ServletConfig getConfig() {
-        return new ServletConfig(config.getServletName(), context);
-    }
+//    public ServletConfig getContainerConfig() {
+//        return new ServletConfig(containerConfig.getServletName(), context);
+//    }
 
-    public ServletContext getContext() {
+    public ContainerContext getContext() {
         return context;
     }
 

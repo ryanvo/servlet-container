@@ -11,26 +11,28 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author rtv
  */
-public class ServletContainerConfig extends DefaultHandler {
+public class ContainerConfig extends DefaultHandler {
 
     private int m_state = 0;
     private String servletName;
     private String m_paramName;
-    private Map<String,String> servletNames = new ConcurrentHashMap<>();
+    private Map<String,String> servletClassByName = new ConcurrentHashMap<>();
     private Map<String,String> contextParams = new ConcurrentHashMap<>();
-    private Map<String,Map<String,String>> initParams = new
-            ConcurrentHashMap<>();
+    private Map<String,Map<String,String>> initParams = new ConcurrentHashMap<>();
+    private ContainerContext context = new ContainerContext();
 
-    private ServletContext context;
-    private Map<String,Servlet> servlets = new ConcurrentHashMap<>();
+//    private Map<String,HttpServlet> servlets = new ConcurrentHashMap<>();
 
-    public ServletContainerConfig(String webXmlPath, WebXmlParser parser) throws Exception {
+    public ContainerConfig(String webXmlPath) throws Exception {
         try {
+
+            /* Open web.xml and parse contents into this object */
             File file = new File(webXmlPath);
             if (!file.exists()) {
                 throw new IOException();
@@ -38,10 +40,12 @@ public class ServletContainerConfig extends DefaultHandler {
             SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
             saxParser.parse(file, this);
 
-            context = createContext();
-            servlets = createServlets(context);
+            /* Use context parameters to set the context obj */
+            for (String param : contextParams.keySet()) {
+                context.setInitParam(param, contextParams.get(param));
+            }
 
-        } catch (ParserConfigurationException |SAXException e) {
+        } catch (ParserConfigurationException|SAXException e) {
             throw new IOException();
         }
     }
@@ -50,43 +54,20 @@ public class ServletContainerConfig extends DefaultHandler {
         return servletName;
     }
 
-    public Map<String, Servlet> getServlets() {
-        return servlets;
+    public Set<String> getServletNames() {
+        return servletClassByName.keySet();
     }
 
-    public ServletContext getContext() {
+    public String getClassByServletName(String name) {
+        return servletClassByName.get(name);
+    }
+
+    public Map<String, String> getInitParmsByServletName(String name) {
+        return initParams.get(name);
+    }
+
+    public ContainerContext getContext() {
         return context;
-    }
-
-    public ServletContext createContext() {
-
-        ServletContext context = new ServletContext();
-        for (String param : contextParams.keySet()) {
-            context.setInitParam(param, contextParams.get(param));
-        }
-        return context;
-
-    }
-
-    public Map<String, Servlet> createServlets( ServletContext context) throws Exception {
-        Map<String,Servlet> servlets = new HashMap<>();
-        for (String servletName : servletNames.keySet()) {
-            ServletConfig config = new ServletConfig(servletName, context);
-            String className = servletNames.get(servletName);
-            Class servletClass = Class.forName(className);
-
-            Servlet servlet = (Servlet) servletClass.newInstance();
-            Map<String,String> servletParams = initParams.get(servletName);
-            if (servletParams != null) {
-                for (String param : servletParams.keySet()) {
-                    config.setInitParam(param, servletParams.get(param));
-                }
-
-            }
-            servlets.put(servletName, servlet);
-        }
-        return servlets;
-
     }
 
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
@@ -111,7 +92,7 @@ public class ServletContainerConfig extends DefaultHandler {
             servletName = value;
             m_state = 0;
         } else if (m_state == 2) {
-            servletNames.put(servletName, value);
+            servletClassByName.put(servletName, value);
             m_state = 0;
         } else if (m_state == 10 || m_state == 20) {
             m_paramName = value;
