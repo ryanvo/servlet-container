@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DefaultServlet implements HttpServlet {
+public class DefaultServlet implements Servlet {
 
     private static Logger log = LogManager.getLogger(DefaultServlet.class);
 

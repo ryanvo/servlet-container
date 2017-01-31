@@ -27,10 +27,9 @@ public class ContainerConfig extends DefaultHandler {
     private Map<String,Map<String,String>> initParams = new ConcurrentHashMap<>();
     private ContainerContext context = new ContainerContext();
 
-
 //    private Map<String,HttpServlet> servlets = new ConcurrentHashMap<>();
 
-    public ContainerConfig(String webXmlPath) {
+    public ContainerConfig(String webXmlPath) throws IOException {
         try {
 
             /* Open web.xml and parse contents into this object */
@@ -55,7 +54,6 @@ public class ContainerConfig extends DefaultHandler {
         return servletName;
     }
 
-
     public Set<String> getServletNames() {
         return servletClassByName.keySet();
     }
@@ -71,7 +69,6 @@ public class ContainerConfig extends DefaultHandler {
     public ContainerContext getContext() {
         return context;
     }
-
 
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
         if (qName.compareTo("servlet-name") == 0) {

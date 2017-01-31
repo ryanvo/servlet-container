@@ -20,8 +20,8 @@ public class HttpResponse {
 
     private final Socket connection;
 
-    public HttpResponse(Socket connection) {
-        this.connection = connection;
+    public HttpResponse() {
+
         date = getHttpDate();
     }
 

@@ -1,29 +1,25 @@
 package edu.upenn.cis.cis455.webserver.thread;
 
-import edu.upenn.cis.cis455.webserver.servlet.http.HttpRequest;
-import edu.upenn.cis.cis455.webserver.servlet.http.HttpResponse;
-import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
+import edu.upenn.cis.cis455.webserver.servlet.ServletContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.net.URISyntaxException;
 
 public class HttpRequestRunnable implements Runnable {
 
     private static Logger log = LogManager.getLogger(HttpRequestRunnable.class);
 
     private Socket connection;
-    private DefaultServlet servlet;
+    private ServletContainer container;
 
     /**
      * Carries a connection to a client with a request
      * @param connection socket to client
-     * @param servlet to handle request
      */
-    public HttpRequestRunnable(Socket connection, DefaultServlet servlet) {
-        this.servlet = servlet;
+    public HttpRequestRunnable(Socket connection, ServletContainer container) {
+        this.container = container;
         this.connection = connection;
     }
 
@@ -33,12 +29,11 @@ public class HttpRequestRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            servlet.service(new HttpRequest(connection), new HttpResponse
-                    (connection));
+            container.dispatch(connection);
         } catch (IllegalStateException e) {
             log.error("Invalid Request Ignored", e);
-        } catch (URISyntaxException e) {
-            log.error("URI Could Not Be Processed", e);
+        } catch (IOException e) {
+            log.error(e);
         }
 
         try {

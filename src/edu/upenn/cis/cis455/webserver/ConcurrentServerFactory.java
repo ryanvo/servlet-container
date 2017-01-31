@@ -28,6 +28,9 @@ public class ConcurrentServerFactory {
 
         DefaultServlet servlet = new DefaultServlet(rootDirectory, manager);
 
+        ContainerConfig config = new ContainerConfig(webXml);
+
+
         log.info(String.format("Factory Created Server at %s, %d threads, request queue of %d",
                 rootDirectory, poolSize, workQueueSize));
 
