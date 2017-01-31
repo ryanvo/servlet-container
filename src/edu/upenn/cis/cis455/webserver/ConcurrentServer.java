@@ -1,5 +1,7 @@
 package edu.upenn.cis.cis455.webserver;
 
+import edu.upenn.cis.cis455.webserver.servlet.ContainerConfig;
+import edu.upenn.cis.cis455.webserver.servlet.ServletContainer;
 import edu.upenn.cis.cis455.webserver.thread.HttpRequestRunnable;
 import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
 import edu.upenn.cis.cis455.webserver.thread.WorkExecutorService;
@@ -16,11 +18,11 @@ public class ConcurrentServer {
     private static Logger log = LogManager.getLogger(ConcurrentServer.class);
 
     final private WorkExecutorService exec;
-    final private DefaultServlet servlet;
+    final private ServletContainer container;
 
-    public ConcurrentServer(WorkExecutorService exec, DefaultServlet servlet) {
+    public ConcurrentServer(ServletContainer container, WorkExecutorService exec) {
         this.exec = exec;
-        this.servlet = servlet;
+        this.container = container;
     }
 
     /**
@@ -32,7 +34,7 @@ public class ConcurrentServer {
 
         try {
             ServerSocket socket = new ServerSocket(port);
-            servlet.setServerSocket(socket);
+            container.setServerSocket(socket); //TODO put this in container?
             log.info(String.format("HTTP Server Started on Port %d", port));
             while (exec.isRunning()) {
                 try {

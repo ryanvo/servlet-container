@@ -22,10 +22,11 @@ public class ConcurrentServerRunner {
 
         int port = 8080;
         String rootDirectory = "/home/cis555/hw1m1/www";
+        String webXmlPath = "";
         int POOL_SIZE = 8;
         int WORK_QUEUE_SIZE = 16;
 
-        ConcurrentServer server = ConcurrentServerFactory.create(rootDirectory, POOL_SIZE, WORK_QUEUE_SIZE);
+        ConcurrentServer server = ConcurrentServerFactory.create(webXmlPath, rootDirectory, POOL_SIZE, WORK_QUEUE_SIZE);
         server.start(port);
 
         log.info("Exiting Main");

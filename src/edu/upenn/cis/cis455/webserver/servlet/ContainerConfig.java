@@ -30,7 +30,7 @@ public class ContainerConfig extends DefaultHandler {
 
 //    private Map<String,HttpServlet> servlets = new ConcurrentHashMap<>();
 
-    public ContainerConfig(String webXmlPath) throws Exception {
+    public ContainerConfig(String webXmlPath) {
         try {
 
             /* Open web.xml and parse contents into this object */
