@@ -1,9 +1,7 @@
 package edu.upenn.cis.cis455.webserver;
 
-import edu.upenn.cis.cis455.webserver.servlet.ContainerConfig;
-import edu.upenn.cis.cis455.webserver.servlet.ServletContainer;
+import edu.upenn.cis.cis455.webserver.container.ServletContainer;
 import edu.upenn.cis.cis455.webserver.thread.HttpRequestRunnable;
-import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
 import edu.upenn.cis.cis455.webserver.thread.WorkExecutorService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +37,7 @@ public class ConcurrentServer {
             while (exec.isRunning()) {
                 try {
                     Socket connection = socket.accept();
-                    exec.execute(new HttpRequestRunnable(connection, servlet));
+                    exec.execute(new HttpRequestRunnable(connection, container));
                 } catch (IllegalStateException e) {
                     log.error("Socket Created Between Client But Executor is Stopped");
                 }

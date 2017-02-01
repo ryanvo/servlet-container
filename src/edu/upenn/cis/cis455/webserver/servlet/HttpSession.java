@@ -1,7 +1,6 @@
-package edu.upenn.cis.cis455.webserver.servlet.http;
+package edu.upenn.cis.cis455.webserver.servlet;
 
-import edu.upenn.cis.cis455.webserver.servlet.ServletConfig;
-import edu.upenn.cis.cis455.webserver.servlet.ServletContext;
+import edu.upenn.cis.cis455.webserver.container.ServletContext;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,22 +38,21 @@ public class HttpSession {
         return context;
     }
 
-    
+
     public void setMaxInactiveInterval(int i) {
 
     }
 
-    
     public int getMaxInactiveInterval() {
         return 0;
     }
 
-    
+
     public Object getAttribute(String s) {
         return attributes.get(s);
     }
 
-    
+
     public Enumeration getAttributeNames() {
         Set<String> keys = attributes.keySet();
         Vector<String> atts = new Vector<>(keys);
@@ -62,18 +60,18 @@ public class HttpSession {
     }
 
 
-    
+
     public void setAttribute(String s, Object o) {
         attributes.put(s, o);
     }
 
 
-    
+
     public void removeAttribute(String s) {
         attributes.remove(s);
     }
-    
-    
+
+
     public void invalidate() {
 
     }

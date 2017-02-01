@@ -1,9 +1,7 @@
-package edu.upenn.cis.cis455.webserver.servlet.http;
+package edu.upenn.cis.cis455.webserver.servlet;
 
 
-import java.io.IOException;
 import java.io.OutputStream;
-import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -17,10 +15,9 @@ public class HttpResponse {
     private String date;
     private String contentType;
     private int contentLength;
+    private OutputStream outputStream;
 
-    private final Socket connection;
-
-    public HttpResponse() {
+    public HttpResponse(OutputStream outputStream) {
 
         date = getHttpDate();
     }
@@ -46,8 +43,8 @@ public class HttpResponse {
     }
 
 
-    public OutputStream getOutputStream() throws IOException {
-        return connection.getOutputStream();
+    public OutputStream getOutputStream() {
+        return outputStream;
     }
 
     public String getStatusAndHeader() {

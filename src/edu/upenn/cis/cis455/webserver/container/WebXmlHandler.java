@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver.servlet;
+package edu.upenn.cis.cis455.webserver.container;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -17,21 +17,28 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author rtv
  */
-public class ContainerConfig extends DefaultHandler {
+public class WebXmlHandler extends DefaultHandler {
 
     private int m_state = 0;
     private String servletName;
     private String m_paramName;
-    private Map<String,String> servletClassByName = new ConcurrentHashMap<>();
     private Map<String,String> contextParams = new ConcurrentHashMap<>();
     private Map<String,Map<String,String>> initParams = new ConcurrentHashMap<>();
-    private ContainerContext context = new ContainerContext();
+
+
+    private Map<String,String> servletClassByName = new ConcurrentHashMap<>();
+    private Map<String,String> servletPatternByName = new ConcurrentHashMap<>();
+
+
+
+
+    private ServletContext context = new ServletContext();
+
 
 //    private Map<String,HttpServlet> servlets = new ConcurrentHashMap<>();
 
-    public ContainerConfig(String webXmlPath) throws IOException {
+    public WebXmlHandler(String webXmlPath) throws IOException {
         try {
-
             /* Open web.xml and parse contents into this object */
             File file = new File(webXmlPath);
             if (!file.exists()) {
@@ -66,7 +73,7 @@ public class ContainerConfig extends DefaultHandler {
         return initParams.get(name);
     }
 
-    public ContainerContext getContext() {
+    public ServletContext getContext() {
         return context;
     }
 

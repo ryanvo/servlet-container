@@ -10,7 +10,6 @@ public class ConcurrentServerRunner {
 
     public static void main(String args[]) {
 
-
         if (args.length != 2) {
             System.out.println("Name: Ryan Vo");
             System.out.println("SEAS Login: ryanvo");
@@ -19,20 +18,16 @@ public class ConcurrentServerRunner {
         int port = Integer.valueOf(args[0]);
         String rootDirectory = args[1];
         String webXmlPath = args[2];
+
         int POOL_SIZE = Integer.parseInt(args[3]);
         int WORK_QUEUE_SIZE = Integer.parseInt(args[4]);
 
 
-//        int port = 8080;
-//        String rootDirectory = "/home/cis555/hw1m1/www";
-//        int POOL_SIZE = 8;
-//        int WORK_QUEUE_SIZE = 16;
-
         try {
-            ConcurrentServer server = ConcurrentServerFactory.create(rootDirectory, POOL_SIZE, WORK_QUEUE_SIZE);
+            ConcurrentServer server = ConcurrentServerFactory.create(webXmlPath, rootDirectory, POOL_SIZE, WORK_QUEUE_SIZE);
             server.start(port);
         } catch (Exception e) {
-            log.error(e);
+            log.error("Error constructing server. Exiting", e);
             System.exit(-1);
         }
 

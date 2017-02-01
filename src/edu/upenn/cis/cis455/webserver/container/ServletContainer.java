@@ -1,15 +1,13 @@
-package edu.upenn.cis.cis455.webserver.servlet;
+package edu.upenn.cis.cis455.webserver.container;
 
-import edu.upenn.cis.cis455.webserver.servlet.http.HttpRequest;
-import edu.upenn.cis.cis455.webserver.servlet.http.HttpResponse;
+import edu.upenn.cis.cis455.webserver.servlet.HttpServlet;
+import edu.upenn.cis.cis455.webserver.servlet.HttpRequest;
+import edu.upenn.cis.cis455.webserver.servlet.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
@@ -24,22 +22,23 @@ public class ServletContainer {
     private static Logger log = LogManager.getLogger(ServletContainer.class);
 
     private ServerSocket serverSocket;
-
-    private ContainerConfig containerConfig;
-    private ContainerContext context;
+    private WebXmlHandler webXml;
+    private ServletContext context;
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
+    private HttpServlet defaultServlet;
 
-    public ServletContainer(ContainerConfig config) {
-        this.containerConfig = config;
-        this.context = config.getContext();
+    public ServletContainer(WebXmlHandler webXml, HttpServlet defaultServlet) {
+        this.webXml = webXml;
+        this.context = webXml.getContext();
+        this.defaultServlet = defaultServlet;
     }
 
-    public void start() {
+    public void init() {
 
         /* Create a servlet for each mapping defined in web.xml */
-        for (String servletName : containerConfig.getServletNames()) {
+        for (String servletName : webXml.getServletNames()) {
 
-            String className = containerConfig.getClassByServletName(servletName);
+            String className = webXml.getClassByServletName(servletName);
             Class servletClass = null;
             try {
                 servletClass = Class.forName(className);
@@ -48,8 +47,8 @@ public class ServletContainer {
             }
 
             /* Create a servletConfig for each servlet by copying the init params parsed from web.xml */
-            ServletConfig servletConfig = new ServletConfig(servletName, containerConfig.getContext());
-            Map<String, String> servletParams = containerConfig.getInitParmsByServletName(servletName);
+            ServletConfig servletConfig = new ServletConfig(servletName, webXml.getContext());
+            Map<String, String> servletParams = webXml.getInitParmsByServletName(servletName);
             if (servletParams != null) {
                 for (String param : servletParams.keySet()) {
                     servletConfig.setInitParam(param, servletParams.get(param));
@@ -76,9 +75,9 @@ public class ServletContainer {
         this.serverSocket = serverSocket;
     }
 
-    public void dispatch(Socket connection) throws IOException {
+    public void serve(InputStream inputStream, OutputStream outputStream) throws IOException {
         String line;
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
         line = in.readLine();
 
         log.info("Parsing HTTP Request: " + line);
@@ -94,31 +93,37 @@ public class ServletContainer {
             throw new IOException();
         }
 
-        HttpServlet servlet = null;
-        String type = null;
-        if (uri.getPath().matches("/+control/*$")) {
-            type = "control";
-            servlet = servlets.get(type);
-
-        } else if (uri.getPath().matches("/+shutdown/*$")) {
-            type = "shutdown";
-            servlet = servlets.get(type);
-
-        } else if (method.equals("GET")) {
-            type = "get";
-            servlet = servlets.get(type);
-        }
+        HttpServlet servlet = getMapping(uri.getPath());
 
 
         HttpRequest req = new HttpRequest();
         req.setMethod(method);
-        req.setType(type);
+//        req.setType(type);
         req.setUri(uri);
-        servlet.service(req, new HttpResponse());
+        servlet.service(req, new HttpResponse(outputStream));
 
         log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
 
 
+    }
+
+    public HttpServlet getMapping(String url) {
+
+        HttpServlet servlet = null;
+        String type = null;
+        if (url.matches("/+control/*$")) {
+            type = "control";
+            servlet = servlets.get(type);
+
+        } else if (url.matches("/+shutdown/*$")) {
+            type = "shutdown";
+            servlet = servlets.get(type);
+
+        } else {
+            servlet = defaultServlet;
+        }
+
+        return servlet;
     }
 
     public void shutdown() {
@@ -127,13 +132,18 @@ public class ServletContainer {
             servlets.get(servletName).destroy();
         }
 
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            log.error("Trying to close server socket", e);
+        }
     }
 
 //    public ServletConfig getContainerConfig() {
-//        return new ServletConfig(containerConfig.getServletName(), context);
+//        return new ServletConfig(webXml.getServletName(), context);
 //    }
 
-    public ContainerContext getContext() {
+    public ServletContext getContext() {
         return context;
     }
 

@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver.servlet;
+package edu.upenn.cis.cis455.webserver.container;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -9,10 +9,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServletConfig {
 
     private String name;
-    private ContainerContext context;
+    private ServletContext context;
     private Map<String,String> initParams;
 
-    public ServletConfig(String name, ContainerContext context) {
+    public ServletConfig(String name, ServletContext context) {
         this.name = name;
         this.context = context;
         initParams = new ConcurrentHashMap<>();
@@ -29,7 +29,7 @@ public class ServletConfig {
         return atts.elements();
     }
 
-    public ContainerContext getContext() {
+    public ServletContext getContext() {
         return context;
     }
 

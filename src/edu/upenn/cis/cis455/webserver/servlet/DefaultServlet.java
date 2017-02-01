@@ -1,21 +1,20 @@
 package edu.upenn.cis.cis455.webserver.servlet;
 
 
-import edu.upenn.cis.cis455.webserver.servlet.http.HttpRequest;
-import edu.upenn.cis.cis455.webserver.servlet.http.HttpConnectionManager;
-import edu.upenn.cis.cis455.webserver.servlet.http.HttpResponse;
+import edu.upenn.cis.cis455.webserver.container.ServletContext;
+import edu.upenn.cis.cis455.webserver.container.HttpConnectionManager;
+import edu.upenn.cis.cis455.webserver.container.ServletConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class DefaultServlet implements Servlet {
+public class DefaultServlet implements HttpServlet {
 
     private static Logger log = LogManager.getLogger(DefaultServlet.class);
 
@@ -23,7 +22,6 @@ public class DefaultServlet implements Servlet {
 
     private final String rootDirectory;
     private HttpConnectionManager manager;
-    private ServerSocket serverSocket;
 
     /**
      * @param rootDirectory path to the www folder
@@ -32,14 +30,6 @@ public class DefaultServlet implements Servlet {
     public DefaultServlet(String rootDirectory, HttpConnectionManager manager) {
         this.rootDirectory = rootDirectory;
         this.manager = manager;
-    }
-
-    /**
-     * ServerSocket must be set in order for the shutdown command to close the connection.
-     * @param serverSocket
-     */
-    public void setServerSocket(ServerSocket serverSocket) {
-        this.serverSocket = serverSocket;
     }
 
     @Override
@@ -63,21 +53,23 @@ public class DefaultServlet implements Servlet {
         log.info(String.format("Thread ID %d is Serving URI %s", Thread.currentThread().getId(),
                 request.getRequestURI()));
 
-        switch (request.getType()) {
-            case "get":
-                doGet(request, response);
-                break;
-            case "control":
-                doControl(response);
-                break;
-            case "shutdown":
-                doShutdown(response);
-                break;
-            default:
-                log.error("DefaultServlet Did Not Recognize Request Type");
-                manager.update(Thread.currentThread().getId(), "waiting");
-                throw new IllegalStateException();
-        }
+//        switch (request.getType()) {
+//            case "get":
+//                doGet(request, response);
+//                break;
+//            case "control":
+//                doControl(response);
+//                break;
+//            case "shutdown":
+//                doShutdown(response);
+//                break;
+//            default:
+//                log.error("DefaultServlet Did Not Recognize Request Type");
+//                manager.update(Thread.currentThread().getId(), "waiting");
+//                throw new IllegalStateException();
+//        }
+
+        doGet(request, response);
 
         manager.update(Thread.currentThread().getId(), "waiting");
     }
@@ -93,8 +85,7 @@ public class DefaultServlet implements Servlet {
             if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
                 log.info(String.format("DefaultServlet Serving GET Request for Directory %s",
-                        fileRequested
-                        .getName()));
+                        fileRequested.getName()));
 
                 response.setVersion(HTTP_VERSION);
                 response.setStatusCode("200");
@@ -158,8 +149,7 @@ public class DefaultServlet implements Servlet {
                 writer.flush();
 
                 writer.println(NOT_FOUND_MESSAGE);
-                log.info(String.format("Not Found Error Sent to Client", request.getRequestURI()
-                        .getPath()));
+                log.info("Not Found Error Sent to Client" + request.getRequestURI().getPath());
             }
 
             log.debug(response.getStatusAndHeader());
@@ -181,7 +171,7 @@ public class DefaultServlet implements Servlet {
     }
 
     @Override
-    public ContainerContext getServletContext() {
+    public ServletContext getServletContext() {
         return null;
     }
 
@@ -202,13 +192,9 @@ public class DefaultServlet implements Servlet {
 
         log.debug(response.getStatusAndHeader());
 
-        try (PrintWriter writer = new PrintWriter(response.getOutputStream(), true)) {
-            writer.println(response.getStatusAndHeader());
-            writer.println(manager.getHtmlResponse());
-        } catch (IOException e) {
-
-            log.error("Could Not Write Control Page Response to Socket", e);
-        }
+        PrintWriter writer = new PrintWriter(response.getOutputStream(), true);
+        writer.println(response.getStatusAndHeader());
+        writer.println(manager.getHtmlResponse());
 
         log.info("Wrote Control Page Response to Socket");
     }

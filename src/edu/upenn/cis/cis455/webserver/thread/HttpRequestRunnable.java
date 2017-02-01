@@ -1,10 +1,12 @@
 package edu.upenn.cis.cis455.webserver.thread;
 
-import edu.upenn.cis.cis455.webserver.servlet.ServletContainer;
+import edu.upenn.cis.cis455.webserver.container.ServletContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 
 public class HttpRequestRunnable implements Runnable {
@@ -29,7 +31,9 @@ public class HttpRequestRunnable implements Runnable {
     @Override
     public void run() {
         try {
-            container.dispatch(connection);
+            InputStream in = connection.getInputStream();
+            OutputStream out = connection.getOutputStream();
+            container.serve(in, out);
         } catch (IllegalStateException e) {
             log.error("Invalid Request Ignored", e);
         } catch (IOException e) {

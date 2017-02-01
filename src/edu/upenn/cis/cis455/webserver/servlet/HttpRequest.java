@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver.servlet.http;
+package edu.upenn.cis.cis455.webserver.servlet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,7 +11,7 @@ public class HttpRequest {
 
     private String method;
     private URI uri;
-    private String type;
+//    private String type;
 
     public void setMethod(String method) {
         this.method = method;
@@ -21,16 +21,16 @@ public class HttpRequest {
         this.uri = uri;
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    /**
-     * @return type of request e.g. GET, POST...
-     */
-    public String getType() {
-        return type;
-    }
+//    public void setType(String type) {
+//        this.type = type;
+//    }
+//
+//    /**
+//     * @return type of request e.g. GET, POST...
+//     */
+//    public String getType() {
+//        return type;
+//    }
 
     /**
      * @return uri requested in status line

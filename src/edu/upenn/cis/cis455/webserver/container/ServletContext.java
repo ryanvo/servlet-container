@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver.servlet;
+package edu.upenn.cis.cis455.webserver.container;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,14 +14,14 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author rtv
  */
-public class ContainerContext {
+public class ServletContext {
 
-    private static Logger log = LogManager.getLogger(ContainerContext.class);
+    private static Logger log = LogManager.getLogger(ServletContext.class);
 
     private Map<String, Object> attributes;
     private Map<String, String> initParams;
 
-    public ContainerContext() {
+    public ServletContext() {
         attributes = new ConcurrentHashMap<>();
         initParams = new ConcurrentHashMap<>();
     }
@@ -80,13 +80,13 @@ The form of the returned string is servername/versionnumber. For example, the Ja
         return null;
     }
 
-    /*Returns the name of this web application corresponding to this ContainerContext as specified in the deployment descriptor for this web application by the display-name element.
+    /*Returns the name of this web application corresponding to this ServletContext as specified in the deployment descriptor for this web application by the display-name element.
     */
     public String getServletContextName() {
         return null;
     }
 
-    public ContainerContext getContext(String s) {
+    public ServletContext getContext(String s) {
         return null;
     }
 
