@@ -1,6 +1,8 @@
 package edu.upenn.cis.cis455.webserver;
 
 
+import edu.upenn.cis.cis455.webserver.connector.HttpHandler;
+import edu.upenn.cis.cis455.webserver.connector.HttpHandlerFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,8 +26,8 @@ public class HttpServer {
 
 
         try {
-            ConcurrentServer server = ConcurrentServerFactory.create(webXmlPath, rootDirectory, POOL_SIZE, WORK_QUEUE_SIZE);
-            server.start(port);
+            HttpHandler httpProcessor = HttpHandlerFactory.create(webXmlPath, rootDirectory, POOL_SIZE, WORK_QUEUE_SIZE);
+            httpProcessor.start(port);
         } catch (Exception e) {
             log.error("Error constructing server. Exiting", e);
             System.exit(-1);

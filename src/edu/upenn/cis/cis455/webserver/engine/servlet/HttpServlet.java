@@ -1,7 +1,7 @@
-package edu.upenn.cis.cis455.webserver.servlet;
+package edu.upenn.cis.cis455.webserver.engine.servlet;
 
-import edu.upenn.cis.cis455.webserver.container.ServletContext;
-import edu.upenn.cis.cis455.webserver.container.ServletConfig;
+import edu.upenn.cis.cis455.webserver.engine.ServletConfig;
+import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 
 /**
  * @author rtv

@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver.container;
+package edu.upenn.cis.cis455.webserver.engine;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,7 +72,7 @@ public class ServletContext {
         return null;
     }
 
-    /*Returns the name and version of the servlet container on which the servlet is running.
+    /*Returns the name and version of the http engine on which the http is running.
 The form of the returned string is servername/versionnumber. For example, the JavaServer Web Development Kit may return the string JavaServer Web Dev Kit/1.0.
 
 */

@@ -1,8 +1,8 @@
-package edu.upenn.cis.cis455.webserver.container;
+package edu.upenn.cis.cis455.webserver.engine;
 
-import edu.upenn.cis.cis455.webserver.servlet.HttpServlet;
-import edu.upenn.cis.cis455.webserver.servlet.HttpRequest;
-import edu.upenn.cis.cis455.webserver.servlet.HttpResponse;
+import edu.upenn.cis.cis455.webserver.engine.servlet.HttpRequest;
+import edu.upenn.cis.cis455.webserver.engine.servlet.HttpResponse;
+import edu.upenn.cis.cis455.webserver.engine.servlet.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,9 +17,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author rtv
  */
-public class ServletContainer {
+public class Container {
 
-    private static Logger log = LogManager.getLogger(ServletContainer.class);
+    private static Logger log = LogManager.getLogger(Container.class);
 
     private ServerSocket serverSocket;
     private WebXmlHandler webXml;
@@ -27,7 +27,7 @@ public class ServletContainer {
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
     private HttpServlet defaultServlet;
 
-    public ServletContainer(WebXmlHandler webXml, HttpServlet defaultServlet) {
+    public Container(WebXmlHandler webXml, HttpServlet defaultServlet) {
         this.webXml = webXml;
         this.context = webXml.getContext();
         this.defaultServlet = defaultServlet;
@@ -35,7 +35,7 @@ public class ServletContainer {
 
     public void init() {
 
-        /* Create a servlet for each mapping defined in web.xml */
+        /* Create a http for each mapping defined in web.xml */
         for (String servletName : webXml.getServletNames()) {
 
             String className = webXml.getClassByServletName(servletName);
@@ -46,7 +46,7 @@ public class ServletContainer {
                 e.printStackTrace();
             }
 
-            /* Create a servletConfig for each servlet by copying the init params parsed from web.xml */
+            /* Create a servletConfig for each http by copying the init params parsed from web.xml */
             ServletConfig servletConfig = new ServletConfig(servletName, webXml.getContext());
             Map<String, String> servletParams = webXml.getInitParamsByServletName(servletName);
             if (servletParams != null) {
@@ -55,7 +55,7 @@ public class ServletContainer {
                 }
             }
 
-            /* Create servlet instance using the config and keep track in map */
+            /* Create http instance using the config and keep track in map */
             HttpServlet servlet = null;
             try {
                 servlet = (HttpServlet) servletClass.newInstance();
@@ -116,7 +116,7 @@ public class ServletContainer {
             servlet = servlets.get(type);
 
         } else if (url.matches("/+shutdown/*$")) {
-            type = "shutdown";
+            type = "stop";
             servlet = servlets.get(type);
 
         } else {

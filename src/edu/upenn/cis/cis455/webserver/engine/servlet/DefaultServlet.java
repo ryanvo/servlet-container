@@ -1,9 +1,8 @@
-package edu.upenn.cis.cis455.webserver.container;
+package edu.upenn.cis.cis455.webserver.engine.servlet;
 
 
-import edu.upenn.cis.cis455.webserver.servlet.HttpRequest;
-import edu.upenn.cis.cis455.webserver.servlet.HttpResponse;
-import edu.upenn.cis.cis455.webserver.servlet.HttpServlet;
+import edu.upenn.cis.cis455.webserver.engine.ServletConfig;
+import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,14 +21,14 @@ public class DefaultServlet implements HttpServlet {
 
     private final String HTTP_VERSION = "HTTP/1.1";
     private final String rootDirectory;
-    private HttpConnectionManager manager;
+    private ConnectionManager manager;
     private Map<String, String> initParams;
 
     /**
      * @param rootDirectory path to the www folder
-     * @param manager needed to shutdown and get status of requests in thread pool
+     * @param manager needed to stop and get status of requests in connector pool
      */
-    public DefaultServlet(String rootDirectory, HttpConnectionManager manager) {
+    public DefaultServlet(String rootDirectory, ConnectionManager manager) {
         this.rootDirectory = rootDirectory;
         this.manager = manager;
     }
@@ -70,7 +69,7 @@ public class DefaultServlet implements HttpServlet {
 //            case "control":
 //                doControl(response);
 //                break;
-//            case "shutdown":
+//            case "stop":
 //                doShutdown(response);
 //                break;
 //            default:
@@ -211,21 +210,21 @@ public class DefaultServlet implements HttpServlet {
 
     /**
      * closes the server socket so that no new connections are accepted and then issues a
-     * shutdown to the manager
-     * @param response associated with the shutdown request
+     * stop to the manager
+     * @param response associated with the stop request
      */
     public void doShutdown(HttpResponse response) {
 
-        String SHUTDOWN_MESSAGE = "<html><body>Server shutting down...</body></html>";
+        String SHUTDOWN_MESSAGE = "<html><body>HttpHandler shutting down...</body></html>";
 
         log.info("DefaultServlet Serving Shutdown Request");
 
 //        try {
 //            serverSocket.close();
 //        } catch (IOException e) {
-//            log.error("Could not close socket. Server will not shutdown");
+//            log.error("Could not close socket. HttpHandler will not stop");
 //        }
-//        log.info("Server Socket Closed");
+//        log.info("HttpHandler Socket Closed");
 //        manager.issueShutdown();
 //
 //        response.setVersion(HTTP_VERSION);

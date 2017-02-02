@@ -1,41 +1,42 @@
-package edu.upenn.cis.cis455.webserver.container;
+package edu.upenn.cis.cis455.webserver.engine.servlet;
 
-import edu.upenn.cis.cis455.webserver.thread.WorkExecutorService;
+import edu.upenn.cis.cis455.webserver.connector.HttpRequestProcessor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Manages the HTTP requests delegated to WorkExecutorService. Maintains the status of each thread
- * and can issue a shutdown of the entire thread pool. Used for the Control Page
+ * Manages the HTTP requests delegated to HttpRequestProcessor. Maintains the status of each connector
+ * and can issue a stop of the entire connector pool. Used for the Control Page
  */
-public class HttpConnectionManager {
+public class ConnectionManager {
 
     private final Map<Long, String> idToUri;
-    private final WorkExecutorService executorService;
+    private final HttpRequestProcessor executorService;
 
-    public HttpConnectionManager(WorkExecutorService executorService) {
+    public ConnectionManager(
+In this benchmark, we tested the web server’s performance when serving HTTP. We did not benchmark HTTPS (encrypted HTTP). The performance characteristics are probably significantly different between  context) {
         idToUri = new ConcurrentHashMap<>();
-        this.executorService = executorService;
+        this.executorService = (HttpRequestProcessor) (context.getAttribute("executor"));
         for (Thread thread : executorService.threadPool()) {
             update(thread.getId(), "waiting");
         }
     }
 
     /**
-     * Updates the status of a thread
+     * Updates the status of a connector
      * @param threadId
      * @param uri currently serving
      */
     public void update(long threadId, String uri) {
         idToUri.put(threadId, uri);
-}
+    }
 
     /**
      * Tells executor service to stop all threads
      */
     public void issueShutdown() {
-        executorService.shutdown();
+        executorService.stop();
     }
 
     /**
@@ -54,7 +55,7 @@ public class HttpConnectionManager {
                     "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;").append(idToUri.get(tid));
         }
 
-        html.append("<p><a href=\"/shutdown/\">Shutdown</a></p></body></html>");
+        html.append("<p><a href=\"/stop/\">Shutdown</a></p></body></html>");
         return html.toString();
     }
 

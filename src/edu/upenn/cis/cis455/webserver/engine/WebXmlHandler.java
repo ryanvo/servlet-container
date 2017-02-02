@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver.container;
+package edu.upenn.cis.cis455.webserver.engine;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -77,11 +77,11 @@ public class WebXmlHandler extends DefaultHandler {
                 webAppName = buffer.toString().trim();
                 break;
 
-            case "servlet-name":
+            case "http-name":
                 servletName = buffer.toString().trim();
                 break;
 
-            case "servlet-class":
+            case "http-class":
                 servletClass = buffer.toString().trim();
                 break;
 
@@ -107,13 +107,13 @@ public class WebXmlHandler extends DefaultHandler {
                 servletInitParams.put(paramName, paramValue);
                 break;
 
-            case "servlet-mapping":
+            case "http-mapping":
                 servletPatternByName.putIfAbsent(servletName, new HashSet<>());
                 Set<String> patterns = servletPatternByName.get(servletName);
                 patterns.add(servletPattern);
                 break;
 
-            case "servlet":
+            case "http":
                 servletClassByName.put(servletName, servletClass);
                 break;
 

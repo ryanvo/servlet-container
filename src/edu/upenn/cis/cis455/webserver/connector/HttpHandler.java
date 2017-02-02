@@ -1,8 +1,6 @@
-package edu.upenn.cis.cis455.webserver;
+package edu.upenn.cis.cis455.webserver.connector;
 
-import edu.upenn.cis.cis455.webserver.container.ServletContainer;
-import edu.upenn.cis.cis455.webserver.thread.HttpRequestRunnable;
-import edu.upenn.cis.cis455.webserver.thread.WorkExecutorService;
+import edu.upenn.cis.cis455.webserver.engine.Container;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,14 +9,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class ConcurrentServer {
+public class HttpHandler {
 
-    private static Logger log = LogManager.getLogger(ConcurrentServer.class);
+    private static Logger log = LogManager.getLogger(HttpHandler.class);
 
-    final private WorkExecutorService exec;
-    final private ServletContainer container;
+    final private HttpRequestProcessor exec;
+    final private Container container;
 
-    public ConcurrentServer(ServletContainer container, WorkExecutorService exec) {
+    public HttpHandler(Container container, HttpRequestProcessor exec) {
         this.exec = exec;
         this.container = container;
     }
@@ -32,12 +30,12 @@ public class ConcurrentServer {
 
         try {
             ServerSocket socket = new ServerSocket(port);
-            container.setServerSocket(socket); //TODO put this in container?
-            log.info(String.format("HTTP Server Started on Port %d", port));
+            container.setServerSocket(socket); //TODO put this in engine?
+            log.info(String.format("HTTP HttpHandler Started on Port %d", port));
             while (exec.isRunning()) {
                 try {
                     Socket connection = socket.accept();
-                    exec.execute(new HttpRequestRunnable(connection, container));
+                    exec.process(new HttpRequestRunnable(connection, container));
                 } catch (IllegalStateException e) {
                     log.error("Socket Created Between Client But Executor is Stopped");
                 }
@@ -45,10 +43,10 @@ public class ConcurrentServer {
         } catch (SocketException e) {
             log.info("ServerSocket Closed Due To Shutdown Request Or Unable to Open Socket");
         } catch (IOException e) {
-            log.error("HTTP Server Could Not Open Port " + port, e);
+            log.error("HTTP HttpHandler Could Not Open Port " + port, e);
         }
 
-        log.info("Server Successfully Shutdown");
+        log.info("HttpHandler Successfully Shutdown");
     }
 
 }

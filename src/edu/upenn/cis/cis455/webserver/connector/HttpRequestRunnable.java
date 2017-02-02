@@ -1,6 +1,6 @@
-package edu.upenn.cis.cis455.webserver.thread;
+package edu.upenn.cis.cis455.webserver.connector;
 
-import edu.upenn.cis.cis455.webserver.container.ServletContainer;
+import edu.upenn.cis.cis455.webserver.engine.Container;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -14,19 +14,19 @@ public class HttpRequestRunnable implements Runnable {
     private static Logger log = LogManager.getLogger(HttpRequestRunnable.class);
 
     private Socket connection;
-    private ServletContainer container;
+    private Container container;
 
     /**
      * Carries a connection to a client with a request
      * @param connection socket to client
      */
-    public HttpRequestRunnable(Socket connection, ServletContainer container) {
+    public HttpRequestRunnable(Socket connection, Container container) {
         this.container = container;
         this.connection = connection;
     }
 
     /**
-     * Tells servlet to handle the request and closes the socket once the request is served
+     * Tells http to handle the request and closes the socket once the request is served
      */
     @Override
     public void run() {

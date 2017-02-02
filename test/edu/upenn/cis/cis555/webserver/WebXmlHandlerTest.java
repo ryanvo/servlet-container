@@ -1,6 +1,6 @@
 package edu.upenn.cis.cis555.webserver;
 
-import edu.upenn.cis.cis455.webserver.container.WebXmlHandler;
+import edu.upenn.cis.cis455.webserver.engine.WebXmlHandler;
 import org.junit.Test;
 
 import java.util.Map;

@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver.thread;
+package edu.upenn.cis.cis455.webserver.connector;
 
 
 import org.apache.logging.log4j.LogManager;
@@ -7,15 +7,15 @@ import org.apache.logging.log4j.Logger;
 import java.util.HashSet;
 import java.util.Set;
 
-public class WorkExecutorService {
+public class HttpRequestProcessor {
 
-    private static Logger log = LogManager.getLogger(WorkExecutorService.class);
+    private static Logger log = LogManager.getLogger(HttpRequestProcessor.class);
 
     private volatile boolean isRunning = true;
     private WorkerPool queue;
     private Set<WorkerThread> threadPool = new HashSet<>();
 
-    public WorkExecutorService(int poolSize, WorkerPool queue) {
+    public HttpRequestProcessor(int poolSize, WorkerPool queue) {
         this.queue = queue;
 
         for (int i = 0; i < poolSize; i++) {
@@ -27,14 +27,14 @@ public class WorkExecutorService {
         }
     }
 
-    public void execute(Runnable request) throws IllegalStateException {
+    public void process(Runnable request) throws IllegalStateException {
         if (!isRunning) {
             throw new IllegalStateException("Executor Service is stopped");
         }
         queue.put(request);
     }
 
-    public void shutdown() {
+    public void stop() {
         isRunning = false;
 
         while (!queue.isEmpty()) {
