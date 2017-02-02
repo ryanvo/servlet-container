@@ -1,0 +1,58 @@
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
+
+    <display-name>Test Web.xml</display-name>
+
+
+    <context-param>
+        <param-name>contextParamOne</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <description>This should be an unrecognized id</description>
+        <param-name>contextParamTwo</param-name>
+        <param-value>address@somedomain.com</param-value>
+    </context-param>
+
+
+    <servlet>
+        <servlet-name>redteam</servlet-name>
+        <servlet-class>edu.upenn.cis.cis555.webserver.WebXmlHandlerTest</servlet-class>
+        <init-param>
+            <param-name>teamColor</param-name>
+            <param-value>red</param-value>
+        </init-param>
+        <init-param>
+            <param-name>bgColor</param-name>
+            <param-value>#CC0000</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet>
+        <servlet-name>blueteam</servlet-name>
+        <servlet-class>webserver.WebXmlHandlerTest</servlet-class>
+        <init-param>
+            <param-name>teamColor</param-name>
+            <param-value>blue</param-value>
+        </init-param>
+        <init-param>
+            <param-name>bgColor</param-name>
+            <param-value>#0000CC</param-value>
+        </init-param>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>blueteam</servlet-name>
+        <url-pattern>/blue/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>redteam</servlet-name>
+        <url-pattern>/red/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>blueteam</servlet-name>
+        <url-pattern>/foo/bar</url-pattern>
+    </servlet-mapping>
+
+</web-app>
