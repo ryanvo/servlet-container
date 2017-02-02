@@ -210,31 +210,29 @@ public class DefaultServlet implements HttpServlet {
 
         log.info("DefaultServlet Serving Shutdown Request");
 
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            log.error("Could not close socket. Server will not shutdown");
-        }
-        log.info("Server Socket Closed");
-        manager.issueShutdown();
-
-        response.setVersion(HTTP_VERSION);
-        response.setStatusCode("200");
-        response.setErrorMessage("OK");
-        response.setContentType("text/html");
-        response.setContentLength(SHUTDOWN_MESSAGE.length());
-
-
-        try(PrintWriter writer = new PrintWriter(response.getOutputStream(), true)) {
-
-            log.debug(response.getStatusAndHeader());
-
-            writer.println(response.getStatusAndHeader());
-            writer.println(SHUTDOWN_MESSAGE);
-
-        } catch (IOException e) {
-            log.error("Could Not Write Shutdown HTML Page to Socket", e);
-        }
+//        try {
+//            serverSocket.close();
+//        } catch (IOException e) {
+//            log.error("Could not close socket. Server will not shutdown");
+//        }
+//        log.info("Server Socket Closed");
+//        manager.issueShutdown();
+//
+//        response.setVersion(HTTP_VERSION);
+//        response.setStatusCode("200");
+//        response.setErrorMessage("OK");
+//        response.setContentType("text/html");
+//        response.setContentLength(SHUTDOWN_MESSAGE.length());
+//
+//
+//        try(PrintWriter writer = new PrintWriter(response.getOutputStream(), true)) {
+//
+//            log.debug(response.getStatusAndHeader());
+//
+//            writer.println(response.getStatusAndHeader());
+//            writer.println(SHUTDOWN_MESSAGE);
+//
+//        }
 
     }
 

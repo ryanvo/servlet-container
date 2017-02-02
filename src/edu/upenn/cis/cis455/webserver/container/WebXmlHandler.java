@@ -1,7 +1,10 @@
 package edu.upenn.cis.cis455.webserver.container;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -9,9 +12,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -19,46 +20,136 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class WebXmlHandler extends DefaultHandler {
 
-    private int m_state = 0;
-    private String servletName;
-    private String m_paramName;
-    private Map<String,String> contextParams = new ConcurrentHashMap<>();
-    private Map<String,Map<String,String>> initParams = new ConcurrentHashMap<>();
 
+    private static Logger log  = LogManager.getLogger(WebXmlHandler.class);
 
-    private Map<String,String> servletClassByName = new ConcurrentHashMap<>();
-    private Map<String,String> servletPatternByName = new ConcurrentHashMap<>();
-
-
-
+    private Map<String, String> servletClassByName = new ConcurrentHashMap<>();
+    private Map<String, Map<String, String>> initParams = new ConcurrentHashMap<>();
+    private Map<String, String> contextParams = new ConcurrentHashMap<>();
+    private Map<String, Set<String>> servletPatternByName = new ConcurrentHashMap<>();
 
     private ServletContext context = new ServletContext();
 
+    private String webAppName;
 
-//    private Map<String,HttpServlet> servlets = new ConcurrentHashMap<>();
+
+
+    private String servletName;
+    private String servletClass;
+    private String servletPattern;
+    private String paramName;
+    private String paramValue;
+    private StringBuilder buffer = new StringBuilder();
 
     public WebXmlHandler(String webXmlPath) throws IOException {
+
+        /* Open web.xml and parse contents */
         try {
-            /* Open web.xml and parse contents into this object */
             File file = new File(webXmlPath);
             if (!file.exists()) {
                 throw new IOException();
             }
-            SAXParser saxParser = SAXParserFactory.newInstance().newSAXParser();
-            saxParser.parse(file, this);
+
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            SAXParser parser = factory.newSAXParser();
+            parser.parse(file, this);
 
             /* Use context parameters to set the context obj */
             for (String param : contextParams.keySet()) {
                 context.setInitParam(param, contextParams.get(param));
             }
 
-        } catch (ParserConfigurationException|SAXException e) {
+        } catch (ParserConfigurationException | SAXException e) {
             throw new IOException();
         }
     }
 
-    public String getServletName() {
-        return servletName;
+
+    @Override
+    public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+
+        /* Reset the buffer between elements */
+        buffer.setLength(0);
+
+    }
+
+    @Override
+    public void endElement(String uri, String localName, String qName) throws SAXException {
+
+        switch (qName) {
+            case "display-name":
+                webAppName = buffer.toString().trim();
+                break;
+
+            case "servlet-name":
+                servletName = buffer.toString().trim();
+                break;
+
+            case "servlet-class":
+                servletClass = buffer.toString().trim();
+                break;
+
+            case "param-name":
+                paramName = buffer.toString().trim();
+                break;
+
+            case "param-value":
+                paramValue = buffer.toString().trim();
+                break;
+
+            case "url-pattern":
+                servletPattern = buffer.toString().trim();
+                break;
+
+            case "context-param":
+                contextParams.put(paramName, paramValue);
+                break;
+
+            case "init-param":
+                initParams.putIfAbsent(servletName, new HashMap<>());
+                Map<String, String> servletInitParams = initParams.get(servletName);
+                servletInitParams.put(paramName, paramValue);
+                break;
+
+            case "servlet-mapping":
+                servletPatternByName.putIfAbsent(servletName, new HashSet<>());
+                Set<String> patterns = servletPatternByName.get(servletName);
+                patterns.add(servletPattern);
+                break;
+
+            case "servlet":
+                servletClassByName.put(servletName, servletClass);
+                break;
+
+            default:
+                log.error("Unmapped qname: " + qName);
+        }
+
+
+    }
+
+    @Override
+    public void characters(char[] ch, int start, int length) throws SAXException {
+        buffer.append(ch, start, length);
+    }
+
+    @Override
+    public void warning(SAXParseException e) throws SAXException {
+        log.error(e);
+    }
+
+    @Override
+    public void error(SAXParseException e) throws SAXException {
+        log.error(e);
+    }
+
+    @Override
+    public void fatalError(SAXParseException e) throws SAXException {
+        log.error(e);
+    }
+
+    public Set<String> getPatternByServletName(String name) {
+        return servletPatternByName.get(name);
     }
 
     public Set<String> getServletNames() {
@@ -73,57 +164,20 @@ public class WebXmlHandler extends DefaultHandler {
         return initParams.get(name);
     }
 
+    public String getWebAppName() {
+        return webAppName;
+    }
+
     public ServletContext getContext() {
         return context;
     }
 
-    public void startElement(String uri, String localName, String qName, Attributes attributes) {
-        if (qName.compareTo("servlet-name") == 0) {
-            m_state = 1;
-        } else if (qName.compareTo("servlet-class") == 0) {
-            m_state = 2;
-        } else if (qName.compareTo("context-param") == 0) {
-            m_state = 3;
-        } else if (qName.compareTo("init-param") == 0) {
-            m_state = 4;
-        } else if (qName.compareTo("param-name") == 0) {
-            m_state = (m_state == 3) ? 10 : 20;
-        } else if (qName.compareTo("param-value") == 0) {
-            m_state = (m_state == 10) ? 11 : 21;
-        }
+    public Set<String> getContextParams() {
+        return contextParams.keySet();
     }
 
-    public void characters(char[] ch, int start, int length) {
-        String value = new String(ch, start, length);
-        if (m_state == 1) {
-            servletName = value;
-            m_state = 0;
-        } else if (m_state == 2) {
-            servletClassByName.put(servletName, value);
-            m_state = 0;
-        } else if (m_state == 10 || m_state == 20) {
-            m_paramName = value;
-        } else if (m_state == 11) {
-            if (m_paramName == null) {
-                System.err.println("Context parameter value '" + value + "' without name");
-                System.exit(-1);
-            }
-            contextParams.put(m_paramName, value);
-            m_paramName = null;
-            m_state = 0;
-        } else if (m_state == 21) {
-            if (m_paramName == null) {
-                System.err.println("Servlet parameter value '" + value + "' without name");
-                System.exit(-1);
-            }
-            Map<String,String> p = initParams.get(servletName);
-            if (p == null) {
-                p = new HashMap<>();
-                initParams.put(servletName, p);
-            }
-            p.put(m_paramName, value);
-            m_paramName = null;
-            m_state = 0;
-        }
+    public String getContextParamByKey(String key) {
+        return contextParams.get(key);
     }
+
 }
