@@ -54,7 +54,7 @@ public class Container {
             /* Create a servletConfig for each http by copying the init params parsed from web.xml */
             ServletConfig servletConfig = new ServletConfig(servletName, context);
             Map<String, String> servletParams = webXml.getInitParamsByServletName(servletName);
-            if (servletParams != null) {
+            if (servletParams != null) { 
                 for (String param : servletParams.keySet()) {
                     servletConfig.setInitParam(param, servletParams.get(param));
                 }
@@ -80,35 +80,11 @@ public class Container {
         this.serverSocket = serverSocket;
     }
 
-    public void serve(InputStream inputStream, OutputStream outputStream) throws IOException {
-        String line;
-        BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
-        line = in.readLine();
+    public void dispatch(HttpRequest req, HttpResponse resp) throws IOException {
 
-        log.info("Parsing HTTP Request: " + line);
+        HttpServlet servlet;
 
-        String[] statusLine = line.split(" ");
-        String method = statusLine[0];
-
-        URI uri = null;
-        try {
-            uri = new URI(statusLine[1]);
-        } catch (URISyntaxException e) {
-            log.error(e);
-            throw new IOException();
-        }
-
-        HttpServlet servlet = getMapping(uri.getPath());
-
-
-        HttpRequest req = new HttpRequest();
-        req.setMethod(method);
-//        req.setType(type);
-        req.setUri(uri);
-        servlet.service(req, new HttpResponse(outputStream));
-
-        log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
-
+        servlet.service(req, resp);
 
     }
 
@@ -143,10 +119,6 @@ public class Container {
             log.error("Trying to close server socket", e);
         }
     }
-
-//    public ServletConfig getContainerConfig() {
-//        return new ServletConfig(webXml.getServletName(), context);
-//    }
 
     public ServletContext getContext() {
         return context;

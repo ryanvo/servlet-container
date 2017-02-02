@@ -13,6 +13,12 @@ public class HttpRequest {
     private URI uri;
 //    private String type;
 
+    public void clear() {
+
+
+
+    }
+
     public void setMethod(String method) {
         this.method = method;
     }

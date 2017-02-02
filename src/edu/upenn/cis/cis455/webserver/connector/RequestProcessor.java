@@ -5,22 +5,19 @@ import edu.upenn.cis.cis455.webserver.engine.Container;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
-public class HttpRequestProcessor {
+public class RequestProcessor {
 
-    private static Logger log = LogManager.getLogger(HttpRequestProcessor.class);
+    private static Logger log = LogManager.getLogger(RequestProcessor.class);
 
     private volatile boolean isRunning = true;
     private WorkerPool queue;
     private Set<WorkerThread> threadPool = new HashSet<>();
-    private Container container;
 
-    public HttpRequestProcessor(int poolSize, WorkerPool queue, Container container) {
+    public RequestProcessor(int poolSize, WorkerPool queue) {
         this.queue = queue;
-        this.container = container;
 
         for (int i = 0; i < poolSize; i++) {
             threadPool.add(new WorkerThread(queue));
@@ -31,11 +28,11 @@ public class HttpRequestProcessor {
         }
     }
 
-    public void process(Socket connection) throws IllegalStateException {
+    public void process(Runnable connection) throws IllegalStateException {
         if (!isRunning) {
             throw new IllegalStateException("Executor Service is stopped");
         }
-        queue.put(new HttpRequestRunnable(connection, container));
+        queue.put(connection);
     }
 
     public void stop() {

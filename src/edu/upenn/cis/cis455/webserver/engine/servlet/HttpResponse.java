@@ -17,9 +17,18 @@ public class HttpResponse {
     private int contentLength;
     private OutputStream outputStream;
 
-    public HttpResponse(OutputStream outputStream) {
-        this.outputStream = outputStream;
+    public HttpResponse() {
         date = getHttpDate();
+    }
+
+    public void clear() {
+
+
+
+    }
+
+    public void setOutputStream(OutputStream os) {
+        outputStream = os;
     }
 
     public void setVersion(String version) {

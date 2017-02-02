@@ -1,7 +1,7 @@
 package edu.upenn.cis.cis455.webserver;
 
-import edu.upenn.cis.cis455.webserver.connector.HttpSocketHandler;
-import edu.upenn.cis.cis455.webserver.connector.HttpRequestProcessor;
+import edu.upenn.cis.cis455.webserver.connector.HttpConnectionHandler;
+import edu.upenn.cis.cis455.webserver.connector.RequestProcessor;
 import edu.upenn.cis.cis455.webserver.connector.WorkerPool;
 import edu.upenn.cis.cis455.webserver.engine.WebXmlHandler;
 import edu.upenn.cis.cis455.webserver.engine.Container;
@@ -16,20 +16,20 @@ public class HttpSocketHandlerFactory {
 
     private static Logger log = LogManager.getLogger(HttpSocketHandlerFactory.class);
 
-    public static HttpSocketHandler create(String webXmlPath, String rootDirectory, int poolSize, int workQueueSize)
+    public static HttpConnectionHandler create(String webXmlPath, String rootDirectory, int poolSize, int workQueueSize)
             throws Exception {
 
         WebXmlHandler webXml = new WebXmlHandler(webXmlPath);
         Container container = new Container(webXml);
 
         WorkerPool workPool = new WorkerPool(workQueueSize);
-        HttpRequestProcessor exec = new HttpRequestProcessor(poolSize, workPool, container);
+        RequestProcessor exec = new RequestProcessor(poolSize, workPool);
         ConnectionManager manager = new ConnectionManager(container.getContext());
 
-        log.info(String.format("Factory Created HttpSocketHandler at %s, %d threads, request queue of %d",
+        log.info(String.format("Factory Created HttpConnectionHandler at %s, %d threads, request queue of %d",
                 rootDirectory, poolSize, workQueueSize));
 
-        return new HttpSocketHandler(exec);
+        return new HttpConnectionHandler(exec, container);
     }
 
 }

@@ -1,23 +1,22 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
-import edu.upenn.cis.cis455.webserver.connector.HttpRequestProcessor;
 import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Manages the HTTP requests delegated to HttpRequestProcessor. Maintains the status of each connector
+ * Manages the HTTP requests delegated to RequestProcessor. Maintains the status of each connector
  * and can issue a stop of the entire connector pool. Used for the Control Page
  */
 public class ConnectionManager {
 
     private final Map<Long, String> idToUri;
-    private final HttpRequestProcessor executorService;
+    private final RequestProcessor executorService;
 
     public ConnectionManager(ServletContext context) {
         idToUri = new ConcurrentHashMap<>();
-        this.executorService = (HttpRequestProcessor) (context.getAttribute("executor"));
+        this.executorService = (RequestProcessor) (context.getAttribute("executor"));
         for (Thread thread : executorService.threadPool()) {
             update(thread.getId(), "waiting");
         }

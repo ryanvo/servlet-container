@@ -216,16 +216,16 @@ public class DefaultServlet implements HttpServlet {
      */
     public void doShutdown(HttpResponse response) {
 
-        String SHUTDOWN_MESSAGE = "<html><body>HttpSocketHandler shutting down...</body></html>";
+        String SHUTDOWN_MESSAGE = "<html><body>HttpConnectionHandler shutting down...</body></html>";
 
         log.info("DefaultServlet Serving Shutdown Request");
 
 //        try {
 //            serverSocket.close();
 //        } catch (IOException e) {
-//            log.error("Could not close socket. HttpSocketHandler will not stop");
+//            log.error("Could not close socket. HttpConnectionHandler will not stop");
 //        }
-//        log.info("HttpSocketHandler Socket Closed");
+//        log.info("HttpConnectionHandler Socket Closed");
 //        manager.issueShutdown();
 //
 //        response.setVersion(HTTP_VERSION);
