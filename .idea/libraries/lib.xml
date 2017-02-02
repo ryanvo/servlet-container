@@ -2,7 +2,6 @@
   <library name="lib">
     <CLASSES>
       <root url="jar://$PROJECT_DIR$/lib/log4j-api-2.7.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/hamcrest-junit-2.0.0.0.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/servlet-api.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/log4j-core-2.7.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/commons-logging.jar!/" />

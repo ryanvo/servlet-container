@@ -48,7 +48,7 @@ public class ServletContainer {
 
             /* Create a servletConfig for each servlet by copying the init params parsed from web.xml */
             ServletConfig servletConfig = new ServletConfig(servletName, webXml.getContext());
-            Map<String, String> servletParams = webXml.getInitParmsByServletName(servletName);
+            Map<String, String> servletParams = webXml.getInitParamsByServletName(servletName);
             if (servletParams != null) {
                 for (String param : servletParams.keySet()) {
                     servletConfig.setInitParam(param, servletParams.get(param));

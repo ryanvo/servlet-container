@@ -54,12 +54,12 @@ public class WebXmlHandlerTest {
     public void shouldParseServletParams() throws Exception {
         WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
 
-        Map<String, String> initParams1 = webXml.getInitParmsByServletName("redteam");
+        Map<String, String> initParams1 = webXml.getInitParamsByServletName("redteam");
         assertThat(initParams1.keySet(), hasSize(2));
         assertThat(initParams1.get("teamColor"), is("red"));
         assertThat(initParams1.get("bgColor"), is("#CC0000"));
 
-        Map<String, String> initParams2 = webXml.getInitParmsByServletName("blueteam");
+        Map<String, String> initParams2 = webXml.getInitParamsByServletName("blueteam");
         assertThat(initParams2.keySet(), hasSize(2));
         assertThat(initParams2.get("teamColor"), is("blue"));
         assertThat(initParams2.get("bgColor"), is("#0000CC"));

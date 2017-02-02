@@ -27,13 +27,9 @@ public class WebXmlHandler extends DefaultHandler {
     private Map<String, Map<String, String>> initParams = new ConcurrentHashMap<>();
     private Map<String, String> contextParams = new ConcurrentHashMap<>();
     private Map<String, Set<String>> servletPatternByName = new ConcurrentHashMap<>();
-
     private ServletContext context = new ServletContext();
 
     private String webAppName;
-
-
-
     private String servletName;
     private String servletClass;
     private String servletPattern;
@@ -160,7 +156,7 @@ public class WebXmlHandler extends DefaultHandler {
         return servletClassByName.get(name);
     }
 
-    public Map<String, String> getInitParmsByServletName(String name) {
+    public Map<String, String> getInitParamsByServletName(String name) {
         return initParams.get(name);
     }
 

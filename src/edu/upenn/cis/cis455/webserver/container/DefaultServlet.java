@@ -1,9 +1,9 @@
-package edu.upenn.cis.cis455.webserver.servlet;
+package edu.upenn.cis.cis455.webserver.container;
 
 
-import edu.upenn.cis.cis455.webserver.container.ServletContext;
-import edu.upenn.cis.cis455.webserver.container.HttpConnectionManager;
-import edu.upenn.cis.cis455.webserver.container.ServletConfig;
+import edu.upenn.cis.cis455.webserver.servlet.HttpRequest;
+import edu.upenn.cis.cis455.webserver.servlet.HttpResponse;
+import edu.upenn.cis.cis455.webserver.servlet.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,15 +13,17 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Enumeration;
+import java.util.Map;
 
 public class DefaultServlet implements HttpServlet {
 
     private static Logger log = LogManager.getLogger(DefaultServlet.class);
 
     private final String HTTP_VERSION = "HTTP/1.1";
-
     private final String rootDirectory;
     private HttpConnectionManager manager;
+    private Map<String, String> initParams;
 
     /**
      * @param rootDirectory path to the www folder
@@ -35,10 +37,18 @@ public class DefaultServlet implements HttpServlet {
     @Override
     public void init(ServletConfig config) {
 
+        Enumeration paramNames = config.getInitParameterNames();
+        while(paramNames.hasMoreElements()) {
+            String key = (String) paramNames.nextElement();
+            initParams.put(key, config.getInitParameter(key));
+        }
+
     }
 
     @Override
     public void destroy() {
+
+
 
     }
 
