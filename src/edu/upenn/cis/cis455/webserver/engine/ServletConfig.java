@@ -15,12 +15,22 @@ public class ServletConfig {
     public ServletConfig(String name, ServletContext context) {
         this.name = name;
         this.context = context;
-        initParams = new ConcurrentHashMap<>();
+        this.initParams = new ConcurrentHashMap<>();
+
+        /* Copy the init params */
+        while (context.getInitParameterNames().hasMoreElements()) {
+            String key = (String) context.getInitParameterNames().nextElement();
+            initParams.put(key, context.getInitParameter(key));
+        }
 
     }
 
     public String getInitParameter(String name) {
         return initParams.get(name);
+    }
+
+    void setInitParam(String name, String value) {
+        initParams.put(name, value);
     }
 
     public Enumeration getInitParameterNames() {
@@ -29,16 +39,13 @@ public class ServletConfig {
         return atts.elements();
     }
 
-    public ServletContext getContext() {
-        return context;
-    }
-
     public String getServletName() {
         return name;
     }
 
-    void setInitParam(String name, String value) {
-        initParams.put(name, value);
+    public ServletContext getServletContext() {
+        return context;
     }
+
 }
 

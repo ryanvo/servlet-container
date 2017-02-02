@@ -48,7 +48,7 @@ public class Container {
             try {
                 servletClass = Class.forName(className);
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
+                log.error("Error on servlet instantiation: " + className, e);
             }
 
             /* Create a servletConfig for each http by copying the init params parsed from web.xml */

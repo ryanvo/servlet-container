@@ -19,10 +19,8 @@ public class HttpSocketHandlerFactory {
     public static HttpSocketHandler create(String webXmlPath, String rootDirectory, int poolSize, int workQueueSize)
             throws Exception {
 
-//        HttpServlet defaultServlet = new DefaultServlet(rootDirectory, manager);
         WebXmlHandler webXml = new WebXmlHandler(webXmlPath);
         Container container = new Container(webXml);
-
 
         WorkerPool workPool = new WorkerPool(workQueueSize);
         HttpRequestProcessor exec = new HttpRequestProcessor(poolSize, workPool, container);

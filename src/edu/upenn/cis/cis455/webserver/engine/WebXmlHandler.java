@@ -13,13 +13,11 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author rtv
  */
 public class WebXmlHandler extends DefaultHandler {
-
 
     private static Logger log  = LogManager.getLogger(WebXmlHandler.class);
 
@@ -34,15 +32,14 @@ public class WebXmlHandler extends DefaultHandler {
     private String servletPattern;
     private String paramName;
     private String paramValue;
+
     private StringBuilder buffer = new StringBuilder();
 
     public WebXmlHandler(String webXmlPath) throws IOException {
-
-
         /* Open web.xml and parse contents */
         try {
             File file = new File(webXmlPath);
-            if (!file.exists()) {
+            if (!file.exists() || !file.canRead()) {
                 throw new IOException();
             }
 
@@ -58,10 +55,8 @@ public class WebXmlHandler extends DefaultHandler {
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-
         /* Reset the buffer between elements */
         buffer.setLength(0);
-
     }
 
     @Override
@@ -113,10 +108,8 @@ public class WebXmlHandler extends DefaultHandler {
                 break;
 
             default:
-                log.error("Unmapped qname: " + qName);
+                log.debug("Unmapped qname: " + qName);
         }
-
-
     }
 
     @Override
@@ -139,8 +132,16 @@ public class WebXmlHandler extends DefaultHandler {
         log.error(e);
     }
 
-    public Set<String> getPatternByServletName(String name) {
-        return servletPatternByName.get(name);
+    public String getWebAppName() {
+        return webAppName;
+    }
+
+    public Set<String> getContextParams() {
+        return contextParams.keySet();
+    }
+
+    public String getContextParamByKey(String key) {
+        return contextParams.get(key);
     }
 
     public Set<String> getServletNames() {
@@ -155,17 +156,8 @@ public class WebXmlHandler extends DefaultHandler {
         return initParams.get(name);
     }
 
-    public String getWebAppName() {
-        return webAppName;
-    }
-
-
-    public Set<String> getContextParams() {
-        return contextParams.keySet();
-    }
-
-    public String getContextParamByKey(String key) {
-        return contextParams.get(key);
+    public Set<String> getPatternByServletName(String name) {
+        return servletPatternByName.get(name);
     }
 
 }

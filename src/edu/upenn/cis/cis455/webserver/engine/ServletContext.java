@@ -21,29 +21,29 @@ public class ServletContext {
     private static Logger log = LogManager.getLogger(ServletContext.class);
 
     private Map<String, Object> attributes;
-    private Map<String, String> initParams;
+    private Map<String, String> contextParams; // This is initParams/contextParmms
 
     public ServletContext(WebXmlHandler webXml) {
         attributes = new ConcurrentHashMap<>();
-        initParams = new ConcurrentHashMap<>();
+        contextParams = new ConcurrentHashMap<>();
 
          /* Use context parameters to set the context obj */
         for (String param : webXml.getContextParams()) {
-            initParams.put(param, webXml.getContextParamByKey(param));
+            contextParams.put(param, webXml.getContextParamByKey(param));
         }
 
     }
 
     void setInitParam(String name, String value) {
-        initParams.put(name, value);
+        contextParams.put(name, value);
     }
 
     public String getInitParameter(String s) {
-        return initParams.get(s);
+        return contextParams.get(s);
     }
 
     public Enumeration getInitParameterNames() {
-        Set<String> keys = initParams.keySet();
+        Set<String> keys = contextParams.keySet();
         Vector<String> atts = new Vector<>(keys);
         return atts.elements();
     }
@@ -60,7 +60,6 @@ public class ServletContext {
         attributes.remove(s);
     }
 
-
     public void setAttribute(String s, Object o) {
         attributes.put(s, o);
     }
@@ -71,6 +70,10 @@ public class ServletContext {
         return atts.elements();
     }
 
+    public ServletContext getContext(String s) {
+        return null;
+    }
+
     public String getRealPath(String s) {
         return null;
     }
@@ -79,12 +82,7 @@ public class ServletContext {
         return null;
     }
 
-
     public String getServletContextName() {
-        return null;
-    }
-
-    public ServletContext getContext(String s) {
         return null;
     }
 
