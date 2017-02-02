@@ -3,6 +3,8 @@ package edu.upenn.cis.cis455.webserver.engine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.RequestDispatcher;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Enumeration;
@@ -21,9 +23,15 @@ public class ServletContext {
     private Map<String, Object> attributes;
     private Map<String, String> initParams;
 
-    public ServletContext() {
+    public ServletContext(WebXmlHandler webXml) {
         attributes = new ConcurrentHashMap<>();
         initParams = new ConcurrentHashMap<>();
+
+         /* Use context parameters to set the context obj */
+        for (String param : webXml.getContextParams()) {
+            initParams.put(param, webXml.getContextParamByKey(param));
+        }
+
     }
 
     void setInitParam(String name, String value) {
@@ -34,23 +42,19 @@ public class ServletContext {
         return initParams.get(s);
     }
 
-
     public Enumeration getInitParameterNames() {
         Set<String> keys = initParams.keySet();
         Vector<String> atts = new Vector<>(keys);
         return atts.elements();
     }
 
-
     public void log(String s) {
         log.error(s);
     }
 
-
     public Object getAttribute(String s) {
         return attributes.get(s);
     }
-
 
     public void removeAttribute(String s) {
         attributes.remove(s);
@@ -60,7 +64,6 @@ public class ServletContext {
     public void setAttribute(String s, Object o) {
         attributes.put(s, o);
     }
-
 
     public Enumeration getAttributeNames() {
         Set<String> keys = attributes.keySet();
@@ -72,16 +75,11 @@ public class ServletContext {
         return null;
     }
 
-    /*Returns the name and version of the http engine on which the http is running.
-The form of the returned string is servername/versionnumber. For example, the JavaServer Web Development Kit may return the string JavaServer Web Dev Kit/1.0.
-
-*/
     public String getServerInfo() {
         return null;
     }
 
-    /*Returns the name of this web application corresponding to this ServletContext as specified in the deployment descriptor for this web application by the display-name element.
-    */
+
     public String getServletContextName() {
         return null;
     }
@@ -90,7 +88,42 @@ The form of the returned string is servername/versionnumber. For example, the Ja
         return null;
     }
 
+//    @Override
+    public int getMajorVersion() {
+        return 0;
+    }
+
+//    @Override
+    public int getMinorVersion() {
+        return 0;
+    }
+
+//    @Override
+    public String getMimeType(String s) {
+        return null;
+    }
+
+//    @Override
+    public Set getResourcePaths(String s) {
+        return null;
+    }
+
     public URL getResource(String path) throws MalformedURLException {
+        return null;
+    }
+
+//    @Override
+    public InputStream getResourceAsStream(String s) {
+        return null;
+    }
+
+//    @Override
+    public RequestDispatcher getRequestDispatcher(String s) {
+        return null;
+    }
+
+//    @Override
+    public RequestDispatcher getNamedDispatcher(String s) {
         return null;
     }
 

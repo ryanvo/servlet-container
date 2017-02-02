@@ -1,9 +1,11 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
 
+import edu.upenn.cis.cis455.webserver.engine.Container;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.Socket;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -14,9 +16,11 @@ public class HttpRequestProcessor {
     private volatile boolean isRunning = true;
     private WorkerPool queue;
     private Set<WorkerThread> threadPool = new HashSet<>();
+    private Container container;
 
-    public HttpRequestProcessor(int poolSize, WorkerPool queue) {
+    public HttpRequestProcessor(int poolSize, WorkerPool queue, Container container) {
         this.queue = queue;
+        this.container = container;
 
         for (int i = 0; i < poolSize; i++) {
             threadPool.add(new WorkerThread(queue));
@@ -27,11 +31,11 @@ public class HttpRequestProcessor {
         }
     }
 
-    public void process(Runnable request) throws IllegalStateException {
+    public void process(Socket connection) throws IllegalStateException {
         if (!isRunning) {
             throw new IllegalStateException("Executor Service is stopped");
         }
-        queue.put(request);
+        queue.put(new HttpRequestRunnable(connection, container));
     }
 
     public void stop() {

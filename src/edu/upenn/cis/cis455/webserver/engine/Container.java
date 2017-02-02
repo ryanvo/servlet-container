@@ -23,14 +23,19 @@ public class Container {
 
     private ServerSocket serverSocket;
     private WebXmlHandler webXml;
+
     private ServletContext context;
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
-    private HttpServlet defaultServlet;
 
-    public Container(WebXmlHandler webXml, HttpServlet defaultServlet) {
+    public Container(WebXmlHandler webXml) {
         this.webXml = webXml;
-        this.context = webXml.getContext();
-        this.defaultServlet = defaultServlet;
+        this.context = new ServletContext(webXml);
+
+         /* Use context parameters to set the context obj */
+        for (String param : webXml.getContextParams()) {
+            context.setInitParam(param, webXml.getContextParamByKey(param));
+        }
+
     }
 
     public void init() {
@@ -47,7 +52,7 @@ public class Container {
             }
 
             /* Create a servletConfig for each http by copying the init params parsed from web.xml */
-            ServletConfig servletConfig = new ServletConfig(servletName, webXml.getContext());
+            ServletConfig servletConfig = new ServletConfig(servletName, context);
             Map<String, String> servletParams = webXml.getInitParamsByServletName(servletName);
             if (servletParams != null) {
                 for (String param : servletParams.keySet()) {
@@ -120,7 +125,7 @@ public class Container {
             servlet = servlets.get(type);
 
         } else {
-            servlet = defaultServlet;
+//            servlet = defaultServlet;
         }
 
         return servlet;

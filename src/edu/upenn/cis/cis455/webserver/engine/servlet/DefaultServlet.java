@@ -1,6 +1,7 @@
 package edu.upenn.cis.cis455.webserver.engine.servlet;
 
 
+import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
 import edu.upenn.cis.cis455.webserver.engine.ServletConfig;
 import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import org.apache.logging.log4j.LogManager;
@@ -215,16 +216,16 @@ public class DefaultServlet implements HttpServlet {
      */
     public void doShutdown(HttpResponse response) {
 
-        String SHUTDOWN_MESSAGE = "<html><body>HttpHandler shutting down...</body></html>";
+        String SHUTDOWN_MESSAGE = "<html><body>HttpSocketHandler shutting down...</body></html>";
 
         log.info("DefaultServlet Serving Shutdown Request");
 
 //        try {
 //            serverSocket.close();
 //        } catch (IOException e) {
-//            log.error("Could not close socket. HttpHandler will not stop");
+//            log.error("Could not close socket. HttpSocketHandler will not stop");
 //        }
-//        log.info("HttpHandler Socket Closed");
+//        log.info("HttpSocketHandler Socket Closed");
 //        manager.issueShutdown();
 //
 //        response.setVersion(HTTP_VERSION);

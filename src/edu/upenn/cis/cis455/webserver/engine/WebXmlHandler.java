@@ -23,11 +23,10 @@ public class WebXmlHandler extends DefaultHandler {
 
     private static Logger log  = LogManager.getLogger(WebXmlHandler.class);
 
-    private Map<String, String> servletClassByName = new ConcurrentHashMap<>();
-    private Map<String, Map<String, String>> initParams = new ConcurrentHashMap<>();
-    private Map<String, String> contextParams = new ConcurrentHashMap<>();
-    private Map<String, Set<String>> servletPatternByName = new ConcurrentHashMap<>();
-    private ServletContext context = new ServletContext();
+    private Map<String, String> servletClassByName = new HashMap<>();
+    private Map<String, Map<String, String>> initParams = new HashMap<>();
+    private Map<String, String> contextParams = new HashMap<>();
+    private Map<String, Set<String>> servletPatternByName = new HashMap<>();
 
     private String webAppName;
     private String servletName;
@@ -39,6 +38,7 @@ public class WebXmlHandler extends DefaultHandler {
 
     public WebXmlHandler(String webXmlPath) throws IOException {
 
+
         /* Open web.xml and parse contents */
         try {
             File file = new File(webXmlPath);
@@ -49,11 +49,6 @@ public class WebXmlHandler extends DefaultHandler {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             SAXParser parser = factory.newSAXParser();
             parser.parse(file, this);
-
-            /* Use context parameters to set the context obj */
-            for (String param : contextParams.keySet()) {
-                context.setInitParam(param, contextParams.get(param));
-            }
 
         } catch (ParserConfigurationException | SAXException e) {
             throw new IOException();
@@ -164,9 +159,6 @@ public class WebXmlHandler extends DefaultHandler {
         return webAppName;
     }
 
-    public ServletContext getContext() {
-        return context;
-    }
 
     public Set<String> getContextParams() {
         return contextParams.keySet();

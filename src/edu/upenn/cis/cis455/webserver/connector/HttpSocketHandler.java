@@ -1,6 +1,5 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
-import edu.upenn.cis.cis455.webserver.engine.Container;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,16 +8,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class HttpHandler {
+public class HttpSocketHandler {
 
-    private static Logger log = LogManager.getLogger(HttpHandler.class);
+    private static Logger log = LogManager.getLogger(HttpSocketHandler.class);
 
     final private HttpRequestProcessor exec;
-    final private Container container;
 
-    public HttpHandler(Container container, HttpRequestProcessor exec) {
+    public HttpSocketHandler(HttpRequestProcessor exec) {
         this.exec = exec;
-        this.container = container;
     }
 
     /**
@@ -30,12 +27,12 @@ public class HttpHandler {
 
         try {
             ServerSocket socket = new ServerSocket(port);
-            container.setServerSocket(socket); //TODO put this in engine?
-            log.info(String.format("HTTP HttpHandler Started on Port %d", port));
+//            container.setServerSocket(socket); //TODO put this in engine?
+            log.info(String.format("HTTP HttpSocketHandler Started on Port %d", port));
             while (exec.isRunning()) {
                 try {
                     Socket connection = socket.accept();
-                    exec.process(new HttpRequestRunnable(connection, container));
+                    exec.process(connection);
                 } catch (IllegalStateException e) {
                     log.error("Socket Created Between Client But Executor is Stopped");
                 }
@@ -43,10 +40,10 @@ public class HttpHandler {
         } catch (SocketException e) {
             log.info("ServerSocket Closed Due To Shutdown Request Or Unable to Open Socket");
         } catch (IOException e) {
-            log.error("HTTP HttpHandler Could Not Open Port " + port, e);
+            log.error("HTTP HttpSocketHandler Could Not Open Port " + port, e);
         }
 
-        log.info("HttpHandler Successfully Shutdown");
+        log.info("HttpSocketHandler Successfully Shutdown");
     }
 
 }

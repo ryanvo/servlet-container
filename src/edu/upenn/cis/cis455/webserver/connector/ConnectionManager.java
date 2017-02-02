@@ -1,6 +1,7 @@
-package edu.upenn.cis.cis455.webserver.engine.servlet;
+package edu.upenn.cis.cis455.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.connector.HttpRequestProcessor;
+import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,8 +15,7 @@ public class ConnectionManager {
     private final Map<Long, String> idToUri;
     private final HttpRequestProcessor executorService;
 
-    public ConnectionManager(
-In this benchmark, we tested the web server’s performance when serving HTTP. We did not benchmark HTTPS (encrypted HTTP). The performance characteristics are probably significantly different between  context) {
+    public ConnectionManager(ServletContext context) {
         idToUri = new ConcurrentHashMap<>();
         this.executorService = (HttpRequestProcessor) (context.getAttribute("executor"));
         for (Thread thread : executorService.threadPool()) {
