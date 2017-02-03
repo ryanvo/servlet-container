@@ -1,10 +1,14 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.engine.Container;
+import edu.upenn.cis.cis455.webserver.engine.servlet.HttpRequest;
+import edu.upenn.cis.cis455.webserver.engine.servlet.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.net.Socket;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpRequestProcessor {
 
