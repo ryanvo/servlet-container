@@ -21,7 +21,7 @@ public class HttpResponse {
         date = getHttpDate();
     }
 
-    public void clear() {
+    public void reset() {
 
 
 

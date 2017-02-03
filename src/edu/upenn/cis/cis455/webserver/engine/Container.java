@@ -38,7 +38,7 @@ public class Container {
 
     }
 
-    public void init() {
+    public void start() {
 
         /* Create a http for each mapping defined in web.xml */
         for (String servletName : webXml.getServletNames()) {
@@ -54,7 +54,7 @@ public class Container {
             /* Create a servletConfig for each http by copying the init params parsed from web.xml */
             ServletConfig servletConfig = new ServletConfig(servletName, context);
             Map<String, String> servletParams = webXml.getInitParamsByServletName(servletName);
-            if (servletParams != null) { 
+            if (servletParams != null) {
                 for (String param : servletParams.keySet()) {
                     servletConfig.setInitParam(param, servletParams.get(param));
                 }
@@ -82,9 +82,9 @@ public class Container {
 
     public void dispatch(HttpRequest req, HttpResponse resp) throws IOException {
 
-        HttpServlet servlet;
-
-        servlet.service(req, resp);
+//        HttpServlet servlet;
+//
+//        servlet.service(req, resp);
 
     }
 

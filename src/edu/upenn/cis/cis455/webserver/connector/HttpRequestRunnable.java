@@ -31,8 +31,10 @@ public class HttpRequestRunnable implements Runnable {
      */
     @Override
     public void run() {
+
+        //TODO do the request, the response, session if necessary
         try {
-            container.dispatch(request, response);
+            container.dispatch(createRequest(request), response);
         } catch (IllegalStateException e) {
             log.error("Invalid Request Ignored", e);
         } catch (IOException e) {
@@ -48,8 +50,8 @@ public class HttpRequestRunnable implements Runnable {
         }
     }
 
-    public HttpRequest createRequest(HttpRequest req) {
-
+    public HttpRequest createRequest(HttpRequest req) throws IOException {
+        req.reset();
         String line;
         BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         line = in.readLine();
@@ -67,18 +69,14 @@ public class HttpRequestRunnable implements Runnable {
             throw new IOException();
         }
 
-
-
-
-        HttpRequest req = new HttpRequest();
-        req.setMethod(method);
-//        req.setType(type);
+        req.setType(method);
         req.setUri(uri);
 
         return request;
     }
 
     public HttpResponse createResponse(HttpResponse resp) {
+        resp.reset();
 
         return response;
 
