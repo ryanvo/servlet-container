@@ -9,14 +9,14 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-public class HttpConnectionHandler {
+public class ConnectionHandler {
 
-    private static Logger log = LogManager.getLogger(HttpConnectionHandler.class);
+    private static Logger log = LogManager.getLogger(ConnectionHandler.class);
 
-    final private RequestProcessor exec;
+    final private HttpRequestProcessor exec;
     private Container container;
 
-    public HttpConnectionHandler(RequestProcessor exec, Container container) {
+    public ConnectionHandler(HttpRequestProcessor exec) {
         this.exec = exec;
         this.container = container;
     }
@@ -31,11 +31,11 @@ public class HttpConnectionHandler {
         try {
             ServerSocket socket = new ServerSocket(port);
 //            container.setServerSocket(socket); //TODO put this in engine?
-            log.info(String.format("HTTP HttpConnectionHandler Started on Port %d", port));
+            log.info(String.format("HTTP ConnectionHandler Started on Port %d", port));
             while (exec.isRunning()) {
                 try {
-                    Socket connection = socket.accept();
-                    exec.process(new HttpRequestRunnable(connection, container));
+                    final Socket connection = socket.accept();
+                    exec.process(connection);
                 } catch (IllegalStateException e) {
                     log.error("Socket Created Between Client But Executor is Stopped");
                 }
@@ -43,10 +43,10 @@ public class HttpConnectionHandler {
         } catch (SocketException e) {
             log.info("ServerSocket Closed Due To Shutdown Request Or Unable to Open Socket");
         } catch (IOException e) {
-            log.error("HTTP HttpConnectionHandler Could Not Open Port " + port, e);
+            log.error("HTTP ConnectionHandler Could Not Open Port " + port, e);
         }
 
-        log.info("HttpConnectionHandler Successfully Shutdown");
+        log.info("ConnectionHandler Successfully Shutdown");
     }
 
 }

@@ -13,14 +13,12 @@ public class HttpRequest {
 
     private static Logger log = LogManager.getLogger(HttpRequest.class);
 
-//    private String method;
     private URI uri;
     private String type;
 
-    public void reset() {
+    public HttpRequest reset() {
 
-
-
+        return this;
     }
 
 //    public void setMethod(String method) {

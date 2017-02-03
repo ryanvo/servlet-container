@@ -15,11 +15,11 @@ public class HttpRequestRunnable implements Runnable {
 
     private static Logger log = LogManager.getLogger(HttpRequestRunnable.class);
 
-    private Socket connection;
     private HttpRequest request = new HttpRequest(); // Both req and resp objects are re-used
     private HttpResponse response = new HttpResponse();
-    private Container container;
 
+    private Socket connection;
+    private Container container;
 
     public HttpRequestRunnable(Socket connection, Container container) {
         this.connection = connection;
@@ -34,12 +34,15 @@ public class HttpRequestRunnable implements Runnable {
 
         //TODO do the request, the response, session if necessary
         try {
-            container.dispatch(createRequest(request), createResponse(response));
+            container.dispatch(createRequest(request.reset()), createResponse(response.reset()));
         } catch (IllegalStateException e) {
             log.error("Invalid Request Ignored", e);
         } catch (IOException e) {
             log.error(e);
+        } catch (URISyntaxException e) {
+            log.error("Could not parse uri from status line");
         }
+
         // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
 
         try {
@@ -50,24 +53,18 @@ public class HttpRequestRunnable implements Runnable {
         }
     }
 
-    public HttpRequest createRequest(HttpRequest req) throws IOException {
-        req.reset();
-        String line;
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        line = in.readLine();
+    public HttpRequest createRequest(HttpRequest req) throws IOException, URISyntaxException {
 
-        log.info("Parsing HTTP Request: " + line);
+
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String line = in.readLine();
+
 
         String[] statusLine = line.split(" ");
         String method = statusLine[0];
+        URI uri = new URI(statusLine[1]);
 
-        URI uri = null;
-        try {
-            uri = new URI(statusLine[1]);
-        } catch (URISyntaxException e) {
-            log.error(e);
-            throw new IOException();
-        }
+        log.info("Parsed HTTP Request: " + line);
 
         req.setType(method);
         req.setUri(uri);

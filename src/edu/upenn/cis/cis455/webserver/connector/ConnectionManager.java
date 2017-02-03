@@ -1,23 +1,21 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
-import edu.upenn.cis.cis455.webserver.engine.ServletContext;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Manages the HTTP requests delegated to RequestProcessor. Maintains the status of each connector
+ * Manages the HTTP requests delegated to HttpRequestProcessor. Maintains the status of each connector
  * and can issue a stop of the entire connector pool. Used for the Control Page
  */
 public class ConnectionManager {
 
     private final Map<Long, String> idToUri;
-    private final RequestProcessor executorService;
+    private final WorkerPool workerPool;
 
-    public ConnectionManager(ServletContext context) {
+    public ConnectionManager(WorkerPool workerPool) {
         idToUri = new ConcurrentHashMap<>();
-        this.executorService = (RequestProcessor) (context.getAttribute("executor"));
-        for (Thread thread : executorService.threadPool()) {
+        this.workerPool = workerPool;
+        for (Thread thread : workerPool.getWorkers()) {
             update(thread.getId(), "waiting");
         }
     }
@@ -35,7 +33,7 @@ public class ConnectionManager {
      * Tells executor service to stop all threads
      */
     public void issueShutdown() {
-        executorService.stop();
+        workerPool.kill();
     }
 
     /**
@@ -48,7 +46,7 @@ public class ConnectionManager {
                 .append("<p><h2>Thread &nbsp; &nbsp; &nbsp; &nbsp;Running</h2></p>");
 
 
-        for (Thread thread : executorService.threadPool()) {
+        for (Thread thread : workerPool.getWorkers()) {
             long tid = thread.getId();
             html.append("<p>").append(tid).append("&nbsp; &nbsp; &nbsp; &nbsp &nbsp; &nbsp; " +
                     "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;").append(idToUri.get(tid));

@@ -1,7 +1,6 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
 
-import edu.upenn.cis.cis455.webserver.connector.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,10 +8,10 @@ public class WorkerThread extends Thread {
 
     private static Logger log = LogManager.getLogger(WorkerThread.class);
 
-    private final WorkerPool pool;
+    private final WorkQueue pool;
     private volatile boolean isRunning = true;
 
-    public WorkerThread(WorkerPool pool) {
+    public WorkerThread(WorkQueue pool) {
         this.pool = pool;
     }
 

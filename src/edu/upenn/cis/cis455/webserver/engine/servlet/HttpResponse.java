@@ -21,11 +21,11 @@ public class HttpResponse {
         date = getHttpDate();
     }
 
-    public void reset() {
+    public HttpResponse reset() {
 
-
-
+        return this;
     }
+
 
     public void setOutputStream(OutputStream os) {
         outputStream = os;

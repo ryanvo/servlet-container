@@ -36,6 +36,7 @@ public class HttpRequestRunnableTest {
             }
         };
 
+
         URI uri = new URIBuilder()
                 .setScheme("http")
                 .setHost("localhost")
@@ -44,10 +45,12 @@ public class HttpRequestRunnableTest {
                 .build();
         Runnable r2 = () -> {
             try {
+
                 HttpGet httpget = new HttpGet(uri);
                 CloseableHttpClient httpclient = HttpClients.createDefault();
                 httpclient.execute(httpget);
                 httpclient.close();
+
             } catch (IOException e) {
                 e.printStackTrace();
             }

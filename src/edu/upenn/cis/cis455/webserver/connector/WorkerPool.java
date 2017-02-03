@@ -1,48 +1,56 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
+import java.util.HashSet;
+import java.util.Set;
 
+
+/**
+ * @author rtv
+ */
 public class WorkerPool {
 
-    private static Logger log = LogManager.getLogger(WorkerPool.class);
+    private Logger log = LogManager.getLogger(WorkerPool.class);
 
-    final private Queue<Runnable> queue = new ArrayDeque<>();
-    private int size;
+    private Set<WorkerThread> threadPool = new HashSet<>();
+    private WorkQueue queue;
 
-    public WorkerPool(int size) {
-        this.size = size;
+    public WorkerPool(int size, WorkQueue queue) {
+        this.queue = queue;
+
+        for (int i = 0; i < size; i++) {
+            threadPool.add(new WorkerThread(queue));
+        }
+
+        for (Thread thread : threadPool) {
+            thread.start();
+        }
+
     }
 
-    public synchronized void put(Runnable request) {
-        while (queue.size() == size) {
+    public void assign(Runnable httpRequest) {
+        queue.put(httpRequest);
+    }
+
+    public Set<WorkerThread> getWorkers() {
+        return threadPool;
+    }
+
+    public void kill() {
+
+        while (!queue.isEmpty()) {
             try {
-                wait();
-            } catch (InterruptedException e) {
-                log.error("Interrupted Exception in put", e);
-            }
+                Thread.sleep(500);
+            } catch (InterruptedException ignore) {}
         }
 
-        queue.add(request);
-        notify();
-    }
-
-    public synchronized Runnable take() throws InterruptedException {
-        while (queue.isEmpty()) {
-            wait();
+        for (WorkerThread thread : threadPool) {
+            thread.interrupt();
         }
 
-        notify();
-        return queue.remove();
-    }
-
-    public boolean isEmpty() {
-        return queue.isEmpty();
+        log.info("All threads stopped");
     }
 
 }
-
