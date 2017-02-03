@@ -25,7 +25,7 @@ public class HttpServer {
 
 
         try {
-            ConnectionHandler httpProcessor = HttpSocketHandlerFactory.create(webXmlPath, rootDirectory, POOL_SIZE, WORK_QUEUE_SIZE);
+            ConnectionHandler httpProcessor = HttpConnectionHandlerFactory.create(webXmlPath, rootDirectory, POOL_SIZE, WORK_QUEUE_SIZE);
             httpProcessor.start(port);
         } catch (Exception e) {
             log.error("Error constructing server. Exiting", e);
