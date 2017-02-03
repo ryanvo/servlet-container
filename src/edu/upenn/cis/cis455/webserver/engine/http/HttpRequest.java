@@ -1,13 +1,9 @@
-package edu.upenn.cis.cis455.webserver.engine.servlet;
+package edu.upenn.cis.cis455.webserver.engine.http;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.servlet.http.*;
-import javax.servlet.http.HttpSession;
 import java.net.URI;
-import java.security.Principal;
-import java.util.Enumeration;
 
 public class HttpRequest {
 

@@ -1,7 +1,7 @@
 package edu.upenn.cis.cis555.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.connector.HttpRequestRunnable;
-import edu.upenn.cis.cis455.webserver.engine.servlet.HttpRequest;
+import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;

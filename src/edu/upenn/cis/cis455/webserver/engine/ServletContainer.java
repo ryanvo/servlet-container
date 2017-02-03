@@ -1,8 +1,8 @@
 package edu.upenn.cis.cis455.webserver.engine;
 
-import edu.upenn.cis.cis455.webserver.engine.servlet.HttpRequest;
-import edu.upenn.cis.cis455.webserver.engine.servlet.HttpResponse;
-import edu.upenn.cis.cis455.webserver.engine.servlet.HttpServlet;
+import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
+import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,7 +47,7 @@ public class ServletContainer implements Container {
             try {
                 servletClass = Class.forName(className);
             } catch (ClassNotFoundException e) {
-                log.error("Error on servlet instantiation: " + className, e);
+                log.error("Error on http instantiation: " + className, e);
             }
 
             /* Create a servletConfig for each http by copying the init params parsed from web.xml */
@@ -82,9 +82,9 @@ public class ServletContainer implements Container {
     @Override
     public void dispatch(HttpRequest req, HttpResponse resp) throws IOException {
 
-//        HttpServlet servlet;
+//        HttpServlet http;
 //
-//        servlet.service(req, resp);
+//        http.service(req, resp);
 
     }
 
@@ -102,7 +102,7 @@ public class ServletContainer implements Container {
             servlet = servlets.get(type);
 
         } else {
-//            servlet = defaultServlet;
+//            http = defaultServlet;
         }
 
         return servlet;
