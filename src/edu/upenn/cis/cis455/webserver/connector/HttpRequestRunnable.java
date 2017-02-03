@@ -16,7 +16,7 @@ public class HttpRequestRunnable implements Runnable {
     private static Logger log = LogManager.getLogger(HttpRequestRunnable.class);
 
     private Socket connection;
-    private HttpRequest request = new HttpRequest();
+    private HttpRequest request = new HttpRequest(); // Both req and resp objects are re-used
     private HttpResponse response = new HttpResponse();
     private Container container;
 
@@ -34,7 +34,7 @@ public class HttpRequestRunnable implements Runnable {
 
         //TODO do the request, the response, session if necessary
         try {
-            container.dispatch(createRequest(request), response);
+            container.dispatch(createRequest(request), createResponse(response));
         } catch (IllegalStateException e) {
             log.error("Invalid Request Ignored", e);
         } catch (IOException e) {
@@ -71,12 +71,15 @@ public class HttpRequestRunnable implements Runnable {
 
         req.setType(method);
         req.setUri(uri);
-
+        //TODO set session, parse query arguments, other req fields
         return request;
     }
 
-    public HttpResponse createResponse(HttpResponse resp) {
+    public HttpResponse createResponse(HttpResponse resp) throws IOException {
+
         resp.reset();
+
+        resp.setOutputStream(connection.getOutputStream());
 
         return response;
 

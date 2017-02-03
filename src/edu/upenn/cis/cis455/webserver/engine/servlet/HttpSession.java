@@ -60,12 +60,9 @@ public class HttpSession {
     }
 
 
-
     public void setAttribute(String s, Object o) {
         attributes.put(s, o);
     }
-
-
 
     public void removeAttribute(String s) {
         attributes.remove(s);
