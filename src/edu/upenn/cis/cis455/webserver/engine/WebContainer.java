@@ -3,6 +3,10 @@ package edu.upenn.cis.cis455.webserver.engine;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
+import edu.upenn.cis.cis455.webserver.engine.xml.ServletConfigBuilder;
+import edu.upenn.cis.cis455.webserver.engine.xml.ServletContextBuilder;
+import edu.upenn.cis.cis455.webserver.engine.xml.WebXmlHandler;
+import org.apache.http.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,43 +29,38 @@ public class WebContainer implements Container {
     private ServletContext context;
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
 
-    public WebContainer(WebXmlHandler webXml) {
+    private ServletContextBuilder contextBuilder;
+    private ServletConfigBuilder configBuilder;
+
+    public WebContainer(WebXmlHandler webXml, ServletContextBuilder contextBuilder, ServletConfigBuilder configBuilder) {
         this.webXml = webXml;
-        this.context = new ServletContext(webXml);
+        this.contextBuilder = contextBuilder;
+        this.configBuilder = configBuilder;
     }
 
     @Override
-    public void start() {
+    public void start() throws IOException, ParseException, InstantiationException {
 
-        /* Create a http for each mapping defined in web.xml */
+        webXml.parse();
+        this.context = contextBuilder.build(webXml.getContextParamsMap());
+
         for (String servletName : webXml.getServletNames()) {
+
+            ServletConfig config = configBuilder.build(servletName, context, webXml.getInitParamsByServletName(servletName));
 
             try {
 
-                String className = webXml.getClassByServletName(servletName);
-                Class servletClass = Class.forName(className);
-
-            /* Create a servletConfig for each http by copying the init params parsed from web.xml */
-                ServletConfig servletConfig = new ServletConfig(servletName, context);
-                Map<String, String> servletParams = webXml.getInitParamsByServletName(servletName);
-                if (servletParams != null) {
-                    for (String param : servletParams.keySet()) {
-                        servletConfig.setInitParam(param, servletParams.get(param));
-                    }
-                }
-
-            /* Create http instance using the config and keep track in map */
+                Class servletClass = Class.forName(webXml.getClassByServletName(servletName));
                 HttpServlet servlet = (HttpServlet) servletClass.newInstance();
 
-                servlet.init(servletConfig);
+                servlet.init(config);
                 servlets.put(servletName, servlet);
 
-            } catch (InstantiationException|IllegalAccessException|ClassNotFoundException e) {
-                log.error("Error on http instantiation: " + servletName, e);
+            } catch (ClassNotFoundException|IllegalAccessException|InstantiationException e) {
+
+                throw new InstantiationException();
             }
-
         }
-
     }
 
     public void setServerSocket(ServerSocket serverSocket) {

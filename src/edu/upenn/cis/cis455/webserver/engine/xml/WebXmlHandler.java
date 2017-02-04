@@ -1,5 +1,6 @@
-package edu.upenn.cis.cis455.webserver.engine;
+package edu.upenn.cis.cis455.webserver.engine.xml;
 
+import org.apache.http.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.Attributes;
@@ -32,11 +33,15 @@ public class WebXmlHandler extends DefaultHandler {
     private String servletPattern;
     private String paramName;
     private String paramValue;
+    private String webXmlPath;
 
     private StringBuilder buffer = new StringBuilder();
 
-    public WebXmlHandler(String webXmlPath) throws IOException {
-        /* Open web.xml and parse contents */
+    public WebXmlHandler(String webXmlPath) {
+        this.webXmlPath = webXmlPath;
+    }
+
+    public void parse() throws IOException, ParseException {
         try {
             File file = new File(webXmlPath);
             if (!file.exists() || !file.canRead()) {
@@ -48,7 +53,7 @@ public class WebXmlHandler extends DefaultHandler {
             parser.parse(file, this);
 
         } catch (ParserConfigurationException | SAXException e) {
-            throw new IOException();
+            throw new ParseException();
         }
     }
 
@@ -131,16 +136,12 @@ public class WebXmlHandler extends DefaultHandler {
         log.error(e);
     }
 
+    public Map<String, String> getContextParamsMap() {
+        return contextParams;
+    }
+
     public String getWebAppName() {
         return webAppName;
-    }
-
-    public Set<String> getContextParams() {
-        return contextParams.keySet();
-    }
-
-    public String getContextParamByKey(String key) {
-        return contextParams.get(key);
     }
 
     public Set<String> getServletNames() {

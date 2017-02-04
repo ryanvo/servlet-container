@@ -10,26 +10,21 @@ public class ServletConfig {
 
     private String name;
     private ServletContext context;
-    private Map<String,String> initParams;
+    private Map<String,String> initParams = new ConcurrentHashMap<>();
 
-    public ServletConfig(String name, ServletContext context) {
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public void setContext(ServletContext context) {
         this.context = context;
-        this.initParams = new ConcurrentHashMap<>();
-
-        /* Copy the init params */
-        while (context.getInitParameterNames().hasMoreElements()) {
-            String key = (String) context.getInitParameterNames().nextElement();
-            initParams.put(key, context.getInitParameter(key));
-        }
-
     }
 
     public String getInitParameter(String name) {
         return initParams.get(name);
     }
 
-    void setInitParam(String name, String value) {
+    public void setInitParam(String name, String value) {
         initParams.put(name, value);
     }
 

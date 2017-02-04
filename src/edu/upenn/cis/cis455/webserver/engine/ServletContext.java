@@ -1,5 +1,6 @@
 package edu.upenn.cis.cis455.webserver.engine;
 
+import edu.upenn.cis.cis455.webserver.engine.xml.WebXmlHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,21 +21,10 @@ public class ServletContext {
 
     private static Logger log = LogManager.getLogger(ServletContext.class);
 
-    private Map<String, Object> attributes;
-    private Map<String, String> contextParams; // This is initParams/contextParmms
+    private Map<String, Object> attributes  = new ConcurrentHashMap<>();
+    private Map<String, String> contextParams = new ConcurrentHashMap<>();
 
-    public ServletContext(WebXmlHandler webXml) {
-        attributes = new ConcurrentHashMap<>();
-        contextParams = new ConcurrentHashMap<>();
-
-         /* Use context parameters to set the context obj */
-        for (String param : webXml.getContextParams()) {
-            contextParams.put(param, webXml.getContextParamByKey(param));
-        }
-
-    }
-
-    void setInitParam(String name, String value) {
+    public void setInitParam(String name, String value) {
         contextParams.put(name, value);
     }
 

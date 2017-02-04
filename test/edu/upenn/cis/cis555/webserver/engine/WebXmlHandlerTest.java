@@ -1,6 +1,6 @@
 package edu.upenn.cis.cis555.webserver.engine;
 
-import edu.upenn.cis.cis455.webserver.engine.WebXmlHandler;
+import edu.upenn.cis.cis455.webserver.engine.xml.WebXmlHandler;
 import org.junit.Test;
 
 import java.util.Map;
@@ -18,12 +18,16 @@ public class WebXmlHandlerTest {
     public void shouldParseWebAppName() throws Exception {
         WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
 
+        webXml.parse();
+
         assertThat(webXml.getWebAppName(), is("Test Web.xml"));
     }
 
     @Test
     public void shouldParseContextParams() throws Exception {
         WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
+
+        webXml.parse();
 
         assertThat(webXml.getContextParams(), hasSize(2));
         assertThat(webXml.getContextParams(), hasItems("contextParamOne"));
@@ -37,6 +41,8 @@ public class WebXmlHandlerTest {
     public void shouldParseServletName() throws Exception {
         WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
 
+        webXml.parse();
+
         assertThat(webXml.getServletNames(), hasSize(2));
         assertThat(webXml.getServletNames(), hasItems("redteam", "blueteam"));
     }
@@ -44,6 +50,8 @@ public class WebXmlHandlerTest {
     @Test
     public void shouldParseServletClass() throws Exception {
         WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
+
+        webXml.parse();
 
         assertThat(webXml.getClassByServletName("redteam"), is("edu.upenn.cis.cis555.webserver.WebXmlHandlerTest"));
         assertThat(webXml.getClassByServletName("blueteam"), is("webserver.WebXmlHandlerTest"));
@@ -53,6 +61,8 @@ public class WebXmlHandlerTest {
     @Test
     public void shouldParseServletParams() throws Exception {
         WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
+
+        webXml.parse();
 
         Map<String, String> initParams1 = webXml.getInitParamsByServletName("redteam");
         assertThat(initParams1.keySet(), hasSize(2));
@@ -69,6 +79,8 @@ public class WebXmlHandlerTest {
     @Test
     public void shouldParseServletPatterns() throws Exception {
         WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
+
+        webXml.parse();
 
         assertThat(webXml.getPatternByServletName("redteam"), hasSize(1));
         assertThat(webXml.getPatternByServletName("redteam"), hasItem("/red/*"));
