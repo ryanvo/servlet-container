@@ -58,12 +58,11 @@ public class HttpRequestRunnable implements Runnable {
 
         String[] statusLine = line.split(" ");
         String method = statusLine[0];
-        URI uri = new URI(statusLine[1]);
+        req.setUri(statusLine[1]);
 
         log.info("Parsed HTTP Request: " + line);
 
         req.setType(method);
-        req.setUri(uri);
         //TODO set session, parse query arguments, other req fields
         return req;
     }

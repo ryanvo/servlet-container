@@ -25,7 +25,9 @@ public class WebXmlHandler extends DefaultHandler {
     private Map<String, String> servletClassByName = new HashMap<>();
     private Map<String, Map<String, String>> initParams = new HashMap<>();
     private Map<String, String> contextParams = new HashMap<>();
-    private Map<String, Set<String>> servletPatternByName = new HashMap<>();
+    private Map<String, String> servletNameByPattern = new HashMap<>();
+
+    //    private Map<String, Set<String>> servletPatternByName = new HashMap<>();
 
     private String webAppName;
     private String servletName;
@@ -104,9 +106,12 @@ public class WebXmlHandler extends DefaultHandler {
                 break;
 
             case "servlet-mapping":
-                servletPatternByName.putIfAbsent(servletName, new HashSet<>());
-                Set<String> patterns = servletPatternByName.get(servletName);
-                patterns.add(servletPattern);
+                servletNameByPattern.put(servletPattern, servletName);
+
+//                servletPatternByName.putIfAbsent(servletName, new HashSet<>());
+//                Set<String> patterns = servletPatternByName.get(servletName);
+//                patterns.add(servletPattern);
+
                 break;
 
             case "servlet":
@@ -158,8 +163,8 @@ public class WebXmlHandler extends DefaultHandler {
         return initParams.get(name);
     }
 
-    public Set<String> getPatternByServletName(String name) {
-        return servletPatternByName.get(name);
+    public Map<String, String> getNameByPatterns() {
+        return servletNameByPattern;
     }
 
 }

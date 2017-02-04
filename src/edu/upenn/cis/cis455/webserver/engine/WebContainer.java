@@ -30,6 +30,8 @@ public class WebContainer implements Container {
 
     private ServletContext context;
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
+    private Map<String, HttpServlet> servletByPattern = new ConcurrentHashMap<>();
+
 
     private ServletContextBuilder contextBuilder;
     private ServletConfigBuilder configBuilder;
@@ -63,8 +65,12 @@ public class WebContainer implements Container {
                 Class servletClass = Class.forName(webXml.getClassByServletName(servletName));
                 HttpServlet servlet = (HttpServlet) servletClass.newInstance();
 
+
+
                 servlet.init(config);
                 servlets.put(servletName, servlet);
+                String pattern = webXml.getNameByPatterns().get(servletName);
+                servletByPattern.put(pattern, servlet);
                 log.info("Started servlet: " + servletName);
 
 
@@ -73,6 +79,14 @@ public class WebContainer implements Container {
                 throw new InstantiationException();
             }
         }
+
+        for (String name : webXml.getNameByPatterns().keySet()) {
+
+
+
+
+        }
+
     }
 
     public void setServerSocket(ServerSocket serverSocket) {

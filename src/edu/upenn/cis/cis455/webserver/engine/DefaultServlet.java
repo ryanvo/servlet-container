@@ -89,7 +89,7 @@ public class DefaultServlet implements HttpServlet {
     public void doGet(HttpRequest request, HttpResponse response) {
 
         String NOT_FOUND_MESSAGE = "<html><body><h1>404 File Not Found</h1></body></html>";
-        File fileRequested = new File(rootDirectory + request.getRequestURI().getPath());
+        File fileRequested = new File(rootDirectory + request.getRequestURI());
 
         try (PrintWriter writer = new PrintWriter(response.getOutputStream())) {
 
@@ -160,7 +160,7 @@ public class DefaultServlet implements HttpServlet {
                 writer.flush();
 
                 writer.println(NOT_FOUND_MESSAGE);
-                log.info("Not Found Error Sent to Client" + request.getRequestURI().getPath());
+                log.info("Not Found Error Sent to Client" + request.getRequestURI());
             }
 
             log.debug(response.getStatusAndHeader());

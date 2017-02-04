@@ -82,12 +82,12 @@ public class WebXmlHandlerTest {
 
         webXml.parse();
 
-        assertThat(webXml.getPatternByServletName("redteam"), hasSize(1));
-        assertThat(webXml.getPatternByServletName("redteam"), hasItem("/red/*"));
+        assertThat(webXml.getNameByPatterns().keySet(), hasSize(1));
+        assertThat(webXml.getNameByPatterns().keySet(), hasItem("/red/*"));
 
-        assertThat(webXml.getPatternByServletName("blueteam"), hasSize(2));
-        assertThat(webXml.getPatternByServletName("blueteam"), hasItem("/foo/bar"));
-        assertThat(webXml.getPatternByServletName("blueteam"), hasItem("/blue/*"));
+        assertThat(webXml.getNameByPatterns().keySet(), hasSize(2));
+        assertThat(webXml.getNameByPatterns().keySet(), hasItem("/foo/bar"));
+        assertThat(webXml.getNameByPatterns().keySet(), hasItem("/blue/*"));
     }
 
 }

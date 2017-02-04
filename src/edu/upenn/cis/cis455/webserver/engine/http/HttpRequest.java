@@ -9,7 +9,7 @@ public class HttpRequest {
 
     private static Logger log = LogManager.getLogger(HttpRequest.class);
 
-    private URI uri;
+    private String uri;
     private String type;
 
     public HttpRequest reset() {
@@ -21,7 +21,7 @@ public class HttpRequest {
 //        this.method = method;
 //    }
 
-    public void setUri(URI uri) {
+    public void setUri(String uri) {
         this.uri = uri;
     }
 
@@ -119,7 +119,7 @@ public class HttpRequest {
     /**
      * @return uri requested in status line
      */
-    public URI getRequestURI() {
+    public String getRequestURI() {
         return uri;
     }
 
