@@ -1,9 +1,10 @@
-package edu.upenn.cis.cis455.webserver.engine.http;
+package edu.upenn.cis.cis455.webserver.engine;
 
 
 import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
-import edu.upenn.cis.cis455.webserver.engine.ServletConfig;
-import edu.upenn.cis.cis455.webserver.engine.ServletContext;
+import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
+import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

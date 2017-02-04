@@ -24,6 +24,8 @@ public class ServletContext {
     private Map<String, Object> attributes  = new ConcurrentHashMap<>();
     private Map<String, String> contextParams = new ConcurrentHashMap<>();
 
+    private String realPath;
+
     public void setInitParam(String name, String value) {
         contextParams.put(name, value);
     }
@@ -60,18 +62,26 @@ public class ServletContext {
         return atts.elements();
     }
 
+
+    public String getRealPath(String s) {
+        return realPath;
+    }
+
+    public void setRealPath(String s) {
+        realPath = s;
+    }
+
+//    @Override
     public ServletContext getContext(String s) {
         return null;
     }
 
-    public String getRealPath(String s) {
-        return null;
-    }
-
+//    @Override
     public String getServerInfo() {
         return null;
     }
 
+    //    @Override
     public String getServletContextName() {
         return null;
     }

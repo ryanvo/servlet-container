@@ -25,6 +25,7 @@ public class WebContainer implements Container {
 
     private ServerSocket serverSocket;
     private WebXmlHandler webXml;
+    private String rootDirectory;
 
     private ServletContext context;
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
@@ -32,8 +33,12 @@ public class WebContainer implements Container {
     private ServletContextBuilder contextBuilder;
     private ServletConfigBuilder configBuilder;
 
-    public WebContainer(WebXmlHandler webXml, ServletContextBuilder contextBuilder, ServletConfigBuilder configBuilder) {
+    public WebContainer(WebXmlHandler webXml,
+                        String rootDirectory,
+                        ServletContextBuilder contextBuilder,
+                        ServletConfigBuilder configBuilder) {
         this.webXml = webXml;
+        this.rootDirectory = rootDirectory;
         this.contextBuilder = contextBuilder;
         this.configBuilder = configBuilder;
     }
@@ -42,7 +47,7 @@ public class WebContainer implements Container {
     public void start() throws IOException, ParseException, InstantiationException {
 
         webXml.parse();
-        this.context = contextBuilder.build(webXml.getContextParamsMap());
+        this.context = contextBuilder.build(rootDirectory, webXml.getContextParams());
 
         for (String servletName : webXml.getServletNames()) {
 

@@ -12,7 +12,7 @@ import java.io.IOException;
 public interface Container {
     void start()  throws Exception;
 
-    void dispatch(HttpRequest req, HttpResponse resp) throws Exception;
+    void dispatch(HttpRequest req, HttpResponse resp) throws IOException;
 
     HttpServlet getMapping(String url);
 

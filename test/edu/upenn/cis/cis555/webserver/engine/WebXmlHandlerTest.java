@@ -29,12 +29,12 @@ public class WebXmlHandlerTest {
 
         webXml.parse();
 
-        assertThat(webXml.getContextParams(), hasSize(2));
-        assertThat(webXml.getContextParams(), hasItems("contextParamOne"));
-        assertThat(webXml.getContextParams(), hasItems("contextParamTwo"));
+        assertThat(webXml.getContextParams().keySet(), hasSize(2));
+        assertThat(webXml.getContextParams().keySet(), hasItems("contextParamOne"));
+        assertThat(webXml.getContextParams().keySet(), hasItems("contextParamTwo"));
 
-        assertThat(webXml.getContextParamByKey("contextParamOne"), is("true"));
-        assertThat(webXml.getContextParamByKey("contextParamTwo"), is("address@somedomain.com"));
+        assertThat(webXml.getContextParams().get("contextParamOne"), is("true"));
+        assertThat(webXml.getContextParams().get("contextParamTwo"), is("address@somedomain.com"));
     }
 
     @Test

@@ -9,13 +9,14 @@ import java.util.Map;
  */
 public class ServletContextBuilder {
 
-    public ServletContext build(Map<String, String> contextParams) {
+    public ServletContext build(String realPath, Map<String, String> contextParams) {
 
         ServletContext servletContext = new ServletContext();
         for (String param : contextParams.keySet()) {
             servletContext.setInitParam(param, contextParams.get(param));
         }
 
+        servletContext.setRealPath(realPath);
         return servletContext;
     }
 
