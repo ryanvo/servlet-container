@@ -10,4 +10,3 @@ public interface RequestProcessor {
     void stop();
     boolean isRunning();
 }
-http request

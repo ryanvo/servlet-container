@@ -28,5 +28,9 @@
     <orderEntry type="library" exported="" name="lib" level="project" />
     <orderEntry type="library" name="httpclient-4.5.3-for-test" level="project" />
     <orderEntry type="library" name="httpcore-4.4.6" level="project" />
+    <orderEntry type="library" name="mockito-core-2.7.1" level="project" />
+    <orderEntry type="library" name="net.bytebuddy:byte-buddy:1.6.5" level="project" />
+    <orderEntry type="library" name="net.bytebuddy:byte-buddy-agent:1.6.5" level="project" />
+    <orderEntry type="library" name="org.objenesis:objenesis:2.5" level="project" />
   </component>
 </module>
