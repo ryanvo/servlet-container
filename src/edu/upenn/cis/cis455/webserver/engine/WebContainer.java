@@ -6,6 +6,7 @@ import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
 import edu.upenn.cis.cis455.webserver.engine.xml.ServletConfigBuilder;
 import edu.upenn.cis.cis455.webserver.engine.xml.ServletContextBuilder;
 import edu.upenn.cis.cis455.webserver.engine.xml.WebXmlHandler;
+import edu.upenn.cis.cis455.webserver.servlet.ControlServlet;
 import org.apache.http.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +37,8 @@ public class WebContainer implements Container {
     private ServletContextBuilder contextBuilder;
     private ServletConfigBuilder configBuilder;
 
+    private ControlServlet controlServlet = new ControlServlet();
+
     public WebContainer(WebXmlHandler webXml,
                         String rootDirectory,
                         HttpServlet defaultServlet,
@@ -53,6 +56,7 @@ public class WebContainer implements Container {
 
         webXml.parse();
         this.context = contextBuilder.build(rootDirectory, webXml.getContextParams());
+
 
         for (String servletName : webXml.getServletNames()) {
 
@@ -96,33 +100,38 @@ public class WebContainer implements Container {
     @Override
     public void dispatch(HttpRequest req, HttpResponse resp) throws IOException {
 
-//        HttpServlet http;
+        HttpServlet servlet;
 //
 //        http.service(req, resp);
+        if (req.getRequestURI().matches("/+control/*$")) {
+            controlServlet.service(req, resp);
 
-        
-        defaultServlet.doGet(req, resp);
+        } else if (req.getRequestURI().matches("/+shutdown/*$")) {
+//            return defaultServlet;
+        } else {
+            defaultServlet.doGet(req, resp);
+        }
 
     }
 
     @Override
-    public HttpServlet getMapping(String url) {
+    public HttpServlet getMapping(String uri) {
 
-        HttpServlet servlet = null;
-        String type = null;
-        if (url.matches("/+control/*$")) {
-            type = "control";
-            servlet = servlets.get(type);
 
-        } else if (url.matches("/+shutdown/*$")) {
-            type = "stop";
-            servlet = servlets.get(type);
-
-        } else {
-//            http = defaultServlet;
+        for (String pattern : servletByPattern.keySet()) {
+            if (uri.matches(pattern)) {
+                return servletByPattern.get(pattern);
+            }
         }
 
-        return servlet;
+        if (uri.matches("/+control/*$")) {
+            return defaultServlet;
+
+        } else if (uri.matches("/+shutdown/*$")) {
+            return defaultServlet;
+        }
+
+        return defaultServlet;
     }
 
     @Override

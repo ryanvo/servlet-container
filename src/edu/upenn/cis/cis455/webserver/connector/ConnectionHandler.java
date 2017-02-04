@@ -12,14 +12,14 @@ public class ConnectionHandler {
 
     private static Logger log = LogManager.getLogger(ConnectionHandler.class);
 
-    final private RequestProcessor exec;
+    final private RequestProcessor requestProcessor;
 
-    public ConnectionHandler(RequestProcessor exec) {
-        this.exec = exec;
+    public ConnectionHandler(RequestProcessor requestProcessor) {
+        this.requestProcessor = requestProcessor;
     }
 
     /**
-     * Loops to accept new connections and tells the executor to schedule them. The server stops
+     * Loops to accept new connections and tells the requestProcessorutor to schedule them. The server stops
      * when the ServerSocket is closed.
      * @param port
      */
@@ -29,12 +29,12 @@ public class ConnectionHandler {
             ServerSocket socket = new ServerSocket(port);
 //            container.setServerSocket(socket); //TODO put this in engine?
             log.info(String.format("HTTP ConnectionHandler Started on Port %d", port));
-            while (exec.isRunning()) {
+            while (requestProcessor.isRunning()) {
                 try {
                     final Socket connection = socket.accept();
-                    exec.process(connection);
+                    requestProcessor.process(connection);
                 } catch (IllegalStateException e) {
-                    log.error("Socket Created Between Client But Executor is Stopped");
+                    log.error("Socket Created Between Client But requestProcessorutor is Stopped");
                 }
             }
         } catch (SocketException e) {

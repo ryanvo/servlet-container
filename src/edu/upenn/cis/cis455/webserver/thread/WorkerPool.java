@@ -30,7 +30,7 @@ public class WorkerPool {
 
     }
 
-    public void assign(Runnable httpRequest) {
+    public void offer(Runnable httpRequest) {
         queue.put(httpRequest);
     }
 

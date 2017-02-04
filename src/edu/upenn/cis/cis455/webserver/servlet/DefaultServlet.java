@@ -1,7 +1,9 @@
-package edu.upenn.cis.cis455.webserver.engine;
+package edu.upenn.cis.cis455.webserver.servlet;
 
 
 import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
+import edu.upenn.cis.cis455.webserver.engine.ServletConfig;
+import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
@@ -23,14 +25,13 @@ public class DefaultServlet implements HttpServlet {
 
     private final String HTTP_VERSION = "HTTP/1.1";
     private final String rootDirectory;
-    private ConnectionManager manager;
     private Map<String, String> initParams;
 
     /**
      * @param rootDirectory path to the www folder
      * @param manager needed to stop and get status of requests in connector pool
      */
-    public DefaultServlet(String rootDirectory, ConnectionManager manager) {
+    public DefaultServlet(String rootDirectory) {
         this.rootDirectory = rootDirectory;
 //        this.manager = manager;
     }
@@ -59,7 +60,7 @@ public class DefaultServlet implements HttpServlet {
      * @param response
      */
     public void service(HttpRequest request, HttpResponse response) {
-        manager.update(Thread.currentThread().getId(), request.getRequestURI().toString());
+//        manager.update(Thread.currentThread().getId(), request.getRequestURI().toString());
 
         log.info(String.format("Thread ID %d is Serving URI %s", Thread.currentThread().getId(),
                 request.getRequestURI()));
@@ -191,25 +192,6 @@ public class DefaultServlet implements HttpServlet {
         return null;
     }
 
-    public void doControl(HttpResponse response) {
-
-        log.info("DefaultServlet Serving Control Page Request");
-        String controlPageHtml = manager.getHtmlResponse();
-        response.setVersion(HTTP_VERSION);
-        response.setStatusCode("200");
-        response.setErrorMessage("OK");
-        response.setContentType("text/html");
-        response.setContentLength(controlPageHtml.length());
-
-        log.debug(response.getStatusAndHeader());
-
-        PrintWriter writer = new PrintWriter(response.getOutputStream(), true);
-        writer.println(response.getStatusAndHeader());
-        writer.println(manager.getHtmlResponse());
-
-        log.info("Wrote Control Page Response to Socket");
-    }
-
     /**
      * closes the server socket so that no new connections are accepted and then issues a
      * stop to the manager
@@ -227,7 +209,7 @@ public class DefaultServlet implements HttpServlet {
 //            log.error("Could not close socket. ConnectionHandler will not stop");
 //        }
 //        log.info("ConnectionHandler Socket Closed");
-//        manager.issueShutdown();
+//        manager.shutdown();
 //
 //        response.setVersion(HTTP_VERSION);
 //        response.setStatusCode("200");

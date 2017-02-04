@@ -1,5 +1,6 @@
 package edu.upenn.cis.cis555.webserver.connector;
 
+import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
 import edu.upenn.cis.cis455.webserver.connector.HttpRequestProcessor;
 import edu.upenn.cis.cis455.webserver.connector.HttpRequestRunnable;
 import edu.upenn.cis.cis455.webserver.engine.Container;
@@ -20,27 +21,27 @@ public class HttpRequestProcessorTest {
     @Test
     public void shouldCreateRunnableAndGiveToWorkerPoolAfterReceivingNewConnection() throws Exception {
 
-        WorkerPool mockWorkerPool = mock(WorkerPool.class);
+        ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
         Container mockContainer = mock(Container.class);
         Socket connection = mock(Socket.class);
 
-        HttpRequestProcessor processor = new HttpRequestProcessor(mockWorkerPool, mockContainer);
+        HttpRequestProcessor processor = new HttpRequestProcessor(mockConnectionManager, mockContainer);
         processor.process(connection);
 
-        verify(mockWorkerPool).assign(isA(HttpRequestRunnable.class));
+        verify(mockConnectionManager).assign(isA(HttpRequestRunnable.class));
     }
 
     @Test
     public void shouldKillWorkerPoolAndSetIsRunningToFalseIfStopInvoked() throws Exception {
 
-        WorkerPool mockWorkerPool = mock(WorkerPool.class);
+        ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
         Container mockContainer = mock(Container.class);
 
-        HttpRequestProcessor processor = new HttpRequestProcessor(mockWorkerPool, mockContainer);
+        HttpRequestProcessor processor = new HttpRequestProcessor(mockConnectionManager, mockContainer);
         processor.stop();
 
         assertThat(processor.isRunning(), is(false));
-        verify(mockWorkerPool).kill();
+        verify(mockConnectionManager).shutdown();
     }
 
 }

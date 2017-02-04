@@ -22,6 +22,10 @@ public class ConnectionManager {
         }
     }
 
+    public void assign(Runnable request) {
+        workerPool.offer(request);
+    }
+
     /**
      * Updates the status of a connector
      * @param threadId
@@ -34,7 +38,7 @@ public class ConnectionManager {
     /**
      * Tells executor service to stop all threads
      */
-    public void issueShutdown() {
+    public void shutdown() {
         workerPool.kill();
     }
 

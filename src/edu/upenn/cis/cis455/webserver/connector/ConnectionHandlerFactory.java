@@ -22,7 +22,8 @@ public class ConnectionHandlerFactory {
         WorkerPool workerPool = new WorkerPool(poolSize, requestQueue);
 
         ConnectionManager manager = new ConnectionManager(workerPool);
-        RequestProcessor requestProcessor = new HttpRequestProcessor(workerPool, container);
+
+        RequestProcessor requestProcessor = new HttpRequestProcessor(manager, container);
 
         log.info(String.format("Factory Created ConnectionHandler with %d threads, request queue of %d", poolSize,
                 workQueueSize));
