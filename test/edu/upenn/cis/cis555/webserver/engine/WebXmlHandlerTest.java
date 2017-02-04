@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis555.webserver.engine.servlet;
+package edu.upenn.cis.cis555.webserver.engine;
 
 import edu.upenn.cis.cis455.webserver.engine.WebXmlHandler;
 import org.junit.Test;

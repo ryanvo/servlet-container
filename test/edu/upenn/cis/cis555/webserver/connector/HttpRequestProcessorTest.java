@@ -35,7 +35,6 @@ public class HttpRequestProcessorTest {
 
         WorkerPool mockWorkerPool = mock(WorkerPool.class);
         Container mockContainer = mock(Container.class);
-        Socket connection = mock(Socket.class);
 
         HttpRequestProcessor processor = new HttpRequestProcessor(mockWorkerPool, mockContainer);
         processor.stop();
