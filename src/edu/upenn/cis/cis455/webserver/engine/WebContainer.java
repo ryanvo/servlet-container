@@ -15,9 +15,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author rtv
  */
-public class ServletContainer implements Container {
+public class WebContainer implements Container {
 
-    private static Logger log = LogManager.getLogger(ServletContainer.class);
+    private static Logger log = LogManager.getLogger(WebContainer.class);
 
     private ServerSocket serverSocket;
     private WebXmlHandler webXml;
@@ -25,7 +25,7 @@ public class ServletContainer implements Container {
     private ServletContext context;
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
 
-    public ServletContainer(WebXmlHandler webXml) {
+    public WebContainer(WebXmlHandler webXml) {
         this.webXml = webXml;
         this.context = new ServletContext(webXml);
     }
@@ -59,9 +59,11 @@ public class ServletContainer implements Container {
             } catch (InstantiationException|IllegalAccessException|ClassNotFoundException e) {
                 log.error("Error on http instantiation: " + servletName, e);
             }
+
         }
 
     }
+
     public void setServerSocket(ServerSocket serverSocket) {
         this.serverSocket = serverSocket;
     }

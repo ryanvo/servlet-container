@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Ryan Vo
  */
-public class ServletContainerTest {
+public class WebContainerTest {
 
     @Test
     public void shouldCreateRunnableAndGiveToWorkerPoolAfterReceivingNewConnection() throws Exception {
