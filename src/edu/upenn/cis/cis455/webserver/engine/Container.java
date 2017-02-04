@@ -10,9 +10,9 @@ import java.io.IOException;
  * @author rtv
  */
 public interface Container {
-    void start();
+    void start()  throws Exception;
 
-    void dispatch(HttpRequest req, HttpResponse resp) throws IOException;
+    void dispatch(HttpRequest req, HttpResponse resp) throws Exception;
 
     HttpServlet getMapping(String url);
 
