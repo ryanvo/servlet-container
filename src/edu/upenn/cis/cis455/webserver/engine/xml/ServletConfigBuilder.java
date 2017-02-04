@@ -11,6 +11,7 @@ import java.util.Map;
 public class ServletConfigBuilder {
 
     public ServletConfig build(String name, ServletContext context, Map<String, String> servletNameInitParams) {
+
         ServletConfig servletConfig = new ServletConfig();
         if (servletNameInitParams != null) {
             for (String param : servletNameInitParams.keySet()) {

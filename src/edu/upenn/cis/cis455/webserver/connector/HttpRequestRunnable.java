@@ -70,8 +70,6 @@ public class HttpRequestRunnable implements Runnable {
 
     public HttpResponse createResponse(HttpResponse resp) throws IOException {
 
-//        resp.reset();
-
         resp.setOutputStream(connection.getOutputStream());
 
         return resp;

@@ -42,6 +42,8 @@ public class WebXmlHandler extends DefaultHandler {
     }
 
     public void parse() throws IOException, ParseException {
+
+        log.debug("Opening web.xml file: " + webXmlPath);
         try {
             File file = new File(webXmlPath);
             if (!file.exists() || !file.canRead()) {

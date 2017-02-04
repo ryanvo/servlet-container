@@ -17,17 +17,12 @@ import static org.mockito.Mockito.*;
  */
 public class WebContainerTest {
 
-    @Test
-    public void shouldCreateRunnableAndGiveToWorkerPoolAfterReceivingNewConnection() throws Exception {
+//    @Test
+//    public void {
+//
+//
+//
+//    }
 
-//        WorkerPool mockWorkerPool = mock(WorkerPool.class);
-//        Container mockContainer = mock(Container.class);
-//        Socket connection = mock(Socket.class);
-//
-//        HttpRequestProcessor processor = new HttpRequestProcessor(mockWorkerPool, mockContainer);
-//        processor.process(connection);
-//
-//        verify(mockWorkerPool).assign(isA(HttpRequestRunnable.class));
-    }
 
 }

@@ -14,11 +14,9 @@ public class ConnectionHandler {
     private static Logger log = LogManager.getLogger(ConnectionHandler.class);
 
     final private RequestProcessor exec;
-    private Container container;
 
     public ConnectionHandler(RequestProcessor exec) {
         this.exec = exec;
-        this.container = container;
     }
 
     /**

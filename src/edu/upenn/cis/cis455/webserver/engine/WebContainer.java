@@ -26,6 +26,7 @@ public class WebContainer implements Container {
     private ServerSocket serverSocket;
     private WebXmlHandler webXml;
     private String rootDirectory;
+    private HttpServlet defaultServlet;
 
     private ServletContext context;
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
@@ -35,10 +36,12 @@ public class WebContainer implements Container {
 
     public WebContainer(WebXmlHandler webXml,
                         String rootDirectory,
+                        HttpServlet defaultServlet,
                         ServletContextBuilder contextBuilder,
                         ServletConfigBuilder configBuilder) {
         this.webXml = webXml;
         this.rootDirectory = rootDirectory;
+        this.defaultServlet = defaultServlet;
         this.contextBuilder = contextBuilder;
         this.configBuilder = configBuilder;
     }
@@ -53,6 +56,8 @@ public class WebContainer implements Container {
 
             ServletConfig config = configBuilder.build(servletName, context, webXml.getInitParamsByServletName(servletName));
 
+            log.debug("Initiating servlet: " + servletName);
+
             try {
 
                 Class servletClass = Class.forName(webXml.getClassByServletName(servletName));
@@ -60,6 +65,8 @@ public class WebContainer implements Container {
 
                 servlet.init(config);
                 servlets.put(servletName, servlet);
+                log.info("Started servlet: " + servletName);
+
 
             } catch (ClassNotFoundException|IllegalAccessException|InstantiationException e) {
 
@@ -78,6 +85,9 @@ public class WebContainer implements Container {
 //        HttpServlet http;
 //
 //        http.service(req, resp);
+
+        
+        defaultServlet.doGet(req, resp);
 
     }
 

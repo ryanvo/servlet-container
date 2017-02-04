@@ -32,7 +32,7 @@ public class DefaultServlet implements HttpServlet {
      */
     public DefaultServlet(String rootDirectory, ConnectionManager manager) {
         this.rootDirectory = rootDirectory;
-        this.manager = manager;
+//        this.manager = manager;
     }
 
     @Override

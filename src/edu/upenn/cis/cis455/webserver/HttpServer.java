@@ -14,7 +14,7 @@ public class HttpServer {
 
     public static void main(String args[]) {
 //
-        if (args.length != 2) {
+        if (args.length != 5) {
             System.out.println("Name: Ryan Vo");
             System.out.println("SEAS Login: ryanvo");
         }
@@ -29,6 +29,7 @@ public class HttpServer {
 
         //TODO try catch
         WebContainer container = WebContainerFactory.create(webXmlPath, rootDirectory);
+        log.info("WebContainer started: webXmlPath:" + webXmlPath + " rootDirectory:" + rootDirectory);
         ConnectionHandler connectionHandler = ConnectionHandlerFactory.create(container, POOL_SIZE, WORK_QUEUE_SIZE);
         connectionHandler.start(port);
 
