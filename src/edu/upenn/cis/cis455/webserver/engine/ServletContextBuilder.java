@@ -1,6 +1,7 @@
 package edu.upenn.cis.cis455.webserver.engine;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author rtv
@@ -10,7 +11,7 @@ public class ServletContextBuilder {
     public String realPath;
     public Map<String, String> contextParams;
 
-    
+
     public ServletContextBuilder setRealPath(String realPath) {
         this.realPath = realPath;
         return this;
@@ -23,6 +24,10 @@ public class ServletContextBuilder {
 
 
     public ServletContext build() {
+
+        if (contextParams == null) {
+            contextParams = new ConcurrentHashMap<>();
+        }
         return new ServletContext(this);
     }
 

@@ -1,6 +1,7 @@
 package edu.upenn.cis.cis455.webserver.engine;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author rtv
@@ -28,6 +29,10 @@ public class ServletConfigBuilder {
     }
 
     public ServletConfig build() {
+
+        if (initParams == null) {
+            initParams = new ConcurrentHashMap<>();
+        }
         return new ServletConfig(this);
     }
 

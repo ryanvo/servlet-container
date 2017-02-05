@@ -44,33 +44,33 @@ public class ServletManager {
 //        servletByPattern.put(Pattern.compile("/+control/*$"), defaultServlet);
         servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
 
-        for (String servletName : webXml.getServletNames()) {
-
-            ServletConfig config = configBuilder.setName(servletName)
-                    .setContext(context)
-                    .setInitParams(webXml.getServletInitParamsByName(servletName))
-                    .build();
-
-            log.debug("Initiating servlet: " + servletName);
-
-            try {
-
-                Class servletClass = Class.forName(webXml.getClassByServletName(servletName));
-                HttpServlet servlet = (HttpServlet) servletClass.newInstance();
-
-                servlet.init(config);
-                servlets.put(servletName, servlet);
-                String pattern = webXml.getNameByPatterns().get(servletName);
-                servletByPattern.put(Pattern.compile(pattern), servlet);
-
-                log.info("Started servlet: " + servletName);
-
-
-            } catch (ClassNotFoundException|IllegalAccessException|InstantiationException e) {
-
-                throw new InstantiationException();
-            }
-        }
+//        for (String servletName : webXml.getServletNames()) {
+//
+//            ServletConfig config = configBuilder.setName(servletName)
+//                                                .setContext(context)
+//                                                .setInitParams(webXml.getServletInitParamsByName(servletName))
+//                                                .build();
+//
+//            log.debug("Initiating servlet: " + servletName);
+//
+//            try {
+//
+//                Class servletClass = Class.forName(webXml.getClassByServletName(servletName));
+//                HttpServlet servlet = (HttpServlet) servletClass.newInstance();
+//
+//                servlet.init(config);
+//                servlets.put(servletName, servlet);
+//                String pattern = webXml.getNameByPatterns().get(servletName);
+//                servletByPattern.put(Pattern.compile(pattern), servlet);
+//
+//                log.info("Started servlet: " + servletName);
+//
+//
+//            } catch (ClassNotFoundException|IllegalAccessException|InstantiationException e) {
+//
+//                throw new InstantiationException();
+//            }
+//        }
     }
 
     public HttpServlet match(String uri) {

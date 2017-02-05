@@ -41,6 +41,13 @@ public class HttpServer {
                                                .setContextParams(webXml.getContextParams())
                                                .build();
         ServletManager servletManager = new ServletManager(webXml, context);
+        WebContainer container = new WebContainer(servletManager);
+        ConnectionHandler connectionHandler = ConnectionHandlerFactory.create(container, POOL_SIZE, WORK_QUEUE_SIZE);
+        log.info("WebContainer started: webXmlPath:" + webXmlPath + " rootDirectory:" + rootDirectory);
+        log.info(String.format("Factory Created ConnectionHandler with %d threads, request queue of %d", POOL_SIZE,
+                WORK_QUEUE_SIZE));
+
+
         try {
             servletManager.start();
         } catch (IOException e) {
@@ -48,14 +55,6 @@ public class HttpServer {
         } catch (InstantiationException e) {
             e.printStackTrace();
         }
-        WebContainer container = new WebContainer(servletManager);
-
-
-        ConnectionHandler connectionHandler = ConnectionHandlerFactory.create(container, POOL_SIZE, WORK_QUEUE_SIZE);
-        log.info("WebContainer started: webXmlPath:" + webXmlPath + " rootDirectory:" + rootDirectory);
-        log.info(String.format("Factory Created ConnectionHandler with %d threads, request queue of %d", POOL_SIZE,
-                WORK_QUEUE_SIZE));
-
 
         connectionHandler.start(port);
 

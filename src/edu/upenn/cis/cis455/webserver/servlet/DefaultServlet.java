@@ -29,12 +29,10 @@ public class DefaultServlet implements HttpServlet {
 
     /**
      * @param rootDirectory path to the www folder
-     * @param manager needed to stop and get status of requests in connector pool
      */
     public DefaultServlet(String rootDirectory) {
         this.rootDirectory = rootDirectory;
 
-//        this.manager = manager;
 
     }
 
@@ -85,7 +83,7 @@ public class DefaultServlet implements HttpServlet {
 
         doGet(request, response);
 
-        manager.update(Thread.currentThread().getId(), "waiting");
+//        manager.update(Thread.currentThread().getId(), "waiting");
     }
 
 
