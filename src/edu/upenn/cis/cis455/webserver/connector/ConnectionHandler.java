@@ -43,7 +43,7 @@ public class ConnectionHandler {
             log.error("HTTP ConnectionHandler Could Not Open Port " + port, e);
         }
 
-        log.info("ConnectionHandler Successfully Shutdown");
+//        log.info("ConnectionHandler Successfully Shutdown");
     }
 
 }

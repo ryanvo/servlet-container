@@ -107,11 +107,6 @@ public class WebXmlHandler extends DefaultHandler {
 
             case "servlet-mapping":
                 servletNameByPattern.put(servletPattern, servletName);
-
-//                servletPatternByName.putIfAbsent(servletName, new HashSet<>());
-//                Set<String> patterns = servletPatternByName.get(servletName);
-//                patterns.add(servletPattern);
-
                 break;
 
             case "servlet":

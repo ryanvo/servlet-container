@@ -2,16 +2,11 @@ package edu.upenn.cis.cis555.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.connector.HttpRequestRunnable;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
+import edu.upenn.cis.cis555.webserver.HttpTestHelper;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.URI;
 
 import static java.lang.Thread.sleep;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -24,10 +19,15 @@ public class HttpRequestRunnableTest {
 
     @Test
     public void shouldPopulateRequestWithStatusLineArguments() throws Exception{
+
+        final int port = 9090;
+        final String host = "localhost";
+        final String path = "/test";
+
         HttpRequest request = new HttpRequest();
         Runnable r1 = () -> {
             try {
-                ServerSocket serverSocket = new ServerSocket(8081);
+                ServerSocket serverSocket = new ServerSocket(port);
                 Socket socket = serverSocket.accept();
                 HttpRequestRunnable requestRunnable = new HttpRequestRunnable(socket, null);
                 requestRunnable.createRequest(request);
@@ -36,34 +36,14 @@ public class HttpRequestRunnableTest {
             }
         };
 
-
-        URI uri = new URIBuilder()
-                .setScheme("http")
-                .setHost("localhost")
-                .setPath("/search")
-                .setPort(8081)
-                .build();
-        Runnable r2 = () -> {
-            try {
-
-                HttpGet httpget = new HttpGet(uri);
-                CloseableHttpClient httpclient = HttpClients.createDefault();
-                httpclient.execute(httpget);
-                httpclient.close();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        };
-
         Thread t1 = new Thread(r1);
-        Thread t2 = new Thread(r2);
+        Thread t2 = HttpTestHelper.sendGet(host, path, port);
         t1.start();
         t2.start();
         sleep(1000);
 
         assertThat(request.getMethod(), is("GET"));
-        assertThat(request.getRequestURI().toString(), is("/search"));
+        assertThat(request.getRequestURI(), is("/test"));
     }
 
 }
