@@ -24,24 +24,12 @@ public class HttpRequestProcessorTest {
         ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
         Container mockContainer = mock(Container.class);
         Socket connection = mock(Socket.class);
+        when(mockConnectionManager.isAcceptingConnections()).thenReturn(true);
 
         HttpRequestProcessor processor = new HttpRequestProcessor(mockConnectionManager, mockContainer);
         processor.process(connection);
 
         verify(mockConnectionManager).assign(isA(HttpRequestRunnable.class));
-    }
-
-    @Test
-    public void shouldKillWorkerPoolAndSetIsRunningToFalseIfStopInvoked() throws Exception {
-
-        ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
-        Container mockContainer = mock(Container.class);
-
-        HttpRequestProcessor processor = new HttpRequestProcessor(mockConnectionManager, mockContainer);
-        processor.stop();
-
-        assertThat(processor.isRunning(), is(false));
-        verify(mockConnectionManager).shutdown();
     }
 
 }

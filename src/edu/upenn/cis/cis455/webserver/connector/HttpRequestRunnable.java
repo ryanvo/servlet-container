@@ -5,6 +5,7 @@ import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tools.ant.taskdefs.condition.Http;
 
 import java.io.*;
 import java.net.Socket;
@@ -20,6 +21,7 @@ public class HttpRequestRunnable implements Runnable {
     public HttpRequestRunnable(Socket connection, Container container) {
         this.connection = connection;
         this.container = container;
+
     }
 
     /**
@@ -27,10 +29,17 @@ public class HttpRequestRunnable implements Runnable {
      */
     @Override
     public void run() {
+        ConnectionManager manager = (ConnectionManager) container.getContext().getAttribute("ConnectionManager");
 
         //TODO do the request, the response, session if necessary
         try {
-            container.dispatch(createRequest(new HttpRequest()), createResponse(new HttpResponse()));
+
+            HttpRequest request = createRequest(new HttpRequest());
+            HttpResponse response = createResponse(new HttpResponse());
+            manager.update(Thread.currentThread().getId(), request.getRequestURI());
+
+            container.dispatch(request, response);
+
         } catch (IllegalStateException e) {
             log.error("Invalid Request Ignored", e);
         } catch (IOException e) {
@@ -43,6 +52,7 @@ public class HttpRequestRunnable implements Runnable {
 
         try {
             connection.close();
+            manager.update(Thread.currentThread().getId(), "waiting");
             log.info("Socket Closed");
         } catch (IOException e) {
             log.error("Could Not Close Socket After Sending Response", e);

@@ -1,5 +1,6 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
+import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
@@ -7,6 +8,5 @@ import java.net.Socket;
  */
 public interface RequestProcessor {
     void process(Socket connection) throws IllegalStateException;
-    void stop();
-    boolean isRunning();
+    void setServerSocket(ServerSocket serverSocket);
 }

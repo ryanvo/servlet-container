@@ -18,32 +18,39 @@ public class ConnectionHandler {
         this.requestProcessor = requestProcessor;
     }
 
-    /**
-     * Loops to accept new connections and tells the RequestProcessor to schedule them. The server stops
-     * when the ServerSocket is closed.
-     * @param port
-     */
-    public void start(int port) {
+    public void start(int port) throws IOException {
 
-        try {
-            ServerSocket socket = new ServerSocket(port);
-//            container.setServerSocket(socket); //TODO put this in engine?
-            log.info(String.format("HTTP ConnectionHandler Started on Port %d", port));
-            while (requestProcessor.isRunning()) {
-                try {
-                    final Socket connection = socket.accept();
-                    requestProcessor.process(connection);
-                } catch (IllegalStateException e) {
-                    log.error("Socket Created Between Client But requestProcessorutor is Stopped");
-                }
+        ServerSocket socket = new ServerSocket(port);
+        log.info(String.format("HTTP ConnectionHandler Started on Port %d", port));
+
+        requestProcessor.setServerSocket(socket); // ServerSocket needs to be stored in ServletContext for shutdown
+
+        while (true) {
+
+            Socket connection = null;
+            try {
+                connection = socket.accept();
+            } catch (SocketException e) {
+                log.info("ServerSocket Closed Due To Shutdown Request");
+            } catch (IOException e) {
+                log.error("Unable to Open Socket");
+                continue;
             }
-        } catch (SocketException e) {
-            log.info("ServerSocket Closed Due To Shutdown Request Or Unable to Open Socket");
-        } catch (IOException e) {
-            log.error("HTTP ConnectionHandler Could Not Open Port " + port, e);
+
+            try {
+                requestProcessor.process(connection);
+            } catch (IllegalStateException e) {
+                log.error("Socket Created Between Client But requestProcessorutor is Stopped");
+                break;
+            }
         }
 
-//        log.info("ConnectionHandler Successfully Shutdown");
+        try {
+            socket.close();
+        } catch (IOException e) {
+            log.error("Failed to close ServerSocket");
+        }
+
     }
 
 }

@@ -24,7 +24,6 @@ public class ConnectionHandlerTest {
         final String path = "/";
 
         HttpRequestProcessor mockRequestProcessor = mock(HttpRequestProcessor.class);
-        when(mockRequestProcessor.isRunning()).thenReturn(true);
 
         Runnable r1 = () -> {
             try {

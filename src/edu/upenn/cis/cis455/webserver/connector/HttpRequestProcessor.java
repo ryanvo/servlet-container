@@ -4,13 +4,13 @@ import edu.upenn.cis.cis455.webserver.engine.Container;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class HttpRequestProcessor implements RequestProcessor {
 
     private static Logger log = LogManager.getLogger(HttpRequestProcessor.class);
 
-    private volatile boolean isRunning = true;
     private ConnectionManager connectionManager;
     private Container container;
 
@@ -21,21 +21,14 @@ public class HttpRequestProcessor implements RequestProcessor {
 
     @Override
     public void process(Socket connection) throws IllegalStateException {
-        if (!isRunning) {
+        if (!connectionManager.isAcceptingConnections()) {
             throw new IllegalStateException("Executor Service is stopped");
         }
         connectionManager.assign(new HttpRequestRunnable(connection, container));
     }
 
-    @Override
-    public void stop() {
-        isRunning = false;
-        connectionManager.shutdown();
-    }
-
-    @Override
-    public boolean isRunning() {
-        return isRunning;
+    public void setServerSocket(ServerSocket serverSocket) {
+        container.getContext().setAttribute("ServerSocket", serverSocket);
     }
 
 }

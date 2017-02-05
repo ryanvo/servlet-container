@@ -4,6 +4,7 @@ import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
 import edu.upenn.cis.cis455.webserver.servlet.ControlServlet;
 import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
+import edu.upenn.cis.cis455.webserver.servlet.ShutdownServlet;
 import org.apache.http.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,23 +27,31 @@ public class ServletManager {
 
     private Map<Pattern, HttpServlet> servletByPattern = new ConcurrentHashMap<>();
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
+
     private HttpServlet defaultServlet;
     private HttpServlet controlServlet;
+    private HttpServlet shutdownServlet;
+
 
     public ServletManager(WebXmlHandler webXml, ServletContext context) {
         this.webXml = webXml;
         this.context = context;
     }
 
-    public void start() throws IOException, ParseException, InstantiationException {
+    public void launchServlets() throws IOException, ParseException, InstantiationException {
 
         ServletConfigBuilder configBuilder = new ServletConfigBuilder();
 
         defaultServlet = new DefaultServlet(context.getRealPath("path"));
         controlServlet = new ControlServlet((ConnectionManager) context.getAttribute("ConnectionManager"));
+        shutdownServlet = new ShutdownServlet();
+        shutdownServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
+
 
 //        servletByPattern.put(Pattern.compile("/+control/*$"), defaultServlet);
         servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
+        servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
+
 
 //        for (String servletName : webXml.getServletNames()) {
 //
@@ -80,6 +89,9 @@ public class ServletManager {
             Matcher uriMatcher = pattern.matcher(uri);
 
             if (uriMatcher.matches()) {
+
+                log.info("Servlet match: name:" + servletByPattern.get(pattern).getServletName());
+
                 return servletByPattern.get(pattern);
             }
 

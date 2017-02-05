@@ -29,8 +29,6 @@ public class ControlServlet implements HttpServlet {
 
     public ControlServlet(ConnectionManager manager) {
         this.manager = manager;
-
-
     }
 
     @Override
@@ -57,7 +55,6 @@ public class ControlServlet implements HttpServlet {
      * @param response
      */
     public void service(HttpRequest request, HttpResponse response) {
-        manager.update(Thread.currentThread().getId(), request.getRequestURI());
 
         log.info(String.format("Thread ID %d is Serving URI %s", Thread.currentThread().getId(),
                 request.getRequestURI()));
@@ -80,7 +77,6 @@ public class ControlServlet implements HttpServlet {
 
         doGet(request, response);
 
-        manager.update(Thread.currentThread().getId(), "waiting");
     }
 
 
@@ -88,7 +84,7 @@ public class ControlServlet implements HttpServlet {
 
     public void doGet(HttpRequest request, HttpResponse response) {
 
-        log.info("DefaultServlet Serving Control Page Request");
+        log.info(getServletName() + " Serving Control Page Request");
         String controlPageHtml = manager.getHtmlResponse();
         response.setVersion(HTTP_VERSION);
         response.setStatusCode("200");

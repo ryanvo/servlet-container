@@ -3,39 +3,35 @@ package edu.upenn.cis.cis455.webserver.engine;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
-import edu.upenn.cis.cis455.webserver.servlet.ControlServlet;
-import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
 import org.apache.http.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 
 /**
  * @author rtv
  */
-public class WebContainer implements Container {
+public class WebAppContainer implements Container {
 
-    private static Logger log = LogManager.getLogger(WebContainer.class);
+    private static Logger log = LogManager.getLogger(WebAppContainer.class);
 
-    private ServerSocket serverSocket;
     private ServletContext context;
     private ServletManager servletManager;
 
-    public WebContainer(ServletManager servletManager) {
+    public WebAppContainer(ServletManager servletManager) {
         this.servletManager = servletManager;
         this.context = servletManager.getContext();
     }
 
 
-    public void setServerSocket(ServerSocket serverSocket) {
-        this.serverSocket = serverSocket;
+    public void start() throws IOException, ParseException, InstantiationException {
+
+        servletManager.launchServlets();
+
     }
+
 
     @Override
     public void dispatch(HttpRequest req, HttpResponse resp) throws IOException {
@@ -53,21 +49,6 @@ public class WebContainer implements Container {
                 log.error("Request Method not recognized: " + req.getMethod());
         }
 
-    }
-
-
-    @Override
-    public void shutdown() {
-
-//        for (String servletName : servlets.keySet()) {
-//            servlets.get(servletName).destroy();
-//        }
-
-        try {
-            serverSocket.close();
-        } catch (IOException e) {
-            log.error("Trying to close server socket", e);
-        }
     }
 
     @Override

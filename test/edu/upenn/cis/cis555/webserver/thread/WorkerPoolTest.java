@@ -1,18 +1,10 @@
 package edu.upenn.cis.cis555.webserver.thread;
 
-import edu.upenn.cis.cis455.webserver.connector.ConnectionHandler;
 import edu.upenn.cis.cis455.webserver.connector.HttpRequestRunnable;
-import edu.upenn.cis.cis455.webserver.engine.ServletContext;
-import edu.upenn.cis.cis455.webserver.engine.ServletManager;
-import edu.upenn.cis.cis455.webserver.engine.WebContainer;
-import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
-import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
-import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
 import edu.upenn.cis.cis455.webserver.thread.WorkQueue;
 import edu.upenn.cis.cis455.webserver.thread.WorkerPool;
 import edu.upenn.cis.cis455.webserver.thread.WorkerThread;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import static java.lang.Thread.sleep;
 import static org.hamcrest.MatcherAssert.assertThat;

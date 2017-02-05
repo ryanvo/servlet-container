@@ -1,17 +1,10 @@
 package edu.upenn.cis.cis555.webserver.engine;
 
-import edu.upenn.cis.cis455.webserver.connector.HttpRequestProcessor;
-import edu.upenn.cis.cis455.webserver.connector.HttpRequestRunnable;
 import edu.upenn.cis.cis455.webserver.engine.*;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
-import edu.upenn.cis.cis455.webserver.thread.WorkerPool;
 import org.junit.Test;
-
-import javax.servlet.Servlet;
-import java.io.IOException;
-import java.net.Socket;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -20,7 +13,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Ryan Vo
  */
-public class WebContainerTest {
+public class WebAppContainerTest {
 
     @Test
     public void shouldCallDoGetWithGetRequest() throws Exception {
@@ -33,8 +26,8 @@ public class WebContainerTest {
         when(mockRequest.getMethod()).thenReturn("GET");
         when(mockRequest.getRequestURI()).thenReturn("/test");
 
-        WebContainer webContainer = new WebContainer(mockServletManager);
-        webContainer.dispatch(mockRequest, mockResponse);
+        WebAppContainer webAppContainer = new WebAppContainer(mockServletManager);
+        webAppContainer.dispatch(mockRequest, mockResponse);
 
         verify(mockServletManager).match("/test");
         verify(mockServlet).doGet(mockRequest, mockResponse);
@@ -48,8 +41,8 @@ public class WebContainerTest {
         ServletManager mockServletManager = mock(ServletManager.class);
         when(mockServletManager.getContext()).thenReturn(mockServletContext);
 
-        WebContainer webContainer = new WebContainer(mockServletManager);
-        ServletContext contextInContainer = webContainer.getContext();
+        WebAppContainer webAppContainer = new WebAppContainer(mockServletManager);
+        ServletContext contextInContainer = webAppContainer.getContext();
 
         assertThat(contextInContainer, is(mockServletContext));
 

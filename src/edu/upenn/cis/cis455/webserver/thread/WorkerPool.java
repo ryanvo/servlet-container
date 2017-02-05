@@ -27,7 +27,6 @@ public class WorkerPool {
         for (Thread thread : threadPool) {
             thread.start();
         }
-
     }
 
     public void offer(Runnable httpRequest) {
@@ -52,5 +51,6 @@ public class WorkerPool {
 
         log.info("All threads stopped");
     }
+
 
 }

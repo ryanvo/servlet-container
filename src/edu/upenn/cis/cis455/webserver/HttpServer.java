@@ -3,8 +3,8 @@ package edu.upenn.cis.cis455.webserver;
 
 import edu.upenn.cis.cis455.webserver.connector.ConnectionHandler;
 import edu.upenn.cis.cis455.webserver.connector.ConnectionHandlerFactory;
-import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
 import edu.upenn.cis.cis455.webserver.engine.*;
+import org.apache.http.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,11 +24,11 @@ public class HttpServer {
         int port = Integer.valueOf(args[0]);
         String rootDirectory = args[1];
         String webXmlPath = args[2];
-
         int POOL_SIZE = Integer.parseInt(args[3]);
         int WORK_QUEUE_SIZE = Integer.parseInt(args[4]);
 
 
+        /* Parse web.xml file */
         WebXmlHandler webXml = new WebXmlHandler(webXmlPath);
         try {
             webXml.parse();
@@ -36,28 +36,32 @@ public class HttpServer {
             e.printStackTrace();
         }
 
-        ServletContextBuilder contextBuilder = new ServletContextBuilder();
-        ServletContext context = contextBuilder.setRealPath(rootDirectory)
-                                               .setContextParams(webXml.getContextParams())
-                                               .build();
-        ServletManager servletManager = new ServletManager(webXml, context);
-        WebContainer container = new WebContainer(servletManager);
+        /* Create WebAppContainer and composite ServletManager */
+        WebAppContainer container = WebAppContainerFactory.create(rootDirectory, webXml);
+        log.info("WebAppContainer started: webXmlPath:" + webXmlPath + " rootDirectory:" + rootDirectory);
+
+        /* Create ConnectionHandler for listening on port */
         ConnectionHandler connectionHandler = ConnectionHandlerFactory.create(container, POOL_SIZE, WORK_QUEUE_SIZE);
-        log.info("WebContainer started: webXmlPath:" + webXmlPath + " rootDirectory:" + rootDirectory);
         log.info(String.format("Factory Created ConnectionHandler with %d threads, request queue of %d", POOL_SIZE,
                 WORK_QUEUE_SIZE));
 
-
+        /* Power up the servlets specified in web.xml */
         try {
-            servletManager.start();
-        } catch (IOException e) {
+            container.start();
+        } catch (ParseException e) {
             e.printStackTrace();
         } catch (InstantiationException e) {
             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        connectionHandler.start(port);
-
+        /* ConnectionHandler accepts incoming requests and dispatches them to WebAppContainer */
+        try {
+            connectionHandler.start(port);
+        } catch (IOException e) {
+            log.error("Failed to open ServerSocket", e);
+        }
 
         log.info("Exiting Main");
         System.exit(0);

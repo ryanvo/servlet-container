@@ -54,38 +54,6 @@ public class DefaultServlet implements HttpServlet {
 
     }
 
-    /**
-     * Sends the request to the appropriate handling method
-     * @param request
-     * @param response
-     */
-    public void service(HttpRequest request, HttpResponse response) {
-//        manager.update(Thread.currentThread().getId(), request.getRequestURI().toString());
-
-        log.info(String.format("Thread ID %d is Serving URI %s", Thread.currentThread().getId(),
-                request.getRequestURI()));
-
-//        switch (request.getMethod()) {
-//            case "get":
-//                doGet(request, response);
-//                break;
-//            case "control":
-//                doControl(response);
-//                break;
-//            case "stop":
-//                doShutdown(response);
-//                break;
-//            default:
-//                log.error("DefaultServlet Did Not Recognize Request Type");
-//                manager.update(Thread.currentThread().getId(), "waiting");
-//                throw new IllegalStateException();
-//        }
-
-        doGet(request, response);
-
-//        manager.update(Thread.currentThread().getId(), "waiting");
-    }
-
 
     public void doGet(HttpRequest request, HttpResponse response) {
 
@@ -192,41 +160,7 @@ public class DefaultServlet implements HttpServlet {
         return null;
     }
 
-    /**
-     * closes the server socket so that no new connections are accepted and then issues a
-     * stop to the manager
-     * @param response associated with the stop request
-     */
-    public void doShutdown(HttpResponse response) {
 
-        String SHUTDOWN_MESSAGE = "<html><body>ConnectionHandler shutting down...</body></html>";
 
-        log.info("DefaultServlet Serving Shutdown Request");
-
-//        try {
-//            serverSocket.close();
-//        } catch (IOException e) {
-//            log.error("Could not close socket. ConnectionHandler will not stop");
-//        }
-//        log.info("ConnectionHandler Socket Closed");
-//        manager.shutdown();
-//
-//        response.setVersion(HTTP_VERSION);
-//        response.setStatusCode("200");
-//        response.setErrorMessage("OK");
-//        response.setContentType("text/html");
-//        response.setContentLength(SHUTDOWN_MESSAGE.length());
-//
-//
-//        try(PrintWriter writer = new PrintWriter(response.getOutputStream(), true)) {
-//
-//            log.debug(response.getStatusAndHeader());
-//
-//            writer.println(response.getStatusAndHeader());
-//            writer.println(SHUTDOWN_MESSAGE);
-//
-//        }
-
-    }
 
 }

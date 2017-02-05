@@ -14,6 +14,8 @@ public class ConnectionManager {
     private final Map<Long, String> idToUri;
     private final WorkerPool workerPool;
 
+    private boolean isAcceptingConnections = true;
+
     public ConnectionManager(WorkerPool workerPool) {
         idToUri = new ConcurrentHashMap<>();
         this.workerPool = workerPool;
@@ -24,8 +26,6 @@ public class ConnectionManager {
 
     public void assign(Runnable request) {
         workerPool.offer(request);
-
-        //TODO do an update here
     }
 
     /**
@@ -41,6 +41,7 @@ public class ConnectionManager {
      * Tells executor service to stop all threads
      */
     public void shutdown() {
+        isAcceptingConnections = false;
         workerPool.kill();
     }
 
@@ -60,8 +61,13 @@ public class ConnectionManager {
                     "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;").append(idToUri.get(tid));
         }
 
-        html.append("<p><a href=\"/stop/\">Shutdown</a></p></body></html>");
+        html.append("<p><a href=\"/shutdown/\">Shutdown</a></p></body></html>");
         return html.toString();
+    }
+
+
+    public boolean isAcceptingConnections() {
+        return isAcceptingConnections;
     }
 
 }

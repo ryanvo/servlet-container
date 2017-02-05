@@ -3,6 +3,7 @@ package edu.upenn.cis.cis455.webserver.engine;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
+import org.apache.http.ParseException;
 
 import java.io.IOException;
 
@@ -10,13 +11,12 @@ import java.io.IOException;
  * @author rtv
  */
 public interface Container {
-//    void start()  throws Exception;
+//    void launchServlets() throws IOException, ParseException, InstantiationException;
 
     void dispatch(HttpRequest req, HttpResponse resp) throws IOException;
 
-//    HttpServlet getMapping(String url);
 
-    void shutdown();
+//    void shutdown();
 
     ServletContext getContext();
 }
