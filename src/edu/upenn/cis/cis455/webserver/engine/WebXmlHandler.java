@@ -1,6 +1,5 @@
 package edu.upenn.cis.cis455.webserver.engine;
 
-import org.apache.http.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.Attributes;
@@ -13,7 +12,9 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author rtv
@@ -43,7 +44,7 @@ public class WebXmlHandler extends DefaultHandler {
         this.webXmlPath = webXmlPath;
     }
 
-    public void parse() throws IOException, ParseException {
+    public void parse() throws IOException, SAXException {
 
         log.debug("Opening web.xml file: " + webXmlPath);
         try {
@@ -56,8 +57,8 @@ public class WebXmlHandler extends DefaultHandler {
             SAXParser parser = factory.newSAXParser();
             parser.parse(file, this);
 
-        } catch (ParserConfigurationException | SAXException e) {
-            throw new ParseException();
+        } catch (ParserConfigurationException|SAXException e) {
+            throw new SAXException();
         }
     }
 

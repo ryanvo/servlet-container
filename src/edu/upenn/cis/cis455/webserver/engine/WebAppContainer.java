@@ -3,7 +3,6 @@ package edu.upenn.cis.cis455.webserver.engine;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
-import org.apache.http.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +25,7 @@ public class WebAppContainer implements Container {
     }
 
 
-    public void start() throws IOException, ParseException, InstantiationException {
+    public void start() throws IOException, InstantiationException {
 
         servletManager.launchServlets();
 

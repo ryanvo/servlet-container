@@ -5,7 +5,6 @@ import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
 import edu.upenn.cis.cis455.webserver.servlet.ControlServlet;
 import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
 import edu.upenn.cis.cis455.webserver.servlet.ShutdownServlet;
-import org.apache.http.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -38,7 +37,7 @@ public class ServletManager {
         this.context = context;
     }
 
-    public void launchServlets() throws IOException, ParseException, InstantiationException {
+    public void launchServlets() throws IOException, InstantiationException {
 
         ServletConfigBuilder configBuilder = new ServletConfigBuilder();
 

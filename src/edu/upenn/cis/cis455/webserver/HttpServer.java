@@ -3,10 +3,12 @@ package edu.upenn.cis.cis455.webserver;
 
 import edu.upenn.cis.cis455.webserver.connector.ConnectionHandler;
 import edu.upenn.cis.cis455.webserver.connector.ConnectionHandlerFactory;
-import edu.upenn.cis.cis455.webserver.engine.*;
-import org.apache.http.ParseException;
+import edu.upenn.cis.cis455.webserver.engine.WebAppContainer;
+import edu.upenn.cis.cis455.webserver.engine.WebAppContainerFactory;
+import edu.upenn.cis.cis455.webserver.engine.WebXmlHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 
@@ -32,6 +34,8 @@ public class HttpServer {
         WebXmlHandler webXml = new WebXmlHandler(webXmlPath);
         try {
             webXml.parse();
+        } catch (SAXException e) {
+            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -48,8 +52,6 @@ public class HttpServer {
         /* Power up the servlets specified in web.xml */
         try {
             container.start();
-        } catch (ParseException e) {
-            e.printStackTrace();
         } catch (InstantiationException e) {
             e.printStackTrace();
         } catch (IOException e) {
