@@ -1,7 +1,6 @@
 package edu.upenn.cis.cis455.webserver.servlet;
 
 
-import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
 import edu.upenn.cis.cis455.webserver.engine.ServletConfig;
 import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
@@ -16,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 public class DefaultServlet implements HttpServlet {
 
@@ -98,15 +98,9 @@ public class DefaultServlet implements HttpServlet {
                 response.setVersion(HTTP_VERSION);
                 response.setStatusCode("200");
                 response.setErrorMessage("OK");
-
-                try {
-                    response.setContentType(Files.probeContentType(fileRequested.toPath()));
-                } catch (IOException e) {
-                    log.error("Error Reading File to Determine Content-Type", e);
-                }
+                response.setContentType(probeContentType(fileRequested.getPath()));
                 int contentLength = Long.valueOf(fileRequested.length()).intValue();
                 response.setContentLength(contentLength);
-
                 writer.println(response.getStatusAndHeader());
                 writer.flush();
 
@@ -169,6 +163,40 @@ public class DefaultServlet implements HttpServlet {
     }
 
 
+    public String probeContentType(String filePath) {
 
+        filePath = filePath.toLowerCase();
+
+        if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) {
+
+            return "image/jpeg";
+
+        } else if (filePath.endsWith(".gif")) {
+
+            return "image/gif";
+
+        } else if (filePath.endsWith(".png")) {
+
+            return "image/png";
+
+        } else if (filePath.endsWith(".txt")) {
+
+            return "text/plain";
+
+        } else if (filePath.endsWith(".html") || filePath.endsWith(".htm")) {
+
+            return "text/html";
+
+        } else {
+
+            return "application/octet-stream";
+
+        }
+
+
+
+
+
+    }
 
 }
