@@ -38,12 +38,15 @@ public class WebAppContainer implements Container {
 
         HttpServlet servlet = servletManager.match(req.getRequestURI());
 
-        switch (req.getMethod()) {
+        switch (req.getMethod().toUpperCase()) {
             case "GET":
                 servlet.doGet(req, resp);
                 break;
             case "POST":
                 servlet.doPost(req, resp);
+                break;
+            case "HEAD":
+                servlet.doHead(req, resp);
                 break;
             default:
                 log.error("Request Method not recognized: " + req.getMethod());

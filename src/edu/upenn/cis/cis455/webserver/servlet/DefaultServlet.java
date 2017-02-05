@@ -10,12 +10,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 public class DefaultServlet implements HttpServlet {
 
@@ -72,6 +70,7 @@ public class DefaultServlet implements HttpServlet {
 
                 StringBuilder fileDirectoryListingHtml = new StringBuilder();
                 fileDirectoryListingHtml.append("<html><body>");
+
                 for(File file : fileRequested.listFiles()) {
                     Path rootPath = Paths.get(rootDirectory);
                     Path fileAbsolutePath = Paths.get(file.getAbsolutePath());
@@ -79,6 +78,7 @@ public class DefaultServlet implements HttpServlet {
                     fileDirectoryListingHtml.append(String.format("<p><a href=\"%s\">%s</a></p>",
                             relativePath.toString(), file.getName()));
                 }
+
                 fileDirectoryListingHtml.append("</html></body>");
 
                 response.setContentLength(fileDirectoryListingHtml.length());
@@ -86,6 +86,7 @@ public class DefaultServlet implements HttpServlet {
                 writer.println(response.getStatusAndHeader());
                 writer.flush();
                 writer.print(fileDirectoryListingHtml.toString());
+                writer.flush();
 
                 log.info(String.format("Directory Listing of %s Sent to Client", fileRequested
                         .getName()));
@@ -120,7 +121,6 @@ public class DefaultServlet implements HttpServlet {
 
                 log.info(String.format("%s Not found", fileRequested.getName()));
 
-
                 response.setVersion(HTTP_VERSION);
                 response.setStatusCode("404");
                 response.setErrorMessage("Not Found");
@@ -131,6 +131,8 @@ public class DefaultServlet implements HttpServlet {
                 writer.flush();
 
                 writer.println(NOT_FOUND_MESSAGE);
+                writer.flush();
+
                 log.info("Not Found Error Sent to Client" + request.getRequestURI());
             }
 
@@ -138,6 +140,64 @@ public class DefaultServlet implements HttpServlet {
 
         } catch (IOException e) {
             log.error("Could Not Write GET Response to Socket", e);
+
+        }
+    }
+
+    public void doHead(HttpRequest request, HttpResponse response) {
+
+        File fileRequested = new File(rootDirectory + request.getRequestURI());
+
+        try (PrintWriter writer = new PrintWriter(response.getOutputStream())) {
+
+            if (fileRequested.canRead() && fileRequested.isDirectory()) {
+
+                log.info(String.format("DefaultServlet Serving HEAD Request for Directory %s",
+                        fileRequested.getName()));
+
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("200");
+                response.setErrorMessage("OK");
+                response.setContentType("text/html");
+
+                writer.println(response.getStatusAndHeader());
+                writer.flush();
+
+                log.info(String.format("Directory Listing of %s Sent to Client", fileRequested
+                        .getName()));
+
+            } else if (fileRequested.canRead()) {
+
+                log.info(String.format("DefaultServlet Serving HEAD Request for %s", fileRequested
+                        .getName()));
+
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("200");
+                response.setErrorMessage("OK");
+                response.setContentType(probeContentType(fileRequested.getPath()));
+                int contentLength = Long.valueOf(fileRequested.length()).intValue();
+                response.setContentLength(contentLength);
+                writer.println(response.getStatusAndHeader());
+                writer.flush();
+
+                log.info(String.format("%s Sent to Client", fileRequested.getName()));
+
+            } else {
+
+                log.info(String.format("%s Not found", fileRequested.getName()));
+
+
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("404");
+                response.setErrorMessage("Not Found");
+
+                writer.println(response.getStatusAndHeader());
+                writer.flush();
+
+                log.info("Not Found Error Sent to Client" + request.getRequestURI());
+            }
+
+            log.debug(response.getStatusAndHeader());
 
         }
     }

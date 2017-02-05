@@ -14,7 +14,7 @@ public class HttpResponse {
     private String errorMessage;
     private String date;
     private String contentType;
-    private int contentLength;
+    private int contentLength = -1;
     private OutputStream outputStream;
 
     public HttpResponse() {
@@ -59,10 +59,18 @@ public class HttpResponse {
     public String getStatusAndHeader() {
         StringBuilder sb = new StringBuilder();
         sb.append(version).append(" ").append(statusCode).append(" ").append(errorMessage).append('\n')
-                .append("Date: ").append(date).append('\n')
-                .append("Content-Type: ").append(contentType).append('\n')
-                .append("Content-Length: ").append(contentLength).append('\n')
-                .append("Connection: Keep-Alive").append('\n');
+                .append("Date: ").append(date).append('\n');
+
+        if (contentType != null) {
+            sb.append("Content-Type: ").append(contentType).append('\n');
+        }
+
+        if (contentLength > 0) {
+            sb.append("Content-Length: ").append(contentLength).append('\n');
+        }
+
+
+        sb.append("Connection: Keep-Alive").append('\n');
         return sb.toString();
     }
 

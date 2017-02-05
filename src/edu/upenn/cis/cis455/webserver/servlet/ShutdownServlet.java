@@ -88,6 +88,11 @@ public class ShutdownServlet implements HttpServlet {
     }
 
     @Override
+    public void doHead(HttpRequest req, HttpResponse resp) {
+
+    }
+
+    @Override
     public void doPost(HttpRequest req, HttpResponse resp) {
     }
 

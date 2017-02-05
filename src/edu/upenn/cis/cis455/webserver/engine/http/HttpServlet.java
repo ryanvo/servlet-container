@@ -12,6 +12,7 @@ public interface HttpServlet {
     void destroy();
 //    void service(HttpRequest request, HttpResponse response);
     void doGet(HttpRequest req, HttpResponse resp);
+    void doHead(HttpRequest req, HttpResponse resp);
     void doPost(HttpRequest req, HttpResponse resp);
     ServletConfig getServletConfig();
     ServletContext getServletContext();
