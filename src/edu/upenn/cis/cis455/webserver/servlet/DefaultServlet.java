@@ -10,9 +10,7 @@ import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -106,12 +104,22 @@ public class DefaultServlet implements HttpServlet {
                 } catch (IOException e) {
                     log.error("Error Reading File to Determine Content-Type", e);
                 }
-                response.setContentLength(Long.valueOf(fileRequested.length()).intValue());
+                int contentLength = Long.valueOf(fileRequested.length()).intValue();
+                response.setContentLength(contentLength);
 
                 writer.println(response.getStatusAndHeader());
                 writer.flush();
 
-                Files.copy(fileRequested.toPath(), response.getOutputStream());
+                /* Send file as binary to output stream */
+                InputStream is = new FileInputStream(fileRequested);
+                byte[] buf = new byte[contentLength];
+                int bytesRead;
+                while ((bytesRead = is.read(buf, 0, buf.length)) > 0) {
+                    response.getOutputStream().write(buf, 0, bytesRead);
+                    response.getOutputStream().flush();
+                }
+
+
                 log.info(String.format("%s Sent to Client", fileRequested.getName()));
 
             } else {
