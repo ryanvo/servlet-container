@@ -2,6 +2,7 @@ package edu.upenn.cis.cis455.webserver.engine.http;
 
 
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -16,6 +17,7 @@ public class HttpResponse {
     private String contentType;
     private int contentLength = -1;
     private OutputStream outputStream;
+    private PrintWriter writer;
 
     public HttpResponse() {
         date = getHttpDate();
@@ -51,6 +53,11 @@ public class HttpResponse {
         this.contentLength = contentLength;
     }
 
+    public PrintWriter getWriter() {
+        if (writer == null) {
+            writer = new PrintWriter()
+        }
+    }
 
     public OutputStream getOutputStream() {
         return outputStream;
