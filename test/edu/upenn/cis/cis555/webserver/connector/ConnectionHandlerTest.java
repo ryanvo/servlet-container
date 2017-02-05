@@ -2,9 +2,11 @@ package edu.upenn.cis.cis555.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.connector.ConnectionHandler;
 import edu.upenn.cis.cis455.webserver.connector.HttpRequestProcessor;
+import edu.upenn.cis.cis455.webserver.connector.RequestProcessor;
 import edu.upenn.cis.cis555.webserver.HttpTestHelper;
 import org.junit.Test;
 
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import static java.lang.Thread.sleep;
@@ -23,7 +25,7 @@ public class ConnectionHandlerTest {
         final String host = "localhost";
         final String path = "/";
 
-        HttpRequestProcessor mockRequestProcessor = mock(HttpRequestProcessor.class);
+        RequestProcessor mockRequestProcessor = mock(RequestProcessor.class);
 
         Runnable r1 = () -> {
             try {
@@ -43,5 +45,22 @@ public class ConnectionHandlerTest {
 
         verify(mockRequestProcessor).process(isA(Socket.class));
     }
+
+    @Test
+    public void shouldSetTheServerSocketInRequestProcessor() throws Exception {
+
+        final int port = 8301;
+
+        RequestProcessor mockRequestProcessor = mock(RequestProcessor.class);
+
+        ConnectionHandler connectionHandler = new ConnectionHandler(mockRequestProcessor);
+
+        connectionHandler.start(port);
+
+        verify(mockRequestProcessor).setServerSocket(isA(ServerSocket.class));
+
+
+    }
+
 
 }

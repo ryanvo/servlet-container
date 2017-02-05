@@ -25,7 +25,7 @@ public class ConnectionHandler {
 
         requestProcessor.setServerSocket(socket); // ServerSocket needs to be stored in ServletContext for shutdown
 
-        while (true) {
+        while (requestProcessor.isAcceptingConnections()) {
 
             Socket connection = null;
             try {
@@ -40,7 +40,7 @@ public class ConnectionHandler {
             try {
                 requestProcessor.process(connection);
             } catch (IllegalStateException e) {
-                log.error("Socket Created Between Client But requestProcessorutor is Stopped");
+                log.info("RequestProcessor must be off");
                 break;
             }
         }

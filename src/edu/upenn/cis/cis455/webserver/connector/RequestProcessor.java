@@ -9,4 +9,5 @@ import java.net.Socket;
 public interface RequestProcessor {
     void process(Socket connection) throws IllegalStateException;
     void setServerSocket(ServerSocket serverSocket);
+    boolean isAcceptingConnections();
 }

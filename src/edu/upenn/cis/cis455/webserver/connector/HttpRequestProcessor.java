@@ -27,8 +27,13 @@ public class HttpRequestProcessor implements RequestProcessor {
         connectionManager.assign(new HttpRequestRunnable(connection, container));
     }
 
+    @Override
+    public boolean isAcceptingConnections() {
+        return connectionManager.isAcceptingConnections();
+    }
+
+
     public void setServerSocket(ServerSocket serverSocket) {
         container.getContext().setAttribute("ServerSocket", serverSocket);
     }
-
 }

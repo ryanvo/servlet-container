@@ -25,7 +25,10 @@ public class ConnectionManager {
         }
     }
 
-    public void assign(Runnable request) {
+    public void assign(Runnable request) throws IllegalStateException {
+        if (!isAcceptingConnections) {
+            throw new IllegalStateException();
+        }
         workerPool.offer(request);
     }
 
