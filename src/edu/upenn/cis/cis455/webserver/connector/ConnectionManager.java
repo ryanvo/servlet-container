@@ -2,6 +2,7 @@ package edu.upenn.cis.cis455.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.thread.WorkerPool;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -45,26 +46,15 @@ public class ConnectionManager {
         workerPool.kill();
     }
 
-    /**
-     * @return html string for status of the control page
-     */
-    public String getHtmlResponse() {
-        StringBuilder html = new StringBuilder();
-
-        html.append("<html><body><h1>Control Panel</h1>")
-                .append("<p><h2>Thread &nbsp; &nbsp; &nbsp; &nbsp;Running</h2></p>");
-
+    public Map<Long, String> getStatus() {
+        Map<Long, String> status = new HashMap<>();
 
         for (Thread thread : workerPool.getWorkers()) {
-            long tid = thread.getId();
-            html.append("<p>").append(tid).append("&nbsp; &nbsp; &nbsp; &nbsp &nbsp; &nbsp; " +
-                    "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;").append(idToUri.get(tid));
+            status.put(thread.getId(), idToUri.get(thread.getId()));
         }
 
-        html.append("<p><a href=\"/shutdown/\">Shutdown</a></p></body></html>");
-        return html.toString();
+        return status;
     }
-
 
     public boolean isAcceptingConnections() {
         return isAcceptingConnections;

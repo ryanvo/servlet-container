@@ -84,8 +84,21 @@ public class ControlServlet implements HttpServlet {
 
     public void doGet(HttpRequest request, HttpResponse response) {
 
+        StringBuilder html = new StringBuilder();
+
+        html.append("<html><body><h1>Control Panel</h1>")
+                .append("<p><h2>Thread &nbsp; &nbsp; &nbsp; &nbsp;Running</h2></p>");
+
+        for (Map.Entry<Long, String> status : manager.getStatus().entrySet()) {
+            long tid = status.getKey();
+            html.append("<p>").append(tid).append("&nbsp; &nbsp; &nbsp; &nbsp &nbsp; &nbsp; " +
+                    "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;").append(status.getValue());
+        }
+
+        html.append("<p><a href=\"/shutdown/\">Shutdown</a></p></body></html>");
+
         log.info(getServletName() + " Serving Control Page Request");
-        String controlPageHtml = manager.getHtmlResponse();
+        String controlPageHtml = html.toString();
         response.setVersion(HTTP_VERSION);
         response.setStatusCode("200");
         response.setErrorMessage("OK");
@@ -96,7 +109,7 @@ public class ControlServlet implements HttpServlet {
 
         PrintWriter writer = new PrintWriter(response.getOutputStream(), true);
         writer.println(response.getStatusAndHeader());
-        writer.println(manager.getHtmlResponse());
+        writer.println(controlPageHtml);
 
         log.info("Wrote Control Page Response to Socket");
     }
