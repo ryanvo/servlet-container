@@ -1,6 +1,6 @@
 package edu.upenn.cis.cis555.webserver.engine;
 
-import edu.upenn.cis.cis455.webserver.engine.xml.WebXmlHandler;
+import edu.upenn.cis.cis455.webserver.engine.WebXmlHandler;
 import org.junit.Test;
 
 import java.util.Map;
@@ -64,12 +64,12 @@ public class WebXmlHandlerTest {
 
         webXml.parse();
 
-        Map<String, String> initParams1 = webXml.getInitParamsByServletName("redteam");
+        Map<String, String> initParams1 = webXml.getServletInitParamsByName("redteam");
         assertThat(initParams1.keySet(), hasSize(2));
         assertThat(initParams1.get("teamColor"), is("red"));
         assertThat(initParams1.get("bgColor"), is("#CC0000"));
 
-        Map<String, String> initParams2 = webXml.getInitParamsByServletName("blueteam");
+        Map<String, String> initParams2 = webXml.getServletInitParamsByName("blueteam");
         assertThat(initParams2.keySet(), hasSize(2));
         assertThat(initParams2.get("teamColor"), is("blue"));
         assertThat(initParams2.get("bgColor"), is("#0000CC"));

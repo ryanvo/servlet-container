@@ -1,6 +1,5 @@
 package edu.upenn.cis.cis455.webserver.engine;
 
-import edu.upenn.cis.cis455.webserver.engine.xml.WebXmlHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,9 +21,13 @@ public class ServletContext {
     private static Logger log = LogManager.getLogger(ServletContext.class);
 
     private Map<String, Object> attributes  = new ConcurrentHashMap<>();
-    private Map<String, String> contextParams = new ConcurrentHashMap<>();
-
+    private Map<String, String> contextParams;
     private String realPath;
+
+    public ServletContext(ServletContextBuilder builder) {
+        contextParams = new ConcurrentHashMap<>(builder.contextParams);
+        realPath = builder.realPath;
+    }
 
     public void setInitParam(String name, String value) {
         contextParams.put(name, value);

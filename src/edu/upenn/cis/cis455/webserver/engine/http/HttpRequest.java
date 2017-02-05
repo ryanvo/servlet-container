@@ -3,14 +3,12 @@ package edu.upenn.cis.cis455.webserver.engine.http;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.net.URI;
-
 public class HttpRequest {
 
     private static Logger log = LogManager.getLogger(HttpRequest.class);
 
     private String uri;
-    private String type;
+    private String method;
 
     public HttpRequest reset() {
 
@@ -25,15 +23,15 @@ public class HttpRequest {
         this.uri = uri;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setMethod(String method) {
+        this.method = method.toUpperCase();
     }
 
     /**
-     * @return type of request e.g. GET, POST...
+     * @return method of request e.g. GET, POST...
      */
-    public String getType() {
-        return type;
+    public String getMethod() {
+        return method;
     }
 
 //    @Override

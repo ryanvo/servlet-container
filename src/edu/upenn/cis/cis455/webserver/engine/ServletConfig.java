@@ -10,7 +10,13 @@ public class ServletConfig {
 
     private String name;
     private ServletContext context;
-    private Map<String,String> initParams = new ConcurrentHashMap<>();
+    private Map<String,String> initParams;
+
+    public ServletConfig(ServletConfigBuilder builder) {
+        name = builder.name;
+        context = builder.context;
+        initParams = new ConcurrentHashMap<>(builder.initParams);
+    }
 
     public void setName(String name) {
         this.name = name;

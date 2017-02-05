@@ -33,7 +33,9 @@ public class DefaultServlet implements HttpServlet {
      */
     public DefaultServlet(String rootDirectory) {
         this.rootDirectory = rootDirectory;
+
 //        this.manager = manager;
+
     }
 
     @Override
@@ -65,7 +67,7 @@ public class DefaultServlet implements HttpServlet {
         log.info(String.format("Thread ID %d is Serving URI %s", Thread.currentThread().getId(),
                 request.getRequestURI()));
 
-//        switch (request.getType()) {
+//        switch (request.getMethod()) {
 //            case "get":
 //                doGet(request, response);
 //                break;

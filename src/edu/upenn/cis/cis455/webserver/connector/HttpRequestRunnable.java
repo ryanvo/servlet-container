@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 public class HttpRequestRunnable implements Runnable {
@@ -62,7 +61,7 @@ public class HttpRequestRunnable implements Runnable {
 
         log.info("Parsed HTTP Request: " + line);
 
-        req.setType(method);
+        req.setMethod(method);
         //TODO set session, parse query arguments, other req fields
         return req;
     }

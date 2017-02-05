@@ -24,6 +24,8 @@ public class ConnectionManager {
 
     public void assign(Runnable request) {
         workerPool.offer(request);
+
+        //TODO do an update here
     }
 
     /**

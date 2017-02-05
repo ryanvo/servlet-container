@@ -19,7 +19,7 @@ public class ConnectionHandler {
     }
 
     /**
-     * Loops to accept new connections and tells the requestProcessorutor to schedule them. The server stops
+     * Loops to accept new connections and tells the RequestProcessor to schedule them. The server stops
      * when the ServerSocket is closed.
      * @param port
      */

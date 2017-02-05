@@ -62,7 +62,7 @@ public class ControlServlet implements HttpServlet {
         log.info(String.format("Thread ID %d is Serving URI %s", Thread.currentThread().getId(),
                 request.getRequestURI()));
 
-//        switch (request.getType()) {
+//        switch (request.getMethod()) {
 //            case "get":
 //                doGet(request, response);
 //                break;

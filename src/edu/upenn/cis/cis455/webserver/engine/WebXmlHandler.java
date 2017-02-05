@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver.engine.xml;
+package edu.upenn.cis.cis455.webserver.engine;
 
 import org.apache.http.ParseException;
 import org.apache.logging.log4j.LogManager;
@@ -159,7 +159,7 @@ public class WebXmlHandler extends DefaultHandler {
         return servletClassByName.get(name);
     }
 
-    public Map<String, String> getInitParamsByServletName(String name) {
+    public Map<String, String> getServletInitParamsByName(String name) {
         return initParams.get(name);
     }
 

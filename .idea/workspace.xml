@@ -2,18 +2,26 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c3e19c2b-30a7-4728-b231-54015cdf2174" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/ControlServlet.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/DefaultServlet.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/DefaultServlet.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletConfigBuilder.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletContextBuilder.java" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainerFactory.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/ServletConfigBuilder.java" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/ServletContextBuilder.java" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/WebXmlHandler.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebXmlHandler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/HttpServer.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/HttpServer.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandler.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandler.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandlerFactory.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandlerFactory.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionManager.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionManager.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestProcessor.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestProcessor.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestRunnable.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestRunnable.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/Container.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/Container.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletConfig.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletConfig.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletContext.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletContext.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainer.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainer.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainerFactory.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainerFactory.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/ServletContextBuilder.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/ServletContextBuilder.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/thread/WorkerPool.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/thread/WorkerPool.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver/connector/HttpRequestProcessorTest.java" afterPath="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver/connector/HttpRequestProcessorTest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/http/HttpRequest.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/http/HttpRequest.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/ControlServlet.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/ControlServlet.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/DefaultServlet.java" afterPath="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/DefaultServlet.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver/connector/HttpRequestRunnableTest.java" afterPath="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver/connector/HttpRequestRunnableTest.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver/engine/WebXmlHandlerTest.java" afterPath="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver/engine/WebXmlHandlerTest.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -42,28 +50,22 @@
           <splitter split-orientation="horizontal" split-proportion="0.5">
             <split-first>
               <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-                <file leaf-file-name="HttpRequestProcessor.java" pinned="false" current-in-tab="true">
+                <file leaf-file-name="HttpRequestProcessor.java" pinned="false" current-in-tab="false">
                   <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestProcessor.java">
                     <provider selected="true" editor-type-id="text-editor">
-                      <state relative-caret-position="832">
-                        <caret line="26" column="81" lean-forward="true" selection-start-line="26" selection-start-column="81" selection-end-line="26" selection-end-column="81" />
-                        <folding>
-                          <element signature="imports" expanded="true" />
-                        </folding>
+                      <state relative-caret-position="96">
+                        <caret line="3" column="36" lean-forward="false" selection-start-line="3" selection-start-column="36" selection-end-line="3" selection-end-column="36" />
+                        <folding />
                       </state>
                     </provider>
                   </entry>
                 </file>
-                <file leaf-file-name="WebContainer.java" pinned="false" current-in-tab="false">
+                <file leaf-file-name="WebContainer.java" pinned="false" current-in-tab="true">
                   <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainer.java">
                     <provider selected="true" editor-type-id="text-editor">
-                      <state relative-caret-position="1856">
-                        <caret line="75" column="57" lean-forward="false" selection-start-line="75" selection-start-column="40" selection-end-line="75" selection-end-column="57" />
-                        <folding>
-                          <element signature="imports" expanded="true" />
-                          <marker date="1486234098839" expanded="true" signature="3320:3386" ph="//..." />
-                          <marker date="1486234098839" expanded="true" signature="3738:4132" ph="{...}" />
-                        </folding>
+                      <state relative-caret-position="1106">
+                        <caret line="56" column="0" lean-forward="false" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+                        <folding />
                       </state>
                     </provider>
                   </entry>
@@ -71,20 +73,11 @@
                 <file leaf-file-name="ServletConfig.java" pinned="false" current-in-tab="false">
                   <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletConfig.java">
                     <provider selected="true" editor-type-id="text-editor">
-                      <state relative-caret-position="416">
-                        <caret line="14" column="19" lean-forward="false" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
+                      <state relative-caret-position="608">
+                        <caret line="20" column="19" lean-forward="false" selection-start-line="20" selection-start-column="19" selection-end-line="20" selection-end-column="19" />
                         <folding>
-                          <element signature="imports" expanded="false" />
-                          <element signature="e#425#426#0" expanded="false" />
-                          <element signature="e#463#464#0" expanded="false" />
-                          <element signature="e#514#515#0" expanded="false" />
-                          <element signature="e#557#558#0" expanded="false" />
-                          <element signature="e#616#617#0" expanded="false" />
-                          <element signature="e#659#660#0" expanded="false" />
-                          <element signature="e#883#884#0" expanded="false" />
-                          <element signature="e#910#911#0" expanded="false" />
-                          <element signature="e#959#960#0" expanded="false" />
-                          <element signature="e#989#990#0" expanded="false" />
+                          <element signature="e#505#506#0" expanded="true" />
+                          <element signature="e#537#538#0" expanded="true" />
                         </folding>
                       </state>
                     </provider>
@@ -94,14 +87,33 @@
             </split-first>
             <split-second>
               <leaf SIDE_TABS_SIZE_LIMIT_KEY="600">
-                <file leaf-file-name="ConnectionManager.java" pinned="false" current-in-tab="true">
+                <file leaf-file-name="ConnectionManager.java" pinned="false" current-in-tab="false">
                   <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionManager.java">
                     <provider selected="true" editor-type-id="text-editor">
-                      <state relative-caret-position="736">
-                        <caret line="26" column="5" lean-forward="false" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
+                      <state relative-caret-position="224">
+                        <caret line="10" column="3" lean-forward="true" selection-start-line="10" selection-start-column="3" selection-end-line="10" selection-end-column="3" />
+                        <folding />
+                      </state>
+                    </provider>
+                  </entry>
+                </file>
+                <file leaf-file-name="ConnectionHandler.java" pinned="false" current-in-tab="false">
+                  <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandler.java">
+                    <provider selected="true" editor-type-id="text-editor">
+                      <state relative-caret-position="480">
+                        <caret line="23" column="18" lean-forward="true" selection-start-line="23" selection-start-column="18" selection-end-line="23" selection-end-column="18" />
+                        <folding />
+                      </state>
+                    </provider>
+                  </entry>
+                </file>
+                <file leaf-file-name="HttpServer.java" pinned="false" current-in-tab="true">
+                  <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/HttpServer.java">
+                    <provider selected="true" editor-type-id="text-editor">
+                      <state relative-caret-position="1750">
+                        <caret line="58" column="0" lean-forward="false" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
                         <folding>
-                          <element signature="e#789#790#0" expanded="true" />
-                          <element signature="e#830#831#0" expanded="true" />
+                          <element signature="imports" expanded="true" />
                         </folding>
                       </state>
                     </provider>
@@ -123,8 +135,8 @@
       <file leaf-file-name="ConnectionHandlerFactory.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandlerFactory.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="224">
-              <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+            <state relative-caret-position="736">
+              <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -133,8 +145,8 @@
       <file leaf-file-name="WebContainer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1824">
-              <caret line="57" column="31" lean-forward="false" selection-start-line="57" selection-start-column="31" selection-end-line="57" selection-end-column="31" />
+            <state relative-caret-position="1104">
+              <caret line="59" column="0" lean-forward="false" selection-start-line="59" selection-start-column="0" selection-end-line="70" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -142,96 +154,38 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HttpSession.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/http/HttpSession.java">
+      <file leaf-file-name="HttpRequest.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/http/HttpRequest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1104">
-              <caret line="64" column="5" lean-forward="false" selection-start-line="64" selection-start-column="5" selection-end-line="64" selection-end-column="5" />
+            <state relative-caret-position="656">
+              <caret line="26" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="26" selection-end-column="25" />
               <folding>
-                <element signature="e#1253#1254#0" expanded="true" />
-                <element signature="e#1289#1290#0" expanded="true" />
+                <element signature="e#2286#2287#0" expanded="true" />
+                <element signature="e#2312#2313#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ServletContextBuilder.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/ServletContextBuilder.java">
+      <file leaf-file-name="ServletManager.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="576">
-              <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ConnectionHandler.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandler.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="704">
-              <caret line="34" column="57" lean-forward="true" selection-start-line="34" selection-start-column="57" selection-end-line="34" selection-end-column="57" />
+            <state relative-caret-position="1168">
+              <caret line="64" column="0" lean-forward="true" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
               <folding>
-                <element signature="e#484#485#0" expanded="true" />
-                <element signature="e#540#541#0" expanded="true" />
+                <element signature="imports" expanded="true" />
+                <element signature="e#3064#3065#0" expanded="true" />
+                <element signature="e#3094#3095#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="HttpRequestRunnable.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestRunnable.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="374">
-              <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="WebContainerFactory.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainerFactory.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="352">
-              <caret line="15" column="69" lean-forward="false" selection-start-line="15" selection-start-column="69" selection-end-line="15" selection-end-column="69" />
-              <folding>
-                <marker date="1486234335878" expanded="true" signature="55:317" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DefaultServlet.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="DefaultServlet.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/DefaultServlet.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1296">
-              <caret line="63" column="0" lean-forward="true" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ControlServlet.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/ControlServlet.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="800">
-              <caret line="41" column="30" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
-              <folding>
-                <element signature="e#3411#3412#0" expanded="true" />
-                <element signature="e#3438#3439#0" expanded="true" />
-                <element signature="e#3501#3502#0" expanded="true" />
-                <element signature="e#3528#3529#0" expanded="true" />
-                <element signature="e#3580#3581#0" expanded="true" />
-                <element signature="e#3607#3608#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="WorkerThread.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/thread/WorkerThread.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="640">
-              <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
+            <state relative-caret-position="672">
+              <caret line="37" column="8" lean-forward="false" selection-start-line="37" selection-start-column="8" selection-end-line="37" selection-end-column="8" />
               <folding />
             </state>
           </provider>
@@ -276,11 +230,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionInfo.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebXmlHandler.java" />
-        <option value="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver/WebXmlHandlerTest.java" />
-        <option value="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver/HttpRequestRunnableTest.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/util/HttpRequestParser.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/servlet/HttpSession.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/servlet/HttpResponse.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/servlet/HttpRequest.java" />
@@ -301,32 +250,37 @@
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletBuilder.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletConfigBuilder.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/ServletBuilder.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletConfig.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/HttpServerFactory.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletContext.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/HttpConnectionHandlerFactory.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpConnectionHandlerFactory.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/Container.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/ServletConfigBuilder.java" />
         <option value="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver/engine/WebContainerTest.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/HttpServer.java" />
         <option value="$PROJECT_DIR$/test/resources/log.log" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/WebXmlHandler.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/http/HttpRequest.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestRunnable.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/DefaultServlet.java" />
         <option value="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver/engine/WebXmlHandlerTest.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/thread/WorkerPool.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestProcessor.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandler.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandlerFactory.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionManager.java" />
         <option value="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver/connector/HttpRequestProcessorTest.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/ControlServlet.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainer.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/DefaultServlet.java" />
-        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainerFactory.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionManager.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletConfig.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletContext.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/ServletConfigBuilder.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandler.java" />
         <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/ServletContextBuilder.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/WebContainerBuilder.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebXmlHandler.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletContextBuilder.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainerFactory.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainerBuilder.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/Container.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandlerFactory.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/HttpServer.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/http/HttpRequest.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainer.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletManager.java" />
+        <option value="$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/DefaultServlet.java" />
       </list>
     </option>
   </component>
@@ -411,7 +365,29 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="webapps" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="WEB-INF" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web-server" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="web-server" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="test" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="resources" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -565,32 +541,6 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="xml" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="web-server" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="web-server" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="src" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="webserver" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="engine" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
               <option name="myItemId" value="http" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -633,9 +583,9 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
       <pane id="PackagesPane" />
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -647,7 +597,7 @@
     <property name="aspect.path.notification.shown" value="true" />
     <property name="js.eslint.eslintPackage" value="" />
     <property name="prop_add_unversioned_files" value="true" />
-    <property name="SearchEverywhereHistoryKey" value="servletconfig&#9;PSI&#9;JAVA://edu.upenn.cis.cis455.webserver.engine.ServletConfig&#10;container&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/WebContainer.java&#10;work&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/connector/WorkerPool.java&#10;reqq&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/connector/RequestQueue.java&#10;pro&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/connector/RequestProcessor.java&#10;test&#9;FILE&#9;file:///Users/ryan/workspace/web-server/test/edu/upenn/cis/cis555/webserver/connector/HttpRequestRunnableTest.java&#10;run&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestRunnable.java&#10;respons&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/servlet/HttpResponse.java&#10;connecti&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/connector/ConnectionInfo.java&#10;conte&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/ServletContext.java&#10;web&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/WebXmlHandler.java&#10;servlet&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/ServletContext.java&#10;serv&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/ServletConfig.java&#10;webx&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/WebXmlHandler.java&#10;contain&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/Container.java&#10;servletconf&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/container/ServletConfig.java&#10;te&#9;FILE&#9;file:///home/rtv/Workspace/web-server/test/edu/upenn/cis/cis555/webserver/WebXmlHandlerTest.java&#10;con&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/servlet/ServletContainer.java&#10;testhar&#9;FILE&#9;file:///home/rtv/Workspace/web-server/extra/TestHarness/TestHarness.java&#10;fakeco&#9;FILE&#9;file:///home/rtv/Workspace/web-server/extra/TestHarness/FakeConfig.java&#10;fa&#9;FILE&#9;file:///home/rtv/Workspace/web-server/extra/TestHarness/FakeContext.java" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/WebContainerBuilder.java&#10;context&#9;PSI&#9;JAVA://edu.upenn.cis.cis455.webserver.engine.ServletContext&#10;hand&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandler.java&#10;servletconfig&#9;PSI&#9;JAVA://edu.upenn.cis.cis455.webserver.engine.ServletConfig&#10;container&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/WebContainer.java&#10;work&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/connector/WorkerPool.java&#10;reqq&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/connector/RequestQueue.java&#10;pro&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/connector/RequestProcessor.java&#10;test&#9;FILE&#9;file:///Users/ryan/workspace/web-server/test/edu/upenn/cis/cis555/webserver/connector/HttpRequestRunnableTest.java&#10;run&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestRunnable.java&#10;respons&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/servlet/HttpResponse.java&#10;connecti&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/connector/ConnectionInfo.java&#10;conte&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/ServletContext.java&#10;web&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/WebXmlHandler.java&#10;servlet&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/ServletContext.java&#10;serv&#9;FILE&#9;file:///Users/ryan/workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/ServletConfig.java&#10;webx&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/WebXmlHandler.java&#10;contain&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/engine/Container.java&#10;servletconf&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/container/ServletConfig.java&#10;te&#9;FILE&#9;file:///home/rtv/Workspace/web-server/test/edu/upenn/cis/cis555/webserver/WebXmlHandlerTest.java&#10;con&#9;FILE&#9;file:///home/rtv/Workspace/web-server/src/edu/upenn/cis/cis455/webserver/servlet/ServletContainer.java&#10;testhar&#9;FILE&#9;file:///home/rtv/Workspace/web-server/extra/TestHarness/TestHarness.java&#10;fakeco&#9;FILE&#9;file:///home/rtv/Workspace/web-server/extra/TestHarness/FakeConfig.java&#10;fa&#9;FILE&#9;file:///home/rtv/Workspace/web-server/extra/TestHarness/FakeContext.java" />
     <property name="settings.editor.selected.configurable" value="terminal" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/test/edu/upenn/cis/cis555/webserver" />
     <property name="Downloaded.Files.Path.Enabled" value="true" />
@@ -662,23 +612,23 @@
     <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
       <recent name="edu.upenn.cis.cis455.webserver" />
     </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/test" />
-      <recent name="$PROJECT_DIR$/lib" />
-      <recent name="$PROJECT_DIR$/web/WEB-INF" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="edu.upenn.cis.cis455.webserver.servlet" />
-      <recent name="edu.upenn.cis.cis455.webserver.engine" />
-      <recent name="edu.upenn.cis.cis555.webserver.engine" />
-      <recent name="edu.upenn.cis.cis555.webserver.connector" />
-      <recent name="edu.upenn.cis.cis455.webserver.container" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/out/test/web-server/resources" />
       <recent name="$PROJECT_DIR$/www" />
       <recent name="$PROJECT_DIR$/webapps" />
       <recent name="$PROJECT_DIR$" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="edu.upenn.cis.cis455.webserver.engine.xml" />
+      <recent name="edu.upenn.cis.cis455.webserver.servlet" />
+      <recent name="edu.upenn.cis.cis455.webserver.engine" />
+      <recent name="edu.upenn.cis.cis555.webserver.engine" />
+      <recent name="edu.upenn.cis.cis555.webserver.connector" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/test" />
+      <recent name="$PROJECT_DIR$/lib" />
+      <recent name="$PROJECT_DIR$/web/WEB-INF" />
     </key>
   </component>
   <component name="RunManager" selected="Application.RunServer">
@@ -1249,7 +1199,8 @@
       <workItem from="1486149892901" duration="19278000" />
       <workItem from="1486185437608" duration="3957000" />
       <workItem from="1486191322855" duration="1320000" />
-      <workItem from="1486232621377" duration="1714000" />
+      <workItem from="1486232621377" duration="1979000" />
+      <workItem from="1486251109502" duration="6679000" />
     </task>
     <servers />
   </component>
@@ -1286,7 +1237,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="97676000" />
+    <option name="totallyTimeSpent" value="104620000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1322,8 +1273,8 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.37092602" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32902226" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2586653" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.188" sideWeight="0.49625668" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25918263" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19013333" sideWeight="0.49625668" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Web" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32798758" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Theme Preview" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1389,7 +1340,7 @@
           <option name="timeStamp" value="26" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/WebXmlHandler.java</url>
+          <url>file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebXmlHandler.java</url>
           <line>78</line>
           <properties />
           <option name="timeStamp" value="28" />
@@ -1404,8 +1355,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/util/HttpRequestParser.java" />
-    <entry file="jar:///Library/Java/JavaVirtualMachines/jdk1.8.0_31.jdk/Contents/Home/src.zip!/java/lang/Runnable.java" />
     <entry file="jar://$PROJECT_DIR$/test/resources/httpcore-4.4.6.jar!/org/apache/http/util/Args.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="448">
@@ -1446,16 +1395,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/thread/WorkQueue.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="22" column="17" lean-forward="true" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="jar:///usr/lib/jvm/java-1.8.0-openjdk-amd64/jre/lib/rt.jar!/org/xml/sax/SAXException.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="128">
@@ -1486,14 +1425,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/HttpServerFactory.java" />
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/Container.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="14" column="61" lean-forward="false" selection-start-line="14" selection-start-column="61" selection-end-line="14" selection-end-column="61" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$PROJECT_DIR$/lib/junit-4.12.jar!/org/junit/internal/runners/model/ReflectiveCallable.class">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="448">
@@ -1559,81 +1490,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/ServletConfigBuilder.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="20" column="0" lean-forward="false" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletContext.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="19" column="13" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="128" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#838#839#0" expanded="false" />
-            <element signature="e#884#885#0" expanded="false" />
-            <element signature="e#932#933#0" expanded="false" />
-            <element signature="e#975#976#0" expanded="false" />
-            <element signature="e#1197#1198#0" expanded="false" />
-            <element signature="e#1225#1226#0" expanded="false" />
-            <element signature="e#1269#1270#0" expanded="false" />
-            <element signature="e#1309#1310#0" expanded="false" />
-            <element signature="e#1354#1355#0" expanded="false" />
-            <element signature="e#1390#1391#0" expanded="false" />
-            <element signature="e#1442#1443#0" expanded="false" />
-            <element signature="e#1478#1479#0" expanded="false" />
-            <element signature="e#1704#1705#0" expanded="false" />
-            <element signature="e#1735#1736#0" expanded="false" />
-            <element signature="e#1776#1777#0" expanded="false" />
-            <element signature="e#1804#1805#0" expanded="false" />
-            <element signature="e#1870#1871#0" expanded="false" />
-            <element signature="e#1897#1898#0" expanded="false" />
-            <element signature="e#1950#1951#0" expanded="false" />
-            <element signature="e#1977#1978#0" expanded="false" />
-            <element signature="e#2042#2043#0" expanded="false" />
-            <element signature="e#2069#2070#0" expanded="false" />
-            <element signature="e#2121#2122#0" expanded="false" />
-            <element signature="e#2145#2146#0" expanded="false" />
-            <element signature="e#2197#2198#0" expanded="false" />
-            <element signature="e#2221#2222#0" expanded="false" />
-            <element signature="e#2280#2281#0" expanded="false" />
-            <element signature="e#2307#2308#0" expanded="false" />
-            <element signature="e#2368#2369#0" expanded="false" />
-            <element signature="e#2395#2396#0" expanded="false" />
-            <element signature="e#2566#2567#0" expanded="false" />
-            <element signature="e#2593#2594#0" expanded="false" />
-            <element signature="e#2672#2673#0" expanded="false" />
-            <element signature="e#2699#2700#0" expanded="false" />
-            <element signature="e#2776#2777#0" expanded="false" />
-            <element signature="e#2803#2804#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/HttpServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="864">
-          <caret line="32" column="77" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/WebXmlHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="227">
-          <caret line="111" column="26" lean-forward="false" selection-start-line="111" selection-start-column="26" selection-end-line="111" selection-end-column="26" />
-          <folding>
-            <element signature="method#warning#0;class#WebXmlHandler#0" expanded="false" />
-            <element signature="method#error#0;class#WebXmlHandler#0" expanded="false" />
-            <element signature="method#fatalError#0;class#WebXmlHandler#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/http/HttpServlet.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="224">
@@ -1665,48 +1521,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletConfig.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="416">
-          <caret line="14" column="19" lean-forward="false" selection-start-line="14" selection-start-column="19" selection-end-line="14" selection-end-column="19" />
-          <folding>
-            <element signature="imports" expanded="false" />
-            <element signature="e#425#426#0" expanded="false" />
-            <element signature="e#463#464#0" expanded="false" />
-            <element signature="e#514#515#0" expanded="false" />
-            <element signature="e#557#558#0" expanded="false" />
-            <element signature="e#616#617#0" expanded="false" />
-            <element signature="e#659#660#0" expanded="false" />
-            <element signature="e#883#884#0" expanded="false" />
-            <element signature="e#910#911#0" expanded="false" />
-            <element signature="e#959#960#0" expanded="false" />
-            <element signature="e#989#990#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/thread/WorkerPool.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="896">
-          <caret line="32" column="21" lean-forward="false" selection-start-line="32" selection-start-column="21" selection-end-line="32" selection-end-column="21" />
-          <folding>
-            <element signature="e#707#708#0" expanded="true" />
-            <element signature="e#745#746#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/http/HttpRequest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="948">
-          <caret line="121" column="27" lean-forward="true" selection-start-line="121" selection-start-column="27" selection-end-line="121" selection-end-column="27" />
-          <folding>
-            <element signature="e#2278#2279#0" expanded="true" />
-            <element signature="e#2304#2305#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/RequestProcessor.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="256">
@@ -1723,29 +1537,13 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/thread/WorkerThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="640">
-          <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestRunnable.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="374">
-          <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/http/HttpSession.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1104">
+        <state relative-caret-position="1504">
           <caret line="64" column="5" lean-forward="false" selection-start-line="64" selection-start-column="5" selection-end-line="64" selection-end-column="5" />
           <folding>
-            <element signature="e#1253#1254#0" expanded="true" />
-            <element signature="e#1289#1290#0" expanded="true" />
+            <element signature="e#1253#1254#0" expanded="false" />
+            <element signature="e#1289#1290#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1755,88 +1553,206 @@
         <state relative-caret-position="800">
           <caret line="41" column="30" lean-forward="false" selection-start-line="41" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
           <folding>
-            <element signature="e#3411#3412#0" expanded="true" />
-            <element signature="e#3438#3439#0" expanded="true" />
-            <element signature="e#3501#3502#0" expanded="true" />
-            <element signature="e#3528#3529#0" expanded="true" />
-            <element signature="e#3580#3581#0" expanded="true" />
-            <element signature="e#3607#3608#0" expanded="true" />
+            <element signature="e#3413#3414#0" expanded="false" />
+            <element signature="e#3440#3441#0" expanded="false" />
+            <element signature="e#3503#3504#0" expanded="false" />
+            <element signature="e#3530#3531#0" expanded="false" />
+            <element signature="e#3582#3583#0" expanded="false" />
+            <element signature="e#3609#3610#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/DefaultServlet.java">
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestRunnable.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1296">
-          <caret line="63" column="0" lean-forward="true" selection-start-line="63" selection-start-column="0" selection-end-line="63" selection-end-column="0" />
+        <state relative-caret-position="384">
+          <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandlerFactory.java">
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/thread/WorkerThread.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="224">
-          <caret line="11" column="13" lean-forward="false" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+        <state relative-caret-position="640">
+          <caret line="23" column="0" lean-forward="false" selection-start-line="23" selection-start-column="0" selection-end-line="23" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandler.java">
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/thread/WorkQueue.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="704">
-          <caret line="34" column="57" lean-forward="true" selection-start-line="34" selection-start-column="57" selection-end-line="34" selection-end-column="57" />
+        <state relative-caret-position="424">
+          <caret line="22" column="17" lean-forward="true" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/thread/WorkerPool.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1403">
+          <caret line="52" column="40" lean-forward="true" selection-start-line="52" selection-start-column="40" selection-end-line="52" selection-end-column="40" />
           <folding>
-            <element signature="e#484#485#0" expanded="true" />
-            <element signature="e#540#541#0" expanded="true" />
+            <element signature="e#707#708#0" expanded="false" />
+            <element signature="e#745#746#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="736">
-          <caret line="26" column="5" lean-forward="false" selection-start-line="26" selection-start-column="5" selection-end-line="26" selection-end-column="5" />
+        <state relative-caret-position="224">
+          <caret line="10" column="3" lean-forward="true" selection-start-line="10" selection-start-column="3" selection-end-line="10" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/WebContainerBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="864">
+          <caret line="30" column="4" lean-forward="false" selection-start-line="30" selection-start-column="4" selection-end-line="30" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletConfigBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="224">
+          <caret line="7" column="13" lean-forward="false" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletContext.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1072">
+          <caret line="68" column="29" lean-forward="false" selection-start-line="68" selection-start-column="18" selection-end-line="68" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebXmlHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="581">
+          <caret line="40" column="0" lean-forward="true" selection-start-line="40" selection-start-column="0" selection-end-line="40" selection-end-column="0" />
           <folding>
-            <element signature="e#789#790#0" expanded="true" />
-            <element signature="e#830#831#0" expanded="true" />
+            <element signature="e#1366#1367#0" expanded="true" />
+            <element signature="e#1410#1411#0" expanded="true" />
+            <element signature="method#warning#0;class#WebXmlHandler#0" expanded="false" />
+            <element signature="method#error#0;class#WebXmlHandler#0" expanded="false" />
+            <element signature="method#fatalError#0;class#WebXmlHandler#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/Container.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="17" column="0" lean-forward="true" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="480">
+          <caret line="23" column="18" lean-forward="true" selection-start-line="23" selection-start-column="18" selection-end-line="23" selection-end-column="18" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletConfig.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="608">
+          <caret line="20" column="19" lean-forward="false" selection-start-line="20" selection-start-column="19" selection-end-line="20" selection-end-column="19" />
+          <folding>
+            <element signature="e#505#506#0" expanded="true" />
+            <element signature="e#537#538#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainerBuilder.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="416">
+          <caret line="13" column="52" lean-forward="false" selection-start-line="13" selection-start-column="52" selection-end-line="13" selection-end-column="52" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/HttpRequestProcessor.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="832">
-          <caret line="26" column="81" lean-forward="true" selection-start-line="26" selection-start-column="81" selection-end-line="26" selection-end-column="81" />
+        <state relative-caret-position="96">
+          <caret line="3" column="36" lean-forward="false" selection-start-line="3" selection-start-column="36" selection-end-line="3" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/HttpServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1750">
+          <caret line="58" column="0" lean-forward="false" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainerFactory.java">
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletContextBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="352">
-          <caret line="15" column="69" lean-forward="false" selection-start-line="15" selection-start-column="69" selection-end-line="15" selection-end-column="69" />
+        <state relative-caret-position="384">
+          <caret line="12" column="4" lean-forward="false" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
           <folding>
-            <marker date="1486234335878" expanded="true" signature="55:317" ph="..." />
+            <element signature="e#532#533#0" expanded="true" />
+            <element signature="e#579#580#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/http/HttpRequest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="656">
+          <caret line="26" column="25" lean-forward="true" selection-start-line="26" selection-start-column="25" selection-end-line="26" selection-end-column="25" />
+          <folding>
+            <element signature="e#2286#2287#0" expanded="true" />
+            <element signature="e#2312#2313#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/WebContainer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1824">
-          <caret line="57" column="31" lean-forward="false" selection-start-line="57" selection-start-column="31" selection-end-line="57" selection-end-column="31" />
+        <state relative-caret-position="1104">
+          <caret line="59" column="0" lean-forward="false" selection-start-line="59" selection-start-column="0" selection-end-line="70" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/xml/ServletContextBuilder.java">
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/connector/ConnectionHandlerFactory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="576">
-          <caret line="20" column="0" lean-forward="true" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+        <state relative-caret-position="736">
+          <caret line="27" column="0" lean-forward="false" selection-start-line="27" selection-start-column="0" selection-end-line="27" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/engine/ServletManager.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1168">
+          <caret line="64" column="0" lean-forward="true" selection-start-line="64" selection-start-column="0" selection-end-line="64" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#3064#3065#0" expanded="true" />
+            <element signature="e#3094#3095#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/edu/upenn/cis/cis455/webserver/servlet/DefaultServlet.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="672">
+          <caret line="37" column="8" lean-forward="false" selection-start-line="37" selection-start-column="8" selection-end-line="37" selection-end-column="8" />
           <folding />
         </state>
       </provider>

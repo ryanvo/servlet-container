@@ -62,7 +62,7 @@ public class HttpRequestRunnableTest {
         t2.start();
         sleep(1000);
 
-        assertThat(request.getType(), is("GET"));
+        assertThat(request.getMethod(), is("GET"));
         assertThat(request.getRequestURI().toString(), is("/search"));
     }
 
