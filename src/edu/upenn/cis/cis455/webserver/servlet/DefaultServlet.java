@@ -6,7 +6,8 @@ import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
-import edu.upenn.cis.cis455.webserver.engine.io.ChunkedWriter;
+import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedOutputStream;
+import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,7 +58,8 @@ public class DefaultServlet implements HttpServlet {
         String NOT_FOUND_MESSAGE = "<html><body><h1>404 File Not Found</h1></body></html>";
         File fileRequested = new File(rootDirectory + request.getRequestURI());
 
-        try (ChunkedWriter writer = response.getWriter()) {
+        try {
+            ChunkedWriter writer = new ChunkedWriter(new ChunkedOutputStream(response.getOutputStream()));
 
             if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
@@ -70,11 +72,10 @@ public class DefaultServlet implements HttpServlet {
                 response.setContentType("text/html");
                 response.addHeader("Transfer-Encoding", "chunked");
 
-                writer.println(response.getStatusAndHeader());
-                writer.flush();
+                writer.unchunkedPrintLn(response.getStatusAndHeader());
 
                 writer.write("<html><body>");
-                for(File file : fileRequested.listFiles()) {
+                for (File file : fileRequested.listFiles()) {
                     Path rootPath = Paths.get(rootDirectory);
                     Path fileAbsolutePath = Paths.get(file.getAbsolutePath());
                     Path relativePath = rootPath.relativize(fileAbsolutePath);
@@ -82,35 +83,31 @@ public class DefaultServlet implements HttpServlet {
                             relativePath.toString(), file.getName()));
                 }
                 writer.write("</html></body>");
-                writer.close();
+                writer.finish();
 
-                log.info(String.format("Directory Listing of %s Sent to Client", fileRequested
-                        .getName()));
+                log.info(String.format("Directory Listing of %s Sent to Client", fileRequested.getName()));
 
             } else if (fileRequested.canRead()) {
 
-                log.info(String.format("DefaultServlet Serving GET Request for %s", fileRequested
-                        .getName()));
+                log.info(String.format("DefaultServlet Serving GET Request for %s", fileRequested.getName()));
 
                 response.setVersion(HTTP_VERSION);
                 response.setStatusCode("200");
                 response.setErrorMessage("OK");
                 response.setContentType(probeContentType(fileRequested.getPath()));
-
                 int contentLength = Long.valueOf(fileRequested.length()).intValue();
                 response.setContentLength(contentLength);
 
-                writer.println(response.getStatusAndHeader());
-                writer.flush();
+                writer.unchunkedPrintLn(response.getStatusAndHeader());
 
                 /* Send file as binary to output stream */
-                InputStream is = new FileInputStream(fileRequested);
+                InputStream fileInputStream = new FileInputStream(fileRequested);
                 byte[] buf = new byte[contentLength];
-                while (is.read(buf, 0, buf.length) > 0) {
-                    writer.write(buf);
-                    writer.flush();
+                int bytesRead;
+                while ((bytesRead = fileInputStream.read(buf, 0, buf.length)) > 0) {
+                    writer.unchunkedWrite(buf, 0, bytesRead);
                 }
-
+                writer.flush();
 
                 log.info(String.format("%s Sent to Client", fileRequested.getName()));
 
@@ -124,21 +121,20 @@ public class DefaultServlet implements HttpServlet {
                 response.setContentType("text/html");
                 response.setContentLength(NOT_FOUND_MESSAGE.length());
 
-                writer.println(response.getStatusAndHeader());
-                writer.flush();
-
-                writer.println(NOT_FOUND_MESSAGE);
-                writer.flush();
+                writer.unchunkedPrintLn(response.getStatusAndHeader());
+                writer.unchunkedPrintLn(NOT_FOUND_MESSAGE);
 
                 log.info("Not Found Error Sent to Client" + request.getRequestURI());
             }
+        } catch (IOException e) {
+
 
             log.debug(response.getStatusAndHeader());
-
-        } catch (IOException e) {
-            log.error("Could Not Write GET Response to Socket", e);
+            //TODO error
 
         }
+
+
     }
 
     public void doHead(HttpRequest request, HttpResponse response) {

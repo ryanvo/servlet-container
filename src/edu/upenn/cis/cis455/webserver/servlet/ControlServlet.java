@@ -7,16 +7,12 @@ import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
-import edu.upenn.cis.cis455.webserver.engine.io.ChunkedWriter;
+import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedOutputStream;
+import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -80,22 +76,18 @@ public class ControlServlet implements HttpServlet {
 
     }
 
-
-
-
     public void doGet(HttpRequest request, HttpResponse response) {
+        log.info(getServletName() + " Serving Control Page Request");
 
+        try (ChunkedWriter writer = new ChunkedWriter(new ChunkedOutputStream(response.getOutputStream()))) {
 
-        try {
             response.setVersion(HTTP_VERSION);
             response.setStatusCode("200");
             response.setErrorMessage("OK");
             response.setContentType("text/html");
             response.addHeader("Transfer-Encoding", "chunked");
 
-            ChunkedWriter writer = response.getWriter();
-
-            writer.println(response.getStatusAndHeader());
+            writer.unchunkedPrintLn(response.getStatusAndHeader());
 
             writer.write("<html><body><h1>Control Panel</h1>");
             writer.write("<p><h2>Thread &nbsp; &nbsp; &nbsp; &nbsp;Running</h2></p>");
@@ -111,17 +103,12 @@ public class ControlServlet implements HttpServlet {
 
             writer.write("<p><a href=\"/shutdown/\">Shutdown</a></p></body></html>");
 
-            writer.close();
-
-            log.info(getServletName() + " Serving Control Page Request");
-
-            log.debug(response.getStatusAndHeader());
-
-
-            log.info("Wrote Control Page Response to Socket");
         } catch (IOException e) {
-            log.error(e);
+            log.debug(response.getStatusAndHeader());
+            //TODO http server error
         }
+
+        log.info("Wrote Control Page Response to Socket");
     }
 
     @Override

@@ -3,7 +3,6 @@ package edu.upenn.cis.cis455.webserver.connector;
 import edu.upenn.cis.cis455.webserver.engine.Container;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
-import edu.upenn.cis.cis455.webserver.engine.io.ChunkedOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -44,13 +43,15 @@ public class ConnectionRunnable implements Runnable {
                 HttpResponse response = new HttpResponse();
 
                 request.setInputStream(connection.getInputStream());
-                response.setOutputStream(new ChunkedOutputStream(connection.getOutputStream()));
+                response.setOutputStream(connection.getOutputStream());
 
                 requestProcessor.process(request);
                 responseProcessor.process(response);
 
                 manager.update(Thread.currentThread().getId(), request.getRequestURI());
                 container.dispatch(request, response);
+
+                response.getOutputStream().flush();
 
             } catch (IllegalStateException e) {
                 log.error("Invalid Request Ignored", e);

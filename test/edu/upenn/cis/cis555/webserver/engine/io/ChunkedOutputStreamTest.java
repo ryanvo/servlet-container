@@ -1,6 +1,6 @@
 package edu.upenn.cis.cis555.webserver.engine.io;
 
-import edu.upenn.cis.cis455.webserver.engine.io.ChunkedOutputStream;
+import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedOutputStream;
 import org.junit.Test;
 import org.mockito.InOrder;
 

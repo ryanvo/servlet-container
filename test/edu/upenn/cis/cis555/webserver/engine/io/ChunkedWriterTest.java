@@ -1,7 +1,7 @@
 package edu.upenn.cis.cis555.webserver.engine.io;
 
-import edu.upenn.cis.cis455.webserver.engine.io.ChunkedOutputStream;
-import edu.upenn.cis.cis455.webserver.engine.io.ChunkedWriter;
+import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedOutputStream;
+import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedWriter;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -15,7 +15,7 @@ import static org.hamcrest.core.Is.is;
 public class ChunkedWriterTest {
 
     @Test
-    public void shouldPrintStringWithChunkedEncoding() throws Exception {
+    public void shouldChunkEncodeWhenWriteIsInvoked() throws Exception {
 
         final String CRLF = "\r\n";
         final String str1 = "foobar";

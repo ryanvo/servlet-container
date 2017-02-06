@@ -32,7 +32,7 @@ public class ConnectionHandler {
     public void start(int port) throws IOException {
 
         ServerSocket socket = new ServerSocket(port);
-        socket.setSoTimeout(2000);
+        socket.setSoTimeout(1000);
 
         log.info(String.format("HTTP ConnectionHandler Started on Port %d", port));
 

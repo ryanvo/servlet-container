@@ -14,18 +14,7 @@ public class HttpRequest {
     private String uri;
     private String method;
     private BufferedReader reader;
-
-
     private InputStream in;
-
-    public HttpRequest reset() {
-
-        return this;
-    }
-
-//    public void setMethod(String method) {
-//        this.method = method;
-//    }
 
     public void setUri(String uri) {
         this.uri = uri;
@@ -48,6 +37,7 @@ public class HttpRequest {
         }
         return reader;
     }
+
     public InputStream getInputStream() {
         return in;
     }

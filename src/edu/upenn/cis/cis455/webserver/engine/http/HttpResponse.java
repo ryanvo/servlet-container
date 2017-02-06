@@ -1,9 +1,6 @@
 package edu.upenn.cis.cis455.webserver.engine.http;
 
 
-import edu.upenn.cis.cis455.webserver.engine.io.ChunkedOutputStream;
-import edu.upenn.cis.cis455.webserver.engine.io.ChunkedWriter;
-
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
@@ -17,11 +14,11 @@ public class HttpResponse {
     private String date;
     private String contentType;
     private int contentLength = -1;
-    private ChunkedOutputStream outputStream;
+    private OutputStream outputStream;
 
     private Map<String, String> headers = new HashMap<>();
 
-    private ChunkedWriter writer;
+    private PrintWriter writer;
 
     public HttpResponse() {
         date = getHttpDate();
@@ -32,7 +29,7 @@ public class HttpResponse {
         headers.put(name, value);
     }
 
-    public void setOutputStream(ChunkedOutputStream os) {
+    public void setOutputStream(OutputStream os) {
         outputStream = os;
     }
 
@@ -56,9 +53,9 @@ public class HttpResponse {
         this.contentLength = contentLength;
     }
 
-    public ChunkedWriter getWriter() {
+    public PrintWriter getWriter() {
         if (writer == null) {
-            writer = new ChunkedWriter(outputStream);
+            writer = new PrintWriter(outputStream);
 //            writer = new PrintWriter(outputStream);
         }
         return writer;
@@ -79,10 +76,10 @@ public class HttpResponse {
 
         if (contentLength > 0) {
             sb.append("Content-Length: ").append(contentLength).append('\n');
+            sb.append("Connection: close").append('\n');
+        } else {
+            sb.append("Connection: keep-alive").append('\n');
         }
-
-
-        sb.append("Connection: Keep-Alive").append('\n');
 
         for (Map.Entry<String, String> header : headers.entrySet()) {
             sb.append(header.getKey()).append(": ").append(header.getValue()).append('\n');

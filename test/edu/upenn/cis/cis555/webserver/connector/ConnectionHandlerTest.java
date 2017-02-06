@@ -2,12 +2,8 @@ package edu.upenn.cis.cis555.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.connector.*;
 import edu.upenn.cis.cis455.webserver.engine.Container;
-import edu.upenn.cis.cis555.webserver.HttpTestHelper;
-import org.apache.http.protocol.HTTP;
 import org.junit.Test;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
@@ -36,9 +32,9 @@ public class ConnectionHandlerTest {
         Runnable runConnectionHandler = () -> {
             try {
                 ConnectionHandler handler = new ConnectionHandler(mockConnectionManager,
-                                                                  mockContainer,
-                                                                  mockRequestProcessor,
-                                                                  mockResponseProcessor);
+                        mockContainer,
+                        mockRequestProcessor,
+                        mockResponseProcessor);
                 handler.start(port);
             } catch (Exception e) {
                 e.printStackTrace();
