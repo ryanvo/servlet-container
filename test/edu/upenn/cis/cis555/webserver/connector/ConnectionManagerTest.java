@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
@@ -42,7 +42,7 @@ public class ConnectionManagerTest {
     public void shouldUpdateTheCurrentUriOfTheThreadWhenUpdateInvoked() throws Exception {
 
             final long workerId = 12L;
-            final String uri = "/foo/bar";
+        final String uri = "/foo/bar";
 
             WorkerPool mockWorkerPool = mock(WorkerPool.class);
 

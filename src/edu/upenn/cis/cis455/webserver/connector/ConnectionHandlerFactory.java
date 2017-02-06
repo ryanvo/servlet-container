@@ -25,9 +25,8 @@ public class ConnectionHandlerFactory {
         container.getContext().setAttribute("ConnectionManager", manager);
 
         RequestProcessor requestProcessor = new HttpRequestProcessor();
-        ResponseProcessor responseProcessor = new HttpResponseProcessor();
 
-        return new ConnectionHandler(manager, container, requestProcessor, responseProcessor);
+        return new ConnectionHandler(manager, container, requestProcessor);
     }
 
 }

@@ -1,6 +1,9 @@
 package edu.upenn.cis.cis555.webserver.connector;
 
-import edu.upenn.cis.cis455.webserver.connector.*;
+import edu.upenn.cis.cis455.webserver.connector.ConnectionHandler;
+import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
+import edu.upenn.cis.cis455.webserver.connector.ConnectionRunnable;
+import edu.upenn.cis.cis455.webserver.connector.RequestProcessor;
 import edu.upenn.cis.cis455.webserver.engine.Container;
 import org.junit.Test;
 
@@ -21,7 +24,6 @@ public class ConnectionHandlerTest {
         final int port = 10542;
         final String host = "localhost";
 
-        ResponseProcessor mockResponseProcessor = mock(ResponseProcessor.class);
         RequestProcessor mockRequestProcessor = mock(RequestProcessor.class);
         Container mockContainer = mock(Container.class);
         ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
@@ -33,8 +35,7 @@ public class ConnectionHandlerTest {
             try {
                 ConnectionHandler handler = new ConnectionHandler(mockConnectionManager,
                         mockContainer,
-                        mockRequestProcessor,
-                        mockResponseProcessor);
+                        mockRequestProcessor);
                 handler.start(port);
             } catch (Exception e) {
                 e.printStackTrace();

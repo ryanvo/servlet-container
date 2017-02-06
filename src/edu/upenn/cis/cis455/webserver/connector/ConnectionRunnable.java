@@ -17,16 +17,13 @@ public class ConnectionRunnable implements Runnable {
     private Socket connection;
     private Container container;
     private RequestProcessor requestProcessor;
-    private ResponseProcessor responseProcessor;
 
     public ConnectionRunnable(Socket connection,
                               Container container,
-                              RequestProcessor requestProcessor,
-                              ResponseProcessor responseProcessor) {
+                              RequestProcessor requestProcessor) {
         this.connection = connection;
         this.container = container;
         this.requestProcessor = requestProcessor;
-        this.responseProcessor = responseProcessor;
     }
 
     /**
@@ -46,7 +43,6 @@ public class ConnectionRunnable implements Runnable {
                 response.setOutputStream(connection.getOutputStream());
 
                 requestProcessor.process(request);
-                responseProcessor.process(response);
 
                 manager.update(Thread.currentThread().getId(), request.getRequestURI());
                 container.dispatch(request, response);

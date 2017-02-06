@@ -17,16 +17,13 @@ public class ConnectionHandler {
     final private ConnectionManager connectionManager;
     final private Container container;
     private RequestProcessor requestProcessor;
-    private ResponseProcessor responseProcessor;
 
     public ConnectionHandler(ConnectionManager connectionManager,
                              Container container,
-                             RequestProcessor requestProcessor,
-                             ResponseProcessor responseProcessor) {
+                             RequestProcessor requestProcessor) {
         this.connectionManager = connectionManager;
         this.container = container;
         this.requestProcessor = requestProcessor;
-        this.responseProcessor = responseProcessor;
     }
 
     public void start(int port) throws IOException {
@@ -60,7 +57,7 @@ public class ConnectionHandler {
 
 
             try {
-                connectionManager.assign(new ConnectionRunnable(connection, container, requestProcessor, responseProcessor));
+                connectionManager.assign(new ConnectionRunnable(connection, container, requestProcessor));
             } catch (IllegalStateException e) {
                 log.info("connectionManager must be off");
                 break;
