@@ -11,19 +11,19 @@ import java.nio.charset.StandardCharsets;
 public class ChunkedPrintWriter extends Writer {
 
 
-    private OutputStream out;
+    private ChunkedOutputStream out;
 
-    public ChunkedPrintWriter(OutputStream out) {
+    public ChunkedPrintWriter(ChunkedOutputStream out) {
         this.out = out;
     }
 
 
     public void print(String s) throws IOException {
-        write(s);
+        out.print(s);
     }
 
     public void println(String s) throws IOException {
-        write(s + "\n");
+        out.println(s);
     }
 
     @Override

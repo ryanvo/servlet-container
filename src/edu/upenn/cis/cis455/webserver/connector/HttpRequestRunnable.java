@@ -34,14 +34,6 @@ public class HttpRequestRunnable implements Runnable {
     public void run() {
         ConnectionManager manager = (ConnectionManager) container.getContext().getAttribute("ConnectionManager");
 
-        //TODO do the request, the response, session if necessary
-        try {
-            connection.setSoTimeout(10000);
-            connection.setKeepAlive(true);
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
-
         while (connection.isConnected()) {
             try {
 
@@ -54,10 +46,6 @@ public class HttpRequestRunnable implements Runnable {
 
             } catch (IllegalStateException e) {
                 log.error("Invalid Request Ignored", e);
-            } catch (SocketTimeoutException e) {
-
-                log.info("Socket timeout, now closing...");
-                break;
             } catch (IOException e) {
                 log.error(e);
             } catch (URISyntaxException e) {
@@ -69,7 +57,6 @@ public class HttpRequestRunnable implements Runnable {
         }
 
         try {
-            log.error("GOT HERE GOT HERE ");
             connection.close();
             manager.update(Thread.currentThread().getId(), "waiting");
             log.info("Socket Closed");
@@ -99,10 +86,10 @@ public class HttpRequestRunnable implements Runnable {
 
     public HttpResponse createResponse(HttpResponse resp) throws IOException {
 
-//        resp.setOutputStream(new ChunkedOutputStream(connection.getOutputStream()));
+        resp.setOutputStream(new ChunkedOutputStream(connection.getOutputStream()));
 
-        resp.setOutputStream(connection.getOutputStream());
-//        resp.addHeader("Transfer-Encoding", "chunked");
+//        resp.setOutputStream(connection.getOutputStream());
+        resp.addHeader("Transfer-Encoding", "chunked");
 
         return resp;
 

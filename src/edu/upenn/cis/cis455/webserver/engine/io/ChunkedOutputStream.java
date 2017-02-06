@@ -36,6 +36,15 @@ public class ChunkedOutputStream extends OutputStream {
         out.write(CLRF);
     }
 
+    public void print(String s) throws IOException {
+        out.write(s.getBytes(), 0, s.length());
+    }
+
+    public void println(String s) throws IOException {
+        s = s + "\n";
+        out.write(s.getBytes(), 0, s.length());
+    }
+
     public void close() throws IOException {
         writeClosingChunk();
         out.flush();

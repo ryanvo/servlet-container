@@ -2,6 +2,7 @@ package edu.upenn.cis.cis455.webserver.engine.http;
 
 
 import edu.upenn.cis.cis455.webserver.engine.ServletContext;
+import edu.upenn.cis.cis455.webserver.engine.io.ChunkedOutputStream;
 import edu.upenn.cis.cis455.webserver.engine.io.ChunkedPrintWriter;
 
 import java.io.OutputStream;
@@ -17,11 +18,11 @@ public class HttpResponse {
     private String date;
     private String contentType;
     private int contentLength = -1;
-    private OutputStream outputStream;
+    private ChunkedOutputStream outputStream;
 
     private Map<String, String> headers = new HashMap<>();
 
-    private PrintWriter writer;
+    private ChunkedPrintWriter writer;
 
     public HttpResponse() {
         date = getHttpDate();
@@ -32,7 +33,7 @@ public class HttpResponse {
         headers.put(name, value);
     }
 
-    public void setOutputStream(OutputStream os) {
+    public void setOutputStream(ChunkedOutputStream os) {
         outputStream = os;
     }
 
@@ -56,10 +57,10 @@ public class HttpResponse {
         this.contentLength = contentLength;
     }
 
-    public PrintWriter getWriter() {
+    public ChunkedPrintWriter getWriter() {
         if (writer == null) {
-//            writer = new PrintWriter(new ChunkedPrintWriter(outputStream));
-            writer = new PrintWriter(outputStream);
+            writer = new ChunkedPrintWriter(outputStream);
+//            writer = new PrintWriter(outputStream);
         }
         return writer;
     }

@@ -6,6 +6,7 @@ import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
+import edu.upenn.cis.cis455.webserver.engine.io.ChunkedPrintWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,7 +57,7 @@ public class DefaultServlet implements HttpServlet {
         String NOT_FOUND_MESSAGE = "<html><body><h1>404 File Not Found</h1></body></html>";
         File fileRequested = new File(rootDirectory + request.getRequestURI());
 
-        try (PrintWriter writer = response.getWriter()) {
+        try (ChunkedPrintWriter writer = response.getWriter()) {
 
             if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
@@ -84,8 +85,7 @@ public class DefaultServlet implements HttpServlet {
                 response.setContentLength(fileDirectoryListingHtml.length());
 
                 writer.println(response.getStatusAndHeader());
-                writer.flush();
-                writer.print(fileDirectoryListingHtml.toString());
+                writer.write(fileDirectoryListingHtml.toString());
                 writer.flush();
 
                 log.info(String.format("Directory Listing of %s Sent to Client", fileRequested
@@ -132,7 +132,7 @@ public class DefaultServlet implements HttpServlet {
                 writer.println(response.getStatusAndHeader());
                 writer.flush();
 
-                writer.println(NOT_FOUND_MESSAGE);
+                writer.write(NOT_FOUND_MESSAGE);
                 writer.flush();
 
                 log.info("Not Found Error Sent to Client" + request.getRequestURI());

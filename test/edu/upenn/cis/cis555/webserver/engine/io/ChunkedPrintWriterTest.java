@@ -32,8 +32,8 @@ public class ChunkedPrintWriterTest {
         ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(streamData);
         ChunkedPrintWriter chunkedPrintWriter = new ChunkedPrintWriter(chunkedOutputStream);
 
-        chunkedPrintWriter.print(str1);
-        chunkedPrintWriter.print(str2);
+        chunkedPrintWriter.write(str1);
+        chunkedPrintWriter.write(str2);
         chunkedPrintWriter.flush();
 
         final String expectedStreamData = str1LenHex + CRLF + str1 + CRLF + str2LenHex + CRLF + str2 + CRLF;
@@ -56,8 +56,8 @@ public class ChunkedPrintWriterTest {
         ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(streamData);
         ChunkedPrintWriter chunkedPrintWriter = new ChunkedPrintWriter(chunkedOutputStream);
 
-        chunkedPrintWriter.println(str1);
-        chunkedPrintWriter.println(str2);
+        chunkedPrintWriter.write(str1);
+        chunkedPrintWriter.write(str2);
         chunkedPrintWriter.flush();
 
         final String expectedStreamData = str1LenHex + CRLF + str1 + '\n' + CRLF + str2LenHex + CRLF + str2 + '\n' + CRLF;
@@ -78,7 +78,7 @@ public class ChunkedPrintWriterTest {
         ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(streamData);
         ChunkedPrintWriter chunkedPrintWriter = new ChunkedPrintWriter(chunkedOutputStream);
 
-        chunkedPrintWriter.println(str2);
+        chunkedPrintWriter.write(str2);
         chunkedPrintWriter.flush();
         chunkedPrintWriter.close();
 
