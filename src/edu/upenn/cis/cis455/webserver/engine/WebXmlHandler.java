@@ -28,8 +28,6 @@ public class WebXmlHandler extends DefaultHandler {
     private Map<String, String> contextParams = new HashMap<>();
     private Map<String, String> servletNameByPattern = new HashMap<>();
 
-    //    private Map<String, Set<String>> servletPatternByName = new HashMap<>();
-
     private String webAppName;
     private String servletName;
     private String servletClass;
