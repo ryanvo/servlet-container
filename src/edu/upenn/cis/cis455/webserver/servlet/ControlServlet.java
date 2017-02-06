@@ -79,7 +79,7 @@ public class ControlServlet implements HttpServlet {
     public void doGet(HttpRequest request, HttpResponse response) {
         log.info(getServletName() + " Serving Control Page Request");
 
-        try (ChunkedWriter writer = new ChunkedWriter(new ChunkedOutputStream(response.getOutputStream()))) {
+        try (ChunkedWriter writer = new ChunkedWriter(response.getOutputStream())) {
 
             response.setVersion(HTTP_VERSION);
             response.setStatusCode("200");

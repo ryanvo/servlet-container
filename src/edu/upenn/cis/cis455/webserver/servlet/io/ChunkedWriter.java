@@ -1,6 +1,7 @@
 package edu.upenn.cis.cis455.webserver.servlet.io;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 
 /**
@@ -10,8 +11,8 @@ public class ChunkedWriter extends Writer {
 
     ChunkedOutputStream out;
 
-    public ChunkedWriter(ChunkedOutputStream out) {
-        this.out = out;
+    public ChunkedWriter(OutputStream out) {
+        this.out = new ChunkedOutputStream(out);
     }
 
     public void unchunkedPrint(String s) throws IOException {

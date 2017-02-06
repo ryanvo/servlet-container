@@ -59,7 +59,7 @@ public class DefaultServlet implements HttpServlet {
         File fileRequested = new File(rootDirectory + request.getRequestURI());
 
         try {
-            ChunkedWriter writer = new ChunkedWriter(new ChunkedOutputStream(response.getOutputStream()));
+            ChunkedWriter writer = new ChunkedWriter(response.getOutputStream());
 
             if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
