@@ -6,25 +6,28 @@ import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.io.ChunkedOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tools.ant.taskdefs.condition.Http;
 
 import java.io.*;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
 
-public class HttpRequestRunnable implements Runnable {
+public class ConnectionRunnable implements Runnable {
 
-    private static Logger log = LogManager.getLogger(HttpRequestRunnable.class);
+    private static Logger log = LogManager.getLogger(ConnectionRunnable.class);
 
     private Socket connection;
     private Container container;
+    private RequestProcessor requestProcessor;
+    private ResponseProcessor responseProcessor;
 
-    public HttpRequestRunnable(Socket connection, Container container) {
+    public ConnectionRunnable(Socket connection,
+                              Container container,
+                              RequestProcessor requestProcessor,
+                              ResponseProcessor responseProcessor) {
         this.connection = connection;
         this.container = container;
-
+        this.requestProcessor = requestProcessor;
+        this.responseProcessor = responseProcessor;
     }
 
     /**
@@ -37,11 +40,16 @@ public class HttpRequestRunnable implements Runnable {
 
             try {
 
-                HttpRequest request = createRequest(new HttpRequest());
-                HttpResponse response = createResponse(new HttpResponse());
+                HttpRequest request = new HttpRequest();
+                HttpResponse response = new HttpResponse();
+
+                request.setInputStream(connection.getInputStream());
+                response.setOutputStream(new ChunkedOutputStream(connection.getOutputStream()));
+
+                requestProcessor.process(request);
+                responseProcessor.process(response);
 
                 manager.update(Thread.currentThread().getId(), request.getRequestURI());
-
                 container.dispatch(request, response);
 
             } catch (IllegalStateException e) {
@@ -64,37 +72,6 @@ public class HttpRequestRunnable implements Runnable {
             log.error("Could Not Close Socket After Sending Response", e);
         }
     }
-
-    public HttpRequest createRequest(HttpRequest req) throws IOException, URISyntaxException {
-
-        req.setInputStream(connection.getInputStream());
-
-        BufferedReader in = req.getReader();
-
-        //TODO null check here
-        String line = in.readLine();
-        String[] statusLine = line.split(" ");
-        String method = statusLine[0];
-        req.setUri(statusLine[1]);
-
-        log.info("Parsed HTTP Request: " + line);
-
-        req.setMethod(method);
-        //TODO set session, parse query arguments, other req fields
-        return req;
-    }
-
-    public HttpResponse createResponse(HttpResponse resp) throws IOException {
-
-        resp.setOutputStream(new ChunkedOutputStream(connection.getOutputStream()));
-
-//        resp.setOutputStream(connection.getOutputStream());
-
-
-        return resp;
-
-    }
-
 }
 
 

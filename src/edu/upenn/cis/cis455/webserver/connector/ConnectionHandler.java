@@ -16,16 +16,23 @@ public class ConnectionHandler {
 
     final private ConnectionManager connectionManager;
     final private Container container;
+    private RequestProcessor requestProcessor;
+    private ResponseProcessor responseProcessor;
 
-    public ConnectionHandler(ConnectionManager connectionManager, Container container) {
+    public ConnectionHandler(ConnectionManager connectionManager,
+                             Container container,
+                             RequestProcessor requestProcessor,
+                             ResponseProcessor responseProcessor) {
         this.connectionManager = connectionManager;
         this.container = container;
+        this.requestProcessor = requestProcessor;
+        this.responseProcessor = responseProcessor;
     }
 
     public void start(int port) throws IOException {
 
         ServerSocket socket = new ServerSocket(port);
-        socket.setSoTimeout(1000);
+        socket.setSoTimeout(2000);
 
         log.info(String.format("HTTP ConnectionHandler Started on Port %d", port));
 
@@ -34,6 +41,7 @@ public class ConnectionHandler {
             Socket connection = null;
             try {
                 connection = socket.accept();
+                log.debug("Connection received");
             } catch (SocketTimeoutException e) {
 
                 if (connectionManager.isAcceptingConnections()) {
@@ -52,7 +60,7 @@ public class ConnectionHandler {
 
 
             try {
-                connectionManager.assign(new HttpRequestRunnable(connection, container));
+                connectionManager.assign(new ConnectionRunnable(connection, container, requestProcessor, responseProcessor));
             } catch (IllegalStateException e) {
                 log.info("connectionManager must be off");
                 break;

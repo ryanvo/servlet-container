@@ -24,7 +24,7 @@ public class ShutdownServlet implements HttpServlet {
     private final String HTTP_VERSION = "HTTP/1.1";
     private Map<String, String> initParams;
     private ServletContext context;
-    private String servletName;
+    public String servletName;
 
     private ConnectionManager manager;
 

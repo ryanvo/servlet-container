@@ -1,6 +1,6 @@
 package edu.upenn.cis.cis555.webserver.thread;
 
-import edu.upenn.cis.cis455.webserver.connector.HttpRequestRunnable;
+import edu.upenn.cis.cis455.webserver.connector.ConnectionRunnable;
 import edu.upenn.cis.cis455.webserver.thread.WorkQueue;
 import edu.upenn.cis.cis455.webserver.thread.WorkerPool;
 import edu.upenn.cis.cis455.webserver.thread.WorkerThread;
@@ -34,7 +34,7 @@ public class WorkerPoolTest {
         final int size = 12;
 
         WorkQueue mockWorkQueue = mock(WorkQueue.class);
-        HttpRequestRunnable mockRunnable = mock(HttpRequestRunnable.class);
+        ConnectionRunnable mockRunnable = mock(ConnectionRunnable.class);
         when(mockWorkQueue.take()).thenReturn(() -> {});
 
         WorkerPool workerPool = new WorkerPool(size, mockWorkQueue);
