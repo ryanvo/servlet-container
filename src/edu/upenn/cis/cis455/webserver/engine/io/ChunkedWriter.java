@@ -8,12 +8,12 @@ import java.nio.charset.StandardCharsets;
 /**
  * @author rtv
  */
-public class ChunkedPrintWriter extends Writer {
+public class ChunkedWriter extends Writer {
 
 
     private ChunkedOutputStream out;
 
-    public ChunkedPrintWriter(ChunkedOutputStream out) {
+    public ChunkedWriter(ChunkedOutputStream out) {
         this.out = out;
     }
 

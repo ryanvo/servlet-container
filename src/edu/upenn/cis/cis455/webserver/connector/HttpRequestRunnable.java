@@ -28,13 +28,13 @@ public class HttpRequestRunnable implements Runnable {
     }
 
     /**
-     * Tells http to handle the request and closes the socket once the request is served
+     * Origin for all servlet requests. All error handling occurs here.
      */
     @Override
     public void run() {
+
         ConnectionManager manager = (ConnectionManager) container.getContext().getAttribute("ConnectionManager");
 
-        while (connection.isConnected()) {
             try {
 
                 HttpRequest request = createRequest(new HttpRequest());
@@ -49,12 +49,12 @@ public class HttpRequestRunnable implements Runnable {
             } catch (IOException e) {
                 log.error(e);
             } catch (URISyntaxException e) {
+
+                //TODO http error code handling here
                 log.error("Could not parse uri from status line");
             }
 
             // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
-
-        }
 
         try {
             connection.close();
@@ -70,9 +70,9 @@ public class HttpRequestRunnable implements Runnable {
         req.setInputStream(connection.getInputStream());
 
         BufferedReader in = req.getReader();
+
+        //TODO null check here
         String line = in.readLine();
-
-
         String[] statusLine = line.split(" ");
         String method = statusLine[0];
         req.setUri(statusLine[1]);

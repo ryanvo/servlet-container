@@ -6,7 +6,7 @@ import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
-import edu.upenn.cis.cis455.webserver.engine.io.ChunkedPrintWriter;
+import edu.upenn.cis.cis455.webserver.engine.io.ChunkedWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -57,7 +57,7 @@ public class DefaultServlet implements HttpServlet {
         String NOT_FOUND_MESSAGE = "<html><body><h1>404 File Not Found</h1></body></html>";
         File fileRequested = new File(rootDirectory + request.getRequestURI());
 
-        try (ChunkedPrintWriter writer = response.getWriter()) {
+        try (ChunkedWriter writer = response.getWriter()) {
 
             if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
@@ -81,8 +81,6 @@ public class DefaultServlet implements HttpServlet {
                 }
 
                 fileDirectoryListingHtml.append("</html></body>");
-
-                response.setContentLength(fileDirectoryListingHtml.length());
 
                 writer.println(response.getStatusAndHeader());
                 writer.write(fileDirectoryListingHtml.toString());
@@ -254,10 +252,6 @@ public class DefaultServlet implements HttpServlet {
             return "application/octet-stream";
 
         }
-
-
-
-
 
     }
 

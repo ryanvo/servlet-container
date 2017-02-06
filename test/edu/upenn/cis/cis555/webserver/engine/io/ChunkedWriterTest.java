@@ -1,22 +1,18 @@
 package edu.upenn.cis.cis555.webserver.engine.io;
 
 import edu.upenn.cis.cis455.webserver.engine.io.ChunkedOutputStream;
-import edu.upenn.cis.cis455.webserver.engine.io.ChunkedPrintWriter;
+import edu.upenn.cis.cis455.webserver.engine.io.ChunkedWriter;
 import org.junit.Test;
-import org.mockito.InOrder;
-import sun.util.cldr.CLDRLocaleDataMetaInfo;
 
 import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.mockito.Mockito.*;
 
 /**
  * @author Ryan Vo
  */
-public class ChunkedPrintWriterTest {
+public class ChunkedWriterTest {
 
     @Test
     public void shouldPrintStringWithChunkedEncoding() throws Exception {
@@ -30,11 +26,11 @@ public class ChunkedPrintWriterTest {
         ByteArrayOutputStream streamData = new ByteArrayOutputStream();
 
         ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(streamData);
-        ChunkedPrintWriter chunkedPrintWriter = new ChunkedPrintWriter(chunkedOutputStream);
+        ChunkedWriter chunkedWriter = new ChunkedWriter(chunkedOutputStream);
 
-        chunkedPrintWriter.write(str1);
-        chunkedPrintWriter.write(str2);
-        chunkedPrintWriter.flush();
+        chunkedWriter.write(str1);
+        chunkedWriter.write(str2);
+        chunkedWriter.flush();
 
         final String expectedStreamData = str1LenHex + CRLF + str1 + CRLF + str2LenHex + CRLF + str2 + CRLF;
 
@@ -54,11 +50,11 @@ public class ChunkedPrintWriterTest {
         ByteArrayOutputStream streamData = new ByteArrayOutputStream();
 
         ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(streamData);
-        ChunkedPrintWriter chunkedPrintWriter = new ChunkedPrintWriter(chunkedOutputStream);
+        ChunkedWriter chunkedWriter = new ChunkedWriter(chunkedOutputStream);
 
-        chunkedPrintWriter.write(str1);
-        chunkedPrintWriter.write(str2);
-        chunkedPrintWriter.flush();
+        chunkedWriter.write(str1);
+        chunkedWriter.write(str2);
+        chunkedWriter.flush();
 
         final String expectedStreamData = str1LenHex + CRLF + str1 + '\n' + CRLF + str2LenHex + CRLF + str2 + '\n' + CRLF;
 
@@ -76,11 +72,11 @@ public class ChunkedPrintWriterTest {
         ByteArrayOutputStream streamData = new ByteArrayOutputStream();
 
         ChunkedOutputStream chunkedOutputStream = new ChunkedOutputStream(streamData);
-        ChunkedPrintWriter chunkedPrintWriter = new ChunkedPrintWriter(chunkedOutputStream);
+        ChunkedWriter chunkedWriter = new ChunkedWriter(chunkedOutputStream);
 
-        chunkedPrintWriter.write(str2);
-        chunkedPrintWriter.flush();
-        chunkedPrintWriter.close();
+        chunkedWriter.write(str2);
+        chunkedWriter.flush();
+        chunkedWriter.close();
 
         final String expectedStreamData = str2LenHex + CRLF + str2 + '\n' + CRLF + terminalChunk;
 

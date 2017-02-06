@@ -7,6 +7,7 @@ import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
+import edu.upenn.cis.cis455.webserver.engine.io.ChunkedWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -84,34 +85,41 @@ public class ControlServlet implements HttpServlet {
 
     public void doGet(HttpRequest request, HttpResponse response) {
 
-        StringBuilder html = new StringBuilder();
 
-        html.append("<html><body><h1>Control Panel</h1>")
-                .append("<p><h2>Thread &nbsp; &nbsp; &nbsp; &nbsp;Running</h2></p>");
+        try {
+            response.setVersion(HTTP_VERSION);
+            response.setStatusCode("200");
+            response.setErrorMessage("OK");
+            response.setContentType("text/html");
 
-        for (Map.Entry<Long, String> status : manager.getStatus().entrySet()) {
-            long tid = status.getKey();
-            html.append("<p>").append(tid).append("&nbsp; &nbsp; &nbsp; &nbsp &nbsp; &nbsp; " +
-                    "&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;").append(status.getValue());
+            ChunkedWriter writer = response.getWriter();
+
+            writer.println(response.getStatusAndHeader());
+
+
+            writer.write("<html><body><h1>Control Panel</h1>");
+            writer.write("<p><h2>Thread &nbsp; &nbsp; &nbsp; &nbsp;Running</h2></p>");
+
+            for (Map.Entry<Long, String> status : manager.getStatus().entrySet()) {
+                long threadId = status.getKey();
+                writer.write("<p>");
+                writer.write(String.valueOf(threadId));
+                writer.write("&nbsp; &nbsp; &nbsp; &nbsp &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" +
+                        " &nbsp; &nbsp;");
+                writer.write(status.getValue());
+            }
+
+            writer.write("<p><a href=\"/shutdown/\">Shutdown</a></p></body></html>");
+
+            log.info(getServletName() + " Serving Control Page Request");
+
+            log.debug(response.getStatusAndHeader());
+
+
+            log.info("Wrote Control Page Response to Socket");
+        } catch (IOException e) {
+            log.error(e);
         }
-
-        html.append("<p><a href=\"/shutdown/\">Shutdown</a></p></body></html>");
-
-        log.info(getServletName() + " Serving Control Page Request");
-        String controlPageHtml = html.toString();
-        response.setVersion(HTTP_VERSION);
-        response.setStatusCode("200");
-        response.setErrorMessage("OK");
-        response.setContentType("text/html");
-        response.setContentLength(controlPageHtml.length());
-
-        log.debug(response.getStatusAndHeader());
-
-        PrintWriter writer = new PrintWriter(response.getOutputStream(), true);
-        writer.println(response.getStatusAndHeader());
-        writer.println(controlPageHtml);
-
-        log.info("Wrote Control Page Response to Socket");
     }
 
     @Override
