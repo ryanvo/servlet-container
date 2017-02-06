@@ -53,11 +53,11 @@ public class HttpResponse {
         this.contentLength = contentLength;
     }
 
-    public PrintWriter getWriter() {
-        if (writer == null) {
-            writer = new PrintWriter()
-        }
-    }
+//    public PrintWriter getWriter() {
+//        if (writer == null) {
+//            writer = new PrintWriter()
+//        }
+//    }
 
     public OutputStream getOutputStream() {
         return outputStream;

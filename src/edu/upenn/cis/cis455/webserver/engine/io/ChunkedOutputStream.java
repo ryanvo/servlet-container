@@ -9,11 +9,9 @@ import java.io.OutputStream;
 public class ChunkedOutputStream extends OutputStream{
 
     private static final byte[] CLRF = new byte[] {'\r', '\n' };
-    private static final byte[] TERMINAL = new byte[] { 0 };
-
+    private static final byte[] TERMINAL = new byte[] { (byte) '0' };
 
     private boolean isOpen = true;
-
     private OutputStream out;
 
     public ChunkedOutputStream(OutputStream out) {
@@ -36,7 +34,6 @@ public class ChunkedOutputStream extends OutputStream{
         out.write(CLRF);
         out.write(data, offset, length);
         out.write(CLRF);
-
     }
 
     public void close() throws IOException {
@@ -48,12 +45,6 @@ public class ChunkedOutputStream extends OutputStream{
     public void flush() throws IOException {
         out.flush();
     }
-
-//    public void finish() throws IOException {
-//        writeClosingChunk();
-//        out.flush();
-//        isOpen = false;
-//    }
 
     public void writeClosingChunk() throws IOException {
         out.write(TERMINAL);
