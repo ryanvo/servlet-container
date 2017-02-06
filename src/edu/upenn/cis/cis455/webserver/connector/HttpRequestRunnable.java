@@ -89,7 +89,7 @@ public class HttpRequestRunnable implements Runnable {
         resp.setOutputStream(new ChunkedOutputStream(connection.getOutputStream()));
 
 //        resp.setOutputStream(connection.getOutputStream());
-        resp.addHeader("Transfer-Encoding", "chunked");
+
 
         return resp;
 

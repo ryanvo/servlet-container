@@ -26,9 +26,13 @@ public class ChunkedWriter extends Writer {
         out.println(s);
     }
 
+    public void write(byte[] b) throws IOException {
+        out.write(b);
+    }
+
     @Override
     public void write(String s) throws IOException {
-        out.write(s.getBytes());
+        out.write(s.getBytes(), 0, s.length());
         out.flush();
     }
 

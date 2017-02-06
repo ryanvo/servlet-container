@@ -91,11 +91,11 @@ public class ControlServlet implements HttpServlet {
             response.setStatusCode("200");
             response.setErrorMessage("OK");
             response.setContentType("text/html");
+            response.addHeader("Transfer-Encoding", "chunked");
 
             ChunkedWriter writer = response.getWriter();
 
             writer.println(response.getStatusAndHeader());
-
 
             writer.write("<html><body><h1>Control Panel</h1>");
             writer.write("<p><h2>Thread &nbsp; &nbsp; &nbsp; &nbsp;Running</h2></p>");
@@ -110,6 +110,8 @@ public class ControlServlet implements HttpServlet {
             }
 
             writer.write("<p><a href=\"/shutdown/\">Shutdown</a></p></body></html>");
+
+            writer.close();
 
             log.info(getServletName() + " Serving Control Page Request");
 

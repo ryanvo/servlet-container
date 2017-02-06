@@ -22,11 +22,11 @@ public class ChunkedOutputStream extends OutputStream {
 
     @Override
     public void write(int i) throws IOException {
-        write(new byte[] { (byte) i }, 0, 1);
+        out.write(new byte[] { (byte) i }, 0, 1);
     }
 
     public void write(byte[] data) throws IOException {
-        write(data, 0, data.length);
+        out.write(data, 0, data.length);
     }
 
 
@@ -37,6 +37,7 @@ public class ChunkedOutputStream extends OutputStream {
         out.write(data, offset, length);
         out.write(CLRF);
     }
+
 
     public void print(String s) throws IOException {
         out.write(s.getBytes(), 0, s.length());

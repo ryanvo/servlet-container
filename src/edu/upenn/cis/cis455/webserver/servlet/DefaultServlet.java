@@ -68,23 +68,21 @@ public class DefaultServlet implements HttpServlet {
                 response.setStatusCode("200");
                 response.setErrorMessage("OK");
                 response.setContentType("text/html");
+                response.addHeader("Transfer-Encoding", "chunked");
 
-                StringBuilder fileDirectoryListingHtml = new StringBuilder();
-                fileDirectoryListingHtml.append("<html><body>");
+                writer.println(response.getStatusAndHeader());
+                writer.flush();
 
+                writer.write("<html><body>");
                 for(File file : fileRequested.listFiles()) {
                     Path rootPath = Paths.get(rootDirectory);
                     Path fileAbsolutePath = Paths.get(file.getAbsolutePath());
                     Path relativePath = rootPath.relativize(fileAbsolutePath);
-                    fileDirectoryListingHtml.append(String.format("<p><a href=\"%s\">%s</a></p>",
+                    writer.write(String.format("<p><a href=\"%s\">%s</a></p>",
                             relativePath.toString(), file.getName()));
                 }
-
-                fileDirectoryListingHtml.append("</html></body>");
-
-                writer.println(response.getStatusAndHeader());
-                writer.write(fileDirectoryListingHtml.toString());
-                writer.flush();
+                writer.write("</html></body>");
+                writer.close();
 
                 log.info(String.format("Directory Listing of %s Sent to Client", fileRequested
                         .getName()));
@@ -98,20 +96,19 @@ public class DefaultServlet implements HttpServlet {
                 response.setStatusCode("200");
                 response.setErrorMessage("OK");
                 response.setContentType(probeContentType(fileRequested.getPath()));
+
                 int contentLength = Long.valueOf(fileRequested.length()).intValue();
                 response.setContentLength(contentLength);
+
                 writer.println(response.getStatusAndHeader());
                 writer.flush();
 
                 /* Send file as binary to output stream */
                 InputStream is = new FileInputStream(fileRequested);
                 byte[] buf = new byte[contentLength];
-                int bytesRead;
-                while ((bytesRead = is.read(buf, 0, buf.length)) > 0) {
-                    response.getOutputStream().write(buf, 0, bytesRead);
-                    response.getOutputStream().flush();
-
-//                    writer.write(new String(buf), 0, bytesRead);
+                while (is.read(buf, 0, buf.length) > 0) {
+                    writer.write(buf);
+                    writer.flush();
                 }
 
 
@@ -130,7 +127,7 @@ public class DefaultServlet implements HttpServlet {
                 writer.println(response.getStatusAndHeader());
                 writer.flush();
 
-                writer.write(NOT_FOUND_MESSAGE);
+                writer.println(NOT_FOUND_MESSAGE);
                 writer.flush();
 
                 log.info("Not Found Error Sent to Client" + request.getRequestURI());
