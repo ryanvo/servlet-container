@@ -4,3 +4,6 @@ bin/*
 out/*
 www/*
 .idea/*
+.idea/
+out/
+test/resources/log.log

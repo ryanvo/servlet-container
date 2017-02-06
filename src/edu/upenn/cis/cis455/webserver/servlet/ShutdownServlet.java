@@ -7,6 +7,7 @@ import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
+import edu.upenn.cis.cis455.webserver.engine.io.ChunkedWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -67,11 +68,12 @@ public class ShutdownServlet implements HttpServlet {
         response.setContentType("text/html");
         response.setContentLength(SHUTDOWN_MESSAGE.length());
 
-
-        try (PrintWriter writer = new PrintWriter(response.getOutputStream(), true)) {
+        try (ChunkedWriter writer = response.getWriter()) {
             log.debug(response.getStatusAndHeader());
             writer.println(response.getStatusAndHeader());
             writer.println(SHUTDOWN_MESSAGE);
+        } catch (IOException e) {
+            //TODO
         }
     }
 
