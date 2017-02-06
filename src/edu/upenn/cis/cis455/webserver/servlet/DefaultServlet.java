@@ -56,7 +56,7 @@ public class DefaultServlet implements HttpServlet {
         String NOT_FOUND_MESSAGE = "<html><body><h1>404 File Not Found</h1></body></html>";
         File fileRequested = new File(rootDirectory + request.getRequestURI());
 
-        try (PrintWriter writer = new PrintWriter(response.getOutputStream())) {
+        try (PrintWriter writer = response.getWriter()) {
 
             if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
@@ -112,6 +112,8 @@ public class DefaultServlet implements HttpServlet {
                 while ((bytesRead = is.read(buf, 0, buf.length)) > 0) {
                     response.getOutputStream().write(buf, 0, bytesRead);
                     response.getOutputStream().flush();
+
+//                    writer.write(new String(buf), 0, bytesRead);
                 }
 
 

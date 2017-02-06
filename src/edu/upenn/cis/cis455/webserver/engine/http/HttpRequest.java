@@ -3,12 +3,20 @@ package edu.upenn.cis.cis455.webserver.engine.http;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 public class HttpRequest {
 
     private static Logger log = LogManager.getLogger(HttpRequest.class);
 
     private String uri;
     private String method;
+    private BufferedReader reader;
+
+
+    private InputStream in;
 
     public HttpRequest reset() {
 
@@ -32,6 +40,20 @@ public class HttpRequest {
      */
     public String getMethod() {
         return method;
+    }
+
+    public BufferedReader getReader() {
+        if (reader == null) {
+            reader = new BufferedReader(new InputStreamReader(in));
+        }
+        return reader;
+    }
+    public InputStream getInputStream() {
+        return in;
+    }
+
+    public void setInputStream(InputStream in) {
+        this.in = in;
     }
 
 //    @Override

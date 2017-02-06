@@ -1,12 +1,13 @@
 package edu.upenn.cis.cis455.webserver.engine.http;
 
 
+import edu.upenn.cis.cis455.webserver.engine.ServletContext;
+import edu.upenn.cis.cis455.webserver.engine.io.ChunkedPrintWriter;
+
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 
 public class HttpResponse {
 
@@ -17,17 +18,19 @@ public class HttpResponse {
     private String contentType;
     private int contentLength = -1;
     private OutputStream outputStream;
+
+    private Map<String, String> headers = new HashMap<>();
+
     private PrintWriter writer;
 
     public HttpResponse() {
         date = getHttpDate();
     }
 
-    public HttpResponse reset() {
 
-        return this;
+    public void addHeader(String name, String value) {
+        headers.put(name, value);
     }
-
 
     public void setOutputStream(OutputStream os) {
         outputStream = os;
@@ -53,11 +56,13 @@ public class HttpResponse {
         this.contentLength = contentLength;
     }
 
-//    public PrintWriter getWriter() {
-//        if (writer == null) {
-//            writer = new PrintWriter()
-//        }
-//    }
+    public PrintWriter getWriter() {
+        if (writer == null) {
+//            writer = new PrintWriter(new ChunkedPrintWriter(outputStream));
+            writer = new PrintWriter(outputStream);
+        }
+        return writer;
+    }
 
     public OutputStream getOutputStream() {
         return outputStream;
@@ -78,6 +83,11 @@ public class HttpResponse {
 
 
         sb.append("Connection: Keep-Alive").append('\n');
+
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            sb.append(header.getKey()).append(": ").append(header.getValue()).append('\n');
+        }
+
         return sb.toString();
     }
 

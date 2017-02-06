@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.net.SocketTimeoutException;
 
 public class ConnectionHandler {
 
@@ -23,13 +24,18 @@ public class ConnectionHandler {
         ServerSocket socket = new ServerSocket(port);
         log.info(String.format("HTTP ConnectionHandler Started on Port %d", port));
 
-        requestProcessor.setServerSocket(socket); // ServerSocket needs to be stored in ServletContext for shutdown
+        socket.setSoTimeout(200);
 
         while (requestProcessor.isAcceptingConnections()) {
 
             Socket connection = null;
             try {
                 connection = socket.accept();
+
+            } catch (SocketTimeoutException e) {
+
+                log.error("FOR REAL");
+
             } catch (SocketException e) {
                 log.info("ServerSocket Closed Due To Shutdown Request");
             } catch (IOException e) {

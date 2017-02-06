@@ -6,7 +6,7 @@ import java.io.OutputStream;
 /**
  * @author rtv
  */
-public class ChunkedOutputStream extends OutputStream{
+public class ChunkedOutputStream extends OutputStream {
 
     private static final byte[] CLRF = new byte[] {'\r', '\n' };
     private static final byte[] TERMINAL = new byte[] { (byte) '0' };

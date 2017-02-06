@@ -3,12 +3,15 @@ package edu.upenn.cis.cis455.webserver.connector;
 import edu.upenn.cis.cis455.webserver.engine.Container;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
+import edu.upenn.cis.cis455.webserver.engine.io.ChunkedOutputStream;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.tools.ant.taskdefs.condition.Http;
 
 import java.io.*;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.net.URISyntaxException;
 
 public class HttpRequestRunnable implements Runnable {
@@ -33,24 +36,40 @@ public class HttpRequestRunnable implements Runnable {
 
         //TODO do the request, the response, session if necessary
         try {
-
-            HttpRequest request = createRequest(new HttpRequest());
-            HttpResponse response = createResponse(new HttpResponse());
-            manager.update(Thread.currentThread().getId(), request.getRequestURI());
-
-            container.dispatch(request, response);
-
-        } catch (IllegalStateException e) {
-            log.error("Invalid Request Ignored", e);
-        } catch (IOException e) {
-            log.error(e);
-        } catch (URISyntaxException e) {
-            log.error("Could not parse uri from status line");
+            connection.setSoTimeout(10000);
+            connection.setKeepAlive(true);
+        } catch (SocketException e) {
+            e.printStackTrace();
         }
 
-        // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
+        while (connection.isConnected()) {
+            try {
+
+                HttpRequest request = createRequest(new HttpRequest());
+                HttpResponse response = createResponse(new HttpResponse());
+
+                manager.update(Thread.currentThread().getId(), request.getRequestURI());
+
+                container.dispatch(request, response);
+
+            } catch (IllegalStateException e) {
+                log.error("Invalid Request Ignored", e);
+            } catch (SocketTimeoutException e) {
+
+                log.info("Socket timeout, now closing...");
+                break;
+            } catch (IOException e) {
+                log.error(e);
+            } catch (URISyntaxException e) {
+                log.error("Could not parse uri from status line");
+            }
+
+            // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
+
+        }
 
         try {
+            log.error("GOT HERE GOT HERE ");
             connection.close();
             manager.update(Thread.currentThread().getId(), "waiting");
             log.info("Socket Closed");
@@ -61,7 +80,9 @@ public class HttpRequestRunnable implements Runnable {
 
     public HttpRequest createRequest(HttpRequest req) throws IOException, URISyntaxException {
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        req.setInputStream(connection.getInputStream());
+
+        BufferedReader in = req.getReader();
         String line = in.readLine();
 
 
@@ -78,7 +99,10 @@ public class HttpRequestRunnable implements Runnable {
 
     public HttpResponse createResponse(HttpResponse resp) throws IOException {
 
+//        resp.setOutputStream(new ChunkedOutputStream(connection.getOutputStream()));
+
         resp.setOutputStream(connection.getOutputStream());
+//        resp.addHeader("Transfer-Encoding", "chunked");
 
         return resp;
 

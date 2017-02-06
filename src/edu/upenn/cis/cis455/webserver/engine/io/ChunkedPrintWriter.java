@@ -1,6 +1,7 @@
 package edu.upenn.cis.cis455.webserver.engine.io;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
@@ -10,9 +11,9 @@ import java.nio.charset.StandardCharsets;
 public class ChunkedPrintWriter extends Writer {
 
 
-    private ChunkedOutputStream out;
+    private OutputStream out;
 
-    public ChunkedPrintWriter(ChunkedOutputStream out) {
+    public ChunkedPrintWriter(OutputStream out) {
         this.out = out;
     }
 

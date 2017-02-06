@@ -24,6 +24,9 @@ public class WorkerThread extends Thread {
                 pool.take().run();
             } catch (InterruptedException e) {
                 break;
+            } catch (NullPointerException e) {
+                log.error(e);
+                continue;
             }
         }
         log.info("Thread Stopped");
