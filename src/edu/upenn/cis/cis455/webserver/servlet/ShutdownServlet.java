@@ -59,18 +59,6 @@ public class ShutdownServlet implements HttpServlet {
 
         log.info(getServletName() + " Serving Shutdown Request");
 
-        try {
-            ServerSocket serverSocket = (ServerSocket) context.getAttribute("ServerSocket");
-            if (serverSocket == null) {
-                log.error("PROBLEMPROBLEM");
-            }
-            serverSocket.close();
-
-        } catch (IOException e) {
-            log.error("Could not close ServerSocket.");
-        }
-
-        log.info("ServerSocket Closed");
         manager.shutdown();
 
         response.setVersion(HTTP_VERSION);
