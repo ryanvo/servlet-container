@@ -26,6 +26,7 @@ public class ConnectionHandlerTest {
         final String path = "/";
 
         RequestProcessor mockRequestProcessor = mock(RequestProcessor.class);
+        when(mockRequestProcessor.isAcceptingConnections()).thenReturn(true);
 
         Runnable r1 = () -> {
             try {
@@ -45,22 +46,5 @@ public class ConnectionHandlerTest {
 
         verify(mockRequestProcessor).process(isA(Socket.class));
     }
-
-    @Test
-    public void shouldSetTheServerSocketInRequestProcessor() throws Exception {
-
-        final int port = 8301;
-
-        RequestProcessor mockRequestProcessor = mock(RequestProcessor.class);
-
-        ConnectionHandler connectionHandler = new ConnectionHandler(mockRequestProcessor);
-
-        connectionHandler.start(port);
-
-        verify(mockRequestProcessor).setServerSocket(isA(ServerSocket.class));
-
-
-    }
-
 
 }
