@@ -9,12 +9,7 @@ import java.io.IOException;
  * @author rtv
  */
 public interface Container {
-//    void launchServlets() throws IOException, ParseException, InstantiationException;
 
     void dispatch(HttpRequest req, HttpResponse resp) throws IOException;
 
-
-//    void shutdown();
-
-    ServletContext getContext();
 }

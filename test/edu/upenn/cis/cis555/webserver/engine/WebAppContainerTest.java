@@ -19,17 +19,17 @@ public class WebAppContainerTest {
     public void shouldCallDoGetWithGetRequest() throws Exception {
 
         HttpServlet mockServlet = mock(HttpServlet.class);
-        ServletManager mockServletManager = mock(ServletManager.class);
+        WebAppManager mockWebAppManager = mock(WebAppManager.class);
         HttpResponse mockResponse = mock(HttpResponse.class);
         HttpRequest mockRequest = mock(HttpRequest.class);
-        when(mockServletManager.match("/test")).thenReturn(mockServlet);
+        when(mockWebAppManager.match("/test")).thenReturn(mockServlet);
         when(mockRequest.getMethod()).thenReturn("GET");
         when(mockRequest.getRequestURI()).thenReturn("/test");
 
-        WebAppContainer webAppContainer = new WebAppContainer(mockServletManager);
+        WebAppContainer webAppContainer = new WebAppContainer(mockWebAppManager);
         webAppContainer.dispatch(mockRequest, mockResponse);
 
-        verify(mockServletManager).match("/test");
+        verify(mockWebAppManager).match("/test");
         verify(mockServlet).doGet(mockRequest, mockResponse);
 
     }
@@ -38,10 +38,10 @@ public class WebAppContainerTest {
     public void shouldReturnContextProvidedByServletManager() throws Exception {
 
         ServletContext mockServletContext = mock(ServletContext.class);
-        ServletManager mockServletManager = mock(ServletManager.class);
-        when(mockServletManager.getContext()).thenReturn(mockServletContext);
+        WebAppManager mockWebAppManager = mock(WebAppManager.class);
+        when(mockWebAppManager.getContext()).thenReturn(mockServletContext);
 
-        WebAppContainer webAppContainer = new WebAppContainer(mockServletManager);
+        WebAppContainer webAppContainer = new WebAppContainer(mockWebAppManager);
         ServletContext contextInContainer = webAppContainer.getContext();
 
         assertThat(contextInContainer, is(mockServletContext));

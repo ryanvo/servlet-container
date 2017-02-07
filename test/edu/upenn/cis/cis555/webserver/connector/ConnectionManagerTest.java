@@ -82,7 +82,7 @@ public class ConnectionManagerTest {
         ConnectionManager connectionManager = new ConnectionManager(mockWorkerPool);
         connectionManager.shutdown();
 
-        assertThat(connectionManager.isAcceptingConnections(), is(false));
+        assertThat(connectionManager.isRunning(), is(false));
         connectionManager.assign(mockRunnable);
     }
 

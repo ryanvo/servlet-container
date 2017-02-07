@@ -17,17 +17,17 @@ public class WebAppContainer implements Container {
     private static Logger log = LogManager.getLogger(WebAppContainer.class);
 
     private ServletContext context;
-    private ServletManager servletManager;
+    private WebAppManager webAppManager;
 
-    public WebAppContainer(ServletManager servletManager) {
-        this.servletManager = servletManager;
-        this.context = servletManager.getContext();
+    public WebAppContainer(WebAppManager webAppManager) {
+        this.webAppManager = webAppManager;
+        this.context = webAppManager.getContext();
     }
 
 
     public void start() throws IOException, InstantiationException {
 
-        servletManager.launchServlets();
+        webAppManager.launchServlets();
 
     }
 
@@ -35,7 +35,7 @@ public class WebAppContainer implements Container {
     @Override
     public void dispatch(HttpRequest req, HttpResponse resp) throws IOException {
 
-        HttpServlet servlet = servletManager.match(req.getRequestURI());
+        HttpServlet servlet = webAppManager.match(req.getRequestURI());
 
         switch (req.getMethod().toUpperCase()) {
             case "GET":
@@ -53,7 +53,6 @@ public class WebAppContainer implements Container {
 
     }
 
-    @Override
     public ServletContext getContext() {
         return context;
     }

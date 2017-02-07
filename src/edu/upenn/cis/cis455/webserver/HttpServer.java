@@ -2,7 +2,7 @@ package edu.upenn.cis.cis455.webserver;
 
 
 import edu.upenn.cis.cis455.webserver.connector.ConnectionHandler;
-import edu.upenn.cis.cis455.webserver.connector.ConnectionHandlerFactory;
+import edu.upenn.cis.cis455.webserver.connector.HttpRequestListenerFactory;
 import edu.upenn.cis.cis455.webserver.engine.WebAppContainer;
 import edu.upenn.cis.cis455.webserver.engine.WebAppContainerFactory;
 import edu.upenn.cis.cis455.webserver.engine.WebXmlHandler;
@@ -40,12 +40,12 @@ public class HttpServer {
             e.printStackTrace();
         }
 
-        /* Create WebAppContainer and composite ServletManager */
+        /* Create WebAppContainer and composite WebAppManager */
         WebAppContainer container = WebAppContainerFactory.create(rootDirectory, webXml);
         log.info("WebAppContainer started: webXmlPath:" + webXmlPath + " rootDirectory:" + rootDirectory);
 
         /* Create ConnectionHandler for listening on port */
-        ConnectionHandler connectionHandler = ConnectionHandlerFactory.create(container, POOL_SIZE, WORK_QUEUE_SIZE);
+        ConnectionHandler connectionHandler = HttpRequestListenerFactory.create(container, POOL_SIZE, WORK_QUEUE_SIZE);
         log.info(String.format("Factory Created ConnectionHandler with %d threads, request queue of %d", POOL_SIZE,
                 WORK_QUEUE_SIZE));
 

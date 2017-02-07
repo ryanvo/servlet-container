@@ -18,9 +18,9 @@ public class WebAppContainerFactory {
                 .setContextParams(webXml.getContextParams())
                 .build();
 
-        /* Create WebAppContainer and composite ServletManager */
-        ServletManager servletManager = new ServletManager(webXml, context);
-        return new WebAppContainer(servletManager);
+        /* Create WebAppContainer and composite WebAppManager */
+        WebAppManager webAppManager = new WebAppManager(webXml, context);
+        return new WebAppContainer(webAppManager);
 
     }
 

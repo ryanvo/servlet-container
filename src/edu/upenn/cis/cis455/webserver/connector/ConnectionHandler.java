@@ -1,75 +1,72 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.engine.Container;
+import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
+import edu.upenn.cis.cis455.webserver.exception.BadRequestException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.SocketTimeoutException;
 
-public class ConnectionHandler {
+public class ConnectionHandler implements Runnable {
 
     private static Logger log = LogManager.getLogger(ConnectionHandler.class);
 
-    final private ConnectionManager connectionManager;
-    final private Container container;
+    private Socket connection;
+    private Container container;
     private RequestProcessor requestProcessor;
 
-    public ConnectionHandler(ConnectionManager connectionManager,
+    public ConnectionHandler(Socket connection,
                              Container container,
                              RequestProcessor requestProcessor) {
-        this.connectionManager = connectionManager;
+        this.connection = connection;
         this.container = container;
         this.requestProcessor = requestProcessor;
     }
 
-    public void start(int port) throws IOException {
+    /**
+     * Origin for all servlet requests. All error handling occurs here.
+     */
+    @Override
+    public void run() {
 
-        ServerSocket socket = new ServerSocket(port);
-        socket.setSoTimeout(1000);
-
-        log.info(String.format("HTTP ConnectionHandler Started on Port %d", port));
-
-        while (connectionManager.isAcceptingConnections()) {
-
-            Socket connection = null;
-            try {
-                connection = socket.accept();
-                log.debug("Connection received");
-            } catch (SocketTimeoutException e) {
-
-                if (connectionManager.isAcceptingConnections()) {
-                    continue;
-                } else {
-                    log.info("Shutdown signal received");
-                    break;
-                }
-
-            } catch (SocketException e) {
-                log.info("ServerSocket Closed Due To Shutdown Request");
-            } catch (IOException e) {
-                log.error("Unable to Open Socket");
-                continue;
-            }
-
-
-            try {
-                connectionManager.assign(new ConnectionRunnable(connection, container, requestProcessor));
-            } catch (IllegalStateException e) {
-                log.info("connectionManager must be off");
-                break;
-            }
-        }
+        ConnectionManager manager = (ConnectionManager) container.getContext().getAttribute("ConnectionManager");
+        HttpRequest request = new HttpRequest();
+        HttpResponse response = new HttpResponse();
 
         try {
-            socket.close();
+            request.setInputStream(connection.getInputStream());
+            response.setOutputStream(connection.getOutputStream());
+            response.addHeader("Server", "ryanvo-server/1.00");
+
+
+            requestProcessor.process(request);
+
+            manager.update(Thread.currentThread().getId(), request.getRequestURI());
+            container.dispatch(request, response);
+
         } catch (IOException e) {
-            log.error("Failed to close ServerSocket");
+            response.sendError(500, "Server IO Error");
+            log.debug("400 Bad Request sent ot client");
+        } catch (BadRequestException e) {
+            response.sendError(400, "Bad Request");
+            log.debug("400 Bad Request sent ot client");
         }
 
+        // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
+
+        try {
+            connection.close();
+            manager.update(Thread.currentThread().getId(), "waiting");
+            log.info("Socket Closed");
+        } catch (IOException e) {
+            log.error("Could Not Close Socket After Sending Response", e);
+        }
     }
 
+
 }
+
+

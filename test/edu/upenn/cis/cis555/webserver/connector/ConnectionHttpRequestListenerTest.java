@@ -2,7 +2,6 @@ package edu.upenn.cis.cis555.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.connector.ConnectionHandler;
 import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
-import edu.upenn.cis.cis455.webserver.connector.ConnectionRunnable;
 import edu.upenn.cis.cis455.webserver.connector.RequestProcessor;
 import edu.upenn.cis.cis455.webserver.engine.Container;
 import org.junit.Test;
@@ -16,7 +15,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Ryan Vo
  */
-public class ConnectionHandlerTest {
+public class ConnectionHttpRequestListenerTest {
 
     @Test
     public void shouldAcceptConnectionFromSocketAndPassSocketToRequestProcessor() throws Exception {
@@ -28,8 +27,8 @@ public class ConnectionHandlerTest {
         Container mockContainer = mock(Container.class);
         ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
 
-        when(mockConnectionManager.isAcceptingConnections()).thenReturn(true);
-        doThrow(IllegalStateException.class).when(mockConnectionManager).assign(any(ConnectionRunnable.class));
+        when(mockConnectionManager.isRunning()).thenReturn(true);
+        doThrow(IllegalStateException.class).when(mockConnectionManager).assign(any(ConnectionHandler.class));
 
         Runnable runConnectionHandler = () -> {
             try {
@@ -52,7 +51,7 @@ public class ConnectionHandlerTest {
             out.close();
         }
 
-        verify(mockConnectionManager, timeout(5000)).assign(isA(ConnectionRunnable.class));
+        verify(mockConnectionManager, timeout(5000)).assign(isA(ConnectionHandler.class));
     }
 
 }

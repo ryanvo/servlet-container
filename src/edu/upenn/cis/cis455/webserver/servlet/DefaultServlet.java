@@ -191,7 +191,7 @@ public class DefaultServlet implements HttpServlet {
                 log.info(String.format("DefaultServlet Serving HEAD Request for %s", fileRequested
                         .getName()));
 
-                LocalDateTime time = LocalDateTime.ofInstant(Instant.ofEpochMilli(fileRequested.lastModified()), ZoneId.of("GMT"));
+                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochMilli(fileRequested.lastModified()), ZoneId.of("GMT"));
                 String lastModifiedTime = time.format(dateFormat);
                 response.addHeader("Last-Modified", lastModifiedTime);
 

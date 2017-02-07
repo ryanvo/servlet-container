@@ -10,12 +10,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * Manages the HTTP requests delegated to HttpRequestProcessor. Maintains the status of each connector
  * and can issue a stop of the entire connector pool. Used for the Control Page
  */
-public class ConnectionManager {
+public class ConnectionManager implements ThreadManager {
 
     private final Map<Long, String> idToUri;
     private final WorkerPool workerPool;
 
-    private boolean isAcceptingConnections = true;
+    private boolean isRunning = true;
 
     public ConnectionManager(WorkerPool workerPool) {
         idToUri = new ConcurrentHashMap<>();
@@ -26,7 +26,7 @@ public class ConnectionManager {
     }
 
     public void assign(Runnable request) throws IllegalStateException {
-        if (!isAcceptingConnections) {
+        if (!isRunning) {
             throw new IllegalStateException();
         }
         workerPool.offer(request);
@@ -45,7 +45,7 @@ public class ConnectionManager {
      * Tells executor service to stop all threads
      */
     public void shutdown() {
-        isAcceptingConnections = false;
+        isRunning = false;
         workerPool.kill();
     }
 
@@ -59,8 +59,8 @@ public class ConnectionManager {
         return status;
     }
 
-    public boolean isAcceptingConnections() {
-        return isAcceptingConnections;
+    public boolean isRunning() {
+        return isRunning;
     }
 
 }

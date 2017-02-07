@@ -9,11 +9,11 @@ import org.apache.logging.log4j.Logger;
 /**
  * Assembles the components of the multithreaded server
  */
-public class ConnectionHandlerFactory {
+public class HttpRequestListenerFactory {
 
-    private static Logger log = LogManager.getLogger(ConnectionHandlerFactory.class);
+    private static Logger log = LogManager.getLogger(HttpRequestListenerFactory.class);
 
-    public static ConnectionHandler create(Container container,
+    public static HttpRequestListener create(Container container,
                                            int poolSize,
                                            int workQueueSize) {
 
@@ -26,7 +26,7 @@ public class ConnectionHandlerFactory {
 
         RequestProcessor requestProcessor = new HttpRequestProcessor();
 
-        return new ConnectionHandler(manager, container, requestProcessor);
+        return new HttpRequestListener(manager, container, requestProcessor);
     }
 
 }

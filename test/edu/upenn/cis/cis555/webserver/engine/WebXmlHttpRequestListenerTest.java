@@ -12,7 +12,7 @@ import static org.hamcrest.Matchers.*;
 /**
  * @author rtv
  */
-public class WebXmlHandlerTest {
+public class WebXmlHttpRequestListenerTest {
 
     @Test
     public void shouldParseWebAppName() throws Exception {
@@ -53,8 +53,8 @@ public class WebXmlHandlerTest {
 
         webXml.parse();
 
-        assertThat(webXml.getClassByServletName("redteam"), is("edu.upenn.cis.cis555.webserver.WebXmlHandlerTest"));
-        assertThat(webXml.getClassByServletName("blueteam"), is("webserver.WebXmlHandlerTest"));
+        assertThat(webXml.getClassByServletName("redteam"), is("edu.upenn.cis.cis555.webserver.WebXmlHttpRequestListenerTest"));
+        assertThat(webXml.getClassByServletName("blueteam"), is("webserver.WebXmlHttpRequestListenerTest"));
 
     }
 
