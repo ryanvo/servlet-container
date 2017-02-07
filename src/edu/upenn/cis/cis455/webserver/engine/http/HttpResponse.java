@@ -29,6 +29,10 @@ public class HttpResponse {
         headers.put(name, value);
     }
 
+    public boolean containsHeader(String name) {
+        return headers.containsKey(name);
+    }
+
     public void setOutputStream(OutputStream os) {
         outputStream = os;
     }
@@ -56,7 +60,6 @@ public class HttpResponse {
     public PrintWriter getWriter() {
         if (writer == null) {
             writer = new PrintWriter(outputStream);
-//            writer = new PrintWriter(outputStream);
         }
         return writer;
     }
@@ -92,6 +95,16 @@ public class HttpResponse {
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
         dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         return dateFormat.format(Calendar.getInstance().getTime());
+    }
+
+
+    public void sendError(int code, String msg) {
+
+        String statusLn = String.format("HTTP/1.1 %d %s", code, msg);
+        getWriter().println(statusLn);
+        getWriter().println();
+        getWriter().flush();
+
     }
 
 }

@@ -3,6 +3,7 @@ package edu.upenn.cis.cis455.webserver.connector;
 import edu.upenn.cis.cis455.webserver.engine.Container;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
+import edu.upenn.cis.cis455.webserver.exception.InvalidRequestException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,33 +34,29 @@ public class ConnectionRunnable implements Runnable {
     public void run() {
 
         ConnectionManager manager = (ConnectionManager) container.getContext().getAttribute("ConnectionManager");
+        HttpRequest request = new HttpRequest();
+        HttpResponse response = new HttpResponse();
 
-            try {
+        try {
+            request.setInputStream(connection.getInputStream());
+            response.setOutputStream(connection.getOutputStream());
+            response.addHeader("Server", "ryanvo-server/1.00");
 
-                HttpRequest request = new HttpRequest();
-                HttpResponse response = new HttpResponse();
 
-                request.setInputStream(connection.getInputStream());
-                response.setOutputStream(connection.getOutputStream());
+            requestProcessor.process(request);
 
-                requestProcessor.process(request);
+            manager.update(Thread.currentThread().getId(), request.getRequestURI());
+            container.dispatch(request, response);
 
-                manager.update(Thread.currentThread().getId(), request.getRequestURI());
-                container.dispatch(request, response);
+        } catch (IOException e) {
+            response.sendError(500, "Server IO Error");
+            log.debug("400 Bad Request sent ot client");
+        } catch (InvalidRequestException e) {
+            response.sendError(400, "Bad Request");
+            log.debug("400 Bad Request sent ot client");
+        }
 
-                response.getOutputStream().flush();
-
-            } catch (IllegalStateException e) {
-                log.error("Invalid Request Ignored", e);
-            } catch (IOException e) {
-                log.error(e);
-            } catch (URISyntaxException e) {
-
-                //TODO http error code handling here
-                log.error("Could not parse uri from status line");
-            }
-
-            // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
+        // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
 
         try {
             connection.close();
@@ -69,6 +66,8 @@ public class ConnectionRunnable implements Runnable {
             log.error("Could Not Close Socket After Sending Response", e);
         }
     }
+
+
 }
 
 

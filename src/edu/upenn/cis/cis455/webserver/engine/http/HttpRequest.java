@@ -15,6 +15,7 @@ public class HttpRequest {
     private String method;
     private BufferedReader reader;
     private InputStream in;
+    private String protocol;
 
     public void setUri(String uri) {
         this.uri = uri;
@@ -46,6 +47,14 @@ public class HttpRequest {
         this.in = in;
     }
 
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+
+    public String getProtocol() {
+        return protocol;
+    }
 //    @Override
 //    public String getAuthType() {
 //        return null;
