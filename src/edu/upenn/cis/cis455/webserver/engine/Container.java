@@ -11,5 +11,5 @@ import java.io.IOException;
 public interface Container {
 
     void dispatch(HttpRequest req, HttpResponse resp) throws IOException;
-
+    ServletContext getContext(String app);
 }

@@ -7,6 +7,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author rtv
@@ -21,6 +25,44 @@ public class HttpRequestProcessor implements RequestProcessor {
 
         String line = in.readLine();
 
+        String[] statusLine = parseStatusLine(line);
+        request.setMethod(statusLine[0]);
+        request.setUri(statusLine[1]);
+        request.setProtocol(statusLine[2]);
+
+        List<String> lines = new ArrayList<>();
+        while (line != null) {
+            line = in.readLine();
+            if (line.equals("\n")) {
+                break;
+            }
+            lines.add(line);
+        }
+
+
+
+        log.info("Parsed HTTP Request: " + line);
+    }
+
+    public Map<String, String> parseHeaders(List<String> headerLines) throws BadRequestException {
+
+        Map<String, String> headers = new HashMap<>();
+
+        for (String line : headerLines) {
+            String[] header = line.split(":");
+
+            if (header.length != 2) {
+                throw new BadRequestException();
+            }
+
+            headers.put(header[0], header[1]);
+        }
+
+        return headers;
+    }
+
+    public String[] parseStatusLine(String line) throws BadRequestException {
+
         if (line == null) {
             throw new BadRequestException();
         }
@@ -30,18 +72,12 @@ public class HttpRequestProcessor implements RequestProcessor {
             throw new BadRequestException();
         }
 
-        request.setMethod(statusLine[0]);
-        request.setUri(statusLine[1]);
-        request.setProtocol(statusLine[2]);
+        String protocol = statusLine[3];
 
-        if (!request.getProtocol().matches("HTTP/\\d.\\d")) {
+        if (!protocol.matches("HTTP/\\d.\\d")) {
             throw new BadRequestException();
         }
 
-        log.info("Parsed HTTP Request: " + line);
-
-
-        //TODO set session, parse query arguments, other req fields
-
+        return statusLine;
     }
 }

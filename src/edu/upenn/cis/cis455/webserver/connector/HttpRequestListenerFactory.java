@@ -22,7 +22,7 @@ public class HttpRequestListenerFactory {
         WorkerPool workerPool = new WorkerPool(poolSize, requestQueue);
 
         ConnectionManager manager = new ConnectionManager(workerPool);
-        container.getContext().setAttribute("ConnectionManager", manager);
+        container.getContext("webapp").setAttribute("ConnectionManager", manager);
 
         RequestProcessor requestProcessor = new HttpRequestProcessor();
 

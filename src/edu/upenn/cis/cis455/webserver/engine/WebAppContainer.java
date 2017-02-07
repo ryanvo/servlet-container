@@ -53,7 +53,7 @@ public class WebAppContainer implements Container {
 
     }
 
-    public ServletContext getContext() {
+    public ServletContext getContext(String app) {
         return context;
     }
 

@@ -53,8 +53,8 @@ public class WebXmlHttpRequestListenerTest {
 
         webXml.parse();
 
-        assertThat(webXml.getClassByServletName("redteam"), is("edu.upenn.cis.cis555.webserver.WebXmlHttpRequestListenerTest"));
-        assertThat(webXml.getClassByServletName("blueteam"), is("webserver.WebXmlHttpRequestListenerTest"));
+        assertThat(webXml.getClassByServletName("redteam"), is("edu.upenn.cis.cis555.webserver.WebXmlHandlerTest"));
+        assertThat(webXml.getClassByServletName("blueteam"), is("webserver.WebXmlHandlerTest"));
 
     }
 

@@ -42,7 +42,7 @@ public class WebAppContainerTest {
         when(mockWebAppManager.getContext()).thenReturn(mockServletContext);
 
         WebAppContainer webAppContainer = new WebAppContainer(mockWebAppManager);
-        ServletContext contextInContainer = webAppContainer.getContext();
+        ServletContext contextInContainer = webAppContainer.getContext("webapp");
 
         assertThat(contextInContainer, is(mockServletContext));
 

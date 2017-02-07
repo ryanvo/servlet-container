@@ -32,7 +32,8 @@ public class ConnectionHandler implements Runnable {
     @Override
     public void run() {
 
-        ConnectionManager manager = (ConnectionManager) container.getContext().getAttribute("ConnectionManager");
+        ConnectionManager manager = (ConnectionManager) container.getContext("webapp").getAttribute
+                ("ConnectionManager");
         HttpRequest request = new HttpRequest();
         HttpResponse response = new HttpResponse();
 

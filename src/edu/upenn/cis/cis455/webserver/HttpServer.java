@@ -2,6 +2,7 @@ package edu.upenn.cis.cis455.webserver;
 
 
 import edu.upenn.cis.cis455.webserver.connector.ConnectionHandler;
+import edu.upenn.cis.cis455.webserver.connector.HttpRequestListener;
 import edu.upenn.cis.cis455.webserver.connector.HttpRequestListenerFactory;
 import edu.upenn.cis.cis455.webserver.engine.WebAppContainer;
 import edu.upenn.cis.cis455.webserver.engine.WebAppContainerFactory;
@@ -45,7 +46,7 @@ public class HttpServer {
         log.info("WebAppContainer started: webXmlPath:" + webXmlPath + " rootDirectory:" + rootDirectory);
 
         /* Create ConnectionHandler for listening on port */
-        ConnectionHandler connectionHandler = HttpRequestListenerFactory.create(container, POOL_SIZE, WORK_QUEUE_SIZE);
+        HttpRequestListener requestListener = HttpRequestListenerFactory.create(container, POOL_SIZE, WORK_QUEUE_SIZE);
         log.info(String.format("Factory Created ConnectionHandler with %d threads, request queue of %d", POOL_SIZE,
                 WORK_QUEUE_SIZE));
 
@@ -60,7 +61,7 @@ public class HttpServer {
 
         /* ConnectionHandler accepts incoming requests and dispatches them to WebAppContainer */
         try {
-            connectionHandler.start(port);
+            requestListener.start(port);
         } catch (IOException e) {
             log.error("Failed to open ServerSocket", e);
         }

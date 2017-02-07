@@ -2,6 +2,7 @@ package edu.upenn.cis.cis555.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.connector.ConnectionHandler;
 import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
+import edu.upenn.cis.cis455.webserver.connector.HttpRequestListener;
 import edu.upenn.cis.cis455.webserver.connector.RequestProcessor;
 import edu.upenn.cis.cis455.webserver.engine.Container;
 import org.junit.Test;
@@ -15,7 +16,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author Ryan Vo
  */
-public class ConnectionHttpRequestListenerTest {
+public class HttpRequestListenerTest {
 
     @Test
     public void shouldAcceptConnectionFromSocketAndPassSocketToRequestProcessor() throws Exception {
@@ -32,10 +33,10 @@ public class ConnectionHttpRequestListenerTest {
 
         Runnable runConnectionHandler = () -> {
             try {
-                ConnectionHandler handler = new ConnectionHandler(mockConnectionManager,
+                HttpRequestListener requestListener = new HttpRequestListener(mockConnectionManager,
                         mockContainer,
                         mockRequestProcessor);
-                handler.start(port);
+                requestListener.start(port);
             } catch (Exception e) {
                 e.printStackTrace();
             }
