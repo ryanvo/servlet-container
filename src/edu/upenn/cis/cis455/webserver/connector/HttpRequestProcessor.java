@@ -38,24 +38,49 @@ public class HttpRequestProcessor implements RequestProcessor {
             }
             lines.add(line);
         }
-
-
+//
+//        Map<String, String> headers = parseHeaders(lines);
+//        for (Map.Entry<String, String> e : headers) {
+//            request.
+//        }
 
         log.info("Parsed HTTP Request: " + line);
     }
 
-    public Map<String, String> parseHeaders(List<String> headerLines) throws BadRequestException {
+    public Map<String, List<String>> parseHeaders(List<String> headerLines) throws BadRequestException {
 
-        Map<String, String> headers = new HashMap<>();
+        Map<String, List<String>> headers = new HashMap<>();
 
+
+        String prevHeaderKey = "";
         for (String line : headerLines) {
-            String[] header = line.split(":");
+            String currHeaderKey;
+            String[] headerEntry, headerValues;
 
-            if (header.length != 2) {
-                throw new BadRequestException();
+
+            if (line.startsWith(" ") ||  line.startsWith("\t")) {
+
+                /* Values belong header entry on previous line */
+                currHeaderKey = prevHeaderKey;
+                headerValues = line.split(",");
+
+            } else {
+
+                headerEntry = line.split(":", 2);
+                if (headerEntry.length != 2) {
+                    throw new BadRequestException();
+                }
+                headerValues = headerEntry[1].split(",");
+                currHeaderKey = headerEntry[0].trim();
             }
 
-            headers.put(header[0], header[1]);
+            List<String> headerValuesList = new ArrayList<>();
+            for (String val : headerValues) {
+                headerValuesList.add(val.trim().toLowerCase());
+            }
+
+            headers.put(currHeaderKey, headerValuesList);
+            prevHeaderKey = currHeaderKey;
         }
 
         return headers;
