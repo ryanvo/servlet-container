@@ -16,7 +16,7 @@ public class HttpResponse {
     private int contentLength = -1;
     private OutputStream outputStream;
 
-    private Map<String, List<String>> headers = new HashMap<>();
+    private Map<String, String> headers = new HashMap<>();
 
     private PrintWriter writer;
 
@@ -25,8 +25,8 @@ public class HttpResponse {
     }
 
 
-    public void setHeaders(Map<String, List<String>> headers) {
-        this.headers = headers;
+    public void addHeader(String name, String value) {
+        headers.put(name, value);
     }
 
     public boolean containsHeader(String name) {
@@ -84,14 +84,8 @@ public class HttpResponse {
             sb.append("Connection: keep-alive").append('\n');
         }
 
-        for (Map.Entry<String, List<String>> headerEntry : headers.entrySet()) {
-            sb.append(headerEntry.getKey()).append(": ");
-            String comma = "";
-            for (String value : headerEntry.getValue()) {
-                sb.append(comma).append(value);
-                comma = ", ";
-            }
-            sb.append("\n");
+        for (Map.Entry<String, String> header : headers.entrySet()) {
+            sb.append(header.getKey()).append(": ").append(header.getValue()).append('\n');
         }
 
         return sb.toString();

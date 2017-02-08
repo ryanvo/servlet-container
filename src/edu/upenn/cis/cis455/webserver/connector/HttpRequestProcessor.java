@@ -1,6 +1,7 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.exception.BadRequestException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -22,27 +23,24 @@ public class HttpRequestProcessor implements RequestProcessor {
     @Override
     public void process(HttpRequest request) throws IOException, BadRequestException {
         BufferedReader in = request.getReader();
-
         String line = in.readLine();
 
+        /* Process status line */
         String[] statusLine = parseStatusLine(line);
         request.setMethod(statusLine[0]);
         request.setUri(statusLine[1]);
         request.setProtocol(statusLine[2]);
 
+        /* Read in headers from request */
         List<String> lines = new ArrayList<>();
-        while (line != null) {
-            line = in.readLine();
-            if (line.equals("\n")) {
-                break;
-            }
+        for (line = in.readLine(); line.equals("\n"); line = in.readLine()) {
             lines.add(line);
         }
-//
-//        Map<String, String> headers = parseHeaders(lines);
-//        for (Map.Entry<String, String> e : headers) {
-//            request.
-//        }
+
+        /* Process headers */
+        Map<String, List<String>> headers = parseHeaders(lines);
+        request.setHeaders(headers);
+
 
         log.info("Parsed HTTP Request: " + line);
     }
@@ -50,7 +48,6 @@ public class HttpRequestProcessor implements RequestProcessor {
     public Map<String, List<String>> parseHeaders(List<String> headerLines) throws BadRequestException {
 
         Map<String, List<String>> headers = new HashMap<>();
-
 
         String prevHeaderKey = "";
         for (String line : headerLines) {
@@ -71,12 +68,13 @@ public class HttpRequestProcessor implements RequestProcessor {
                     throw new BadRequestException();
                 }
                 headerValues = headerEntry[1].split(",");
-                currHeaderKey = headerEntry[0].trim();
+                currHeaderKey = headerEntry[0].trim().toLowerCase();
             }
 
-            List<String> headerValuesList = new ArrayList<>();
+            /* Get list of values for the key or create new one */
+            List<String> headerValuesList = headers.getOrDefault(currHeaderKey, new ArrayList<>());
             for (String val : headerValues) {
-                headerValuesList.add(val.trim().toLowerCase());
+                headerValuesList.add(val.trim());
             }
 
             headers.put(currHeaderKey, headerValuesList);
@@ -92,12 +90,12 @@ public class HttpRequestProcessor implements RequestProcessor {
             throw new BadRequestException();
         }
 
-        String[] statusLine = line.split(" ");
+        String[] statusLine = line.split("\\s+");
         if (statusLine.length != 3) {
             throw new BadRequestException();
         }
 
-        String protocol = statusLine[3];
+        String protocol = statusLine[2];
 
         if (!protocol.matches("HTTP/\\d.\\d")) {
             throw new BadRequestException();
@@ -105,4 +103,5 @@ public class HttpRequestProcessor implements RequestProcessor {
 
         return statusLine;
     }
+
 }
