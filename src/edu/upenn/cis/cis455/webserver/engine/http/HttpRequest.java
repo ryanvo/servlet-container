@@ -21,7 +21,6 @@ public class HttpRequest {
     private InputStream in;
 
 
-
 //    private URI uri;
 
     private HttpSession session = null;
@@ -58,7 +57,7 @@ public class HttpRequest {
 
     private int localPort;
 
-    public boolean hasHeader(String key) {
+    public boolean containsHeader(String key) {
         return headers.containsKey(key);
     }
 

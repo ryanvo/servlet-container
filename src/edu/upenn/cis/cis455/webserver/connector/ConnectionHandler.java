@@ -41,6 +41,8 @@ public class ConnectionHandler implements Runnable {
         HttpResponse response = new HttpResponse();
 
         try {
+            response.setOutputStream(connection.getOutputStream());
+            response.addHeader("Server", "ryanvo-server/1.00");
             request.setInputStream(connection.getInputStream());
 
             requestProcessor.process(request);
@@ -52,13 +54,13 @@ public class ConnectionHandler implements Runnable {
                 throw new BadRequestException();
             }
 
-            if (request.hasHeader("expect") && request.getHeader("expect").contains("100-continue")) {
-                connection.getOutputStream().write("HTTP/1.1 100 Continue\r\n\r\n".getBytes());
+            /* Send 100 Continue after receiving headers if request asked for it */
+            if (request.containsHeader("expect") && request.getHeader("expect").contains("100-continue")) {
+                connection.getOutputStream().write("HTTP/1.1 100 Continue\r\n".getBytes());
+                connection.getOutputStream().flush();
             }
 
             /* Exceptions throw by servlet are caught under ServletException */
-            response.setOutputStream(connection.getOutputStream());
-            response.addHeader("Server", "ryanvo-server/1.00");
             container.dispatch(request, response);
 
         } catch (IOException e) {
@@ -67,7 +69,7 @@ public class ConnectionHandler implements Runnable {
         } catch (BadRequestException e) {
             response.sendError(400, "Bad Request");
             log.debug("400 Bad Request sent to client");
-        }  catch (ServletException e) {
+        } catch (ServletException e) {
             log.info("Servlet throw exception: ", e);
             if (e.getRootCause() instanceof UnsupportedRequestException) {
                 response.sendError(501, "Not Implemented");

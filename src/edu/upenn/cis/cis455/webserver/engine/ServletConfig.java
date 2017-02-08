@@ -1,6 +1,9 @@
 package edu.upenn.cis.cis455.webserver.engine;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -10,7 +13,7 @@ public class ServletConfig {
 
     private String name;
     private ServletContext context;
-    private Map<String,String> initParams;
+    private Map<String, String> initParams;
 
     public ServletConfig(ServletConfigBuilder builder) {
         name = builder.name;

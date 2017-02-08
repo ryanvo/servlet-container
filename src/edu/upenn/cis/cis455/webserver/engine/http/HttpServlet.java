@@ -11,7 +11,8 @@ import javax.servlet.ServletException;
  */
 public abstract class HttpServlet {
 
-    abstract public void init(ServletConfig config)  throws ServletException ;
+    abstract public void init(ServletConfig config) throws ServletException;
+
     abstract public void destroy();
 
 
@@ -30,16 +31,19 @@ public abstract class HttpServlet {
             default:
                 throw new ServletException(new UnsupportedRequestException());
         }
-
-
     }
 
 
     abstract public void doGet(HttpRequest req, HttpResponse resp) throws ServletException;
+
     abstract public void doHead(HttpRequest req, HttpResponse resp) throws ServletException;
+
     abstract public void doPost(HttpRequest req, HttpResponse resp) throws ServletException;
+
     abstract public ServletConfig getServletConfig();
+
     abstract public ServletContext getServletContext();
+
     abstract public String getServletName();
 
 }
