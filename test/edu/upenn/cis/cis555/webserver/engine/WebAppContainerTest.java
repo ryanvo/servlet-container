@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 public class WebAppContainerTest {
 
     @Test
-    public void shouldCallDoGetWithGetRequest() throws Exception {
+    public void shouldCallServiceWithRequest() throws Exception {
 
         HttpServlet mockServlet = mock(HttpServlet.class);
         WebAppManager mockWebAppManager = mock(WebAppManager.class);
@@ -30,7 +30,7 @@ public class WebAppContainerTest {
         webAppContainer.dispatch(mockRequest, mockResponse);
 
         verify(mockWebAppManager).match("/test");
-        verify(mockServlet).doGet(mockRequest, mockResponse);
+        verify(mockServlet).service(mockRequest, mockResponse);
 
     }
 

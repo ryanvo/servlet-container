@@ -33,8 +33,10 @@ public class HttpRequestProcessor implements RequestProcessor {
 
         /* Read in headers from request */
         List<String> lines = new ArrayList<>();
-        for (line = in.readLine(); line.equals("\n"); line = in.readLine()) {
+        for (line = in.readLine(); !line.equals(null) && !line.isEmpty(); line = in.readLine()) {
             lines.add(line);
+            log.debug("Header line: " + line);
+
         }
 
         /* Process headers */
@@ -101,6 +103,7 @@ public class HttpRequestProcessor implements RequestProcessor {
             throw new BadRequestException();
         }
 
+        log.debug("Parsed status line: " + line);
         return statusLine;
     }
 

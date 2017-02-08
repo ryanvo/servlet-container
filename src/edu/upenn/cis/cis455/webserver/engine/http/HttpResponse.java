@@ -24,7 +24,6 @@ public class HttpResponse {
         date = getHttpDate();
     }
 
-
     public void addHeader(String name, String value) {
         headers.put(name, value);
     }

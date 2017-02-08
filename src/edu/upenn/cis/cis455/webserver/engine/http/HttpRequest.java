@@ -58,6 +58,13 @@ public class HttpRequest {
 
     private int localPort;
 
+    public boolean hasHeader(String key) {
+        return headers.containsKey(key);
+    }
+
+    public List<String> getHeaderValues(String key) {
+        return headers.get(key);
+    }
 
     public void setUri(String uri) {
         this.uri = uri;
