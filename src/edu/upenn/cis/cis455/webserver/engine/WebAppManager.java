@@ -8,6 +8,7 @@ import edu.upenn.cis.cis455.webserver.servlet.ShutdownServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,7 +38,7 @@ public class WebAppManager implements ServletManager {
         this.context = context;
     }
 
-    public void launchServlets() throws IOException, InstantiationException {
+    public void launchServlets() throws IOException, ServletException {
 
         ServletConfigBuilder configBuilder = new ServletConfigBuilder();
 
@@ -51,7 +52,7 @@ public class WebAppManager implements ServletManager {
         servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
         servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
 
-
+        /* Commented block below is for milestone 2 */
 //        for (String servletName : webXml.getServletNames()) {
 //
 //            ServletConfig config = configBuilder.setName(servletName)
@@ -82,7 +83,7 @@ public class WebAppManager implements ServletManager {
     }
 
     @Override
-    public HttpServlet launch(ServletConfig config) {
+    public HttpServlet launch(ServletConfig config)  {
         return null;
     }
 

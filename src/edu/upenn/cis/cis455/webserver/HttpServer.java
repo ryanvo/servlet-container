@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.SAXException;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 
 public class HttpServer {
@@ -53,7 +54,7 @@ public class HttpServer {
         /* Power up the servlets specified in web.xml */
         try {
             container.start();
-        } catch (InstantiationException e) {
+        } catch (ServletException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();

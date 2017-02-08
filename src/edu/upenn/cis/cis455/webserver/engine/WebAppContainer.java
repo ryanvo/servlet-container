@@ -6,6 +6,7 @@ import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 
 
@@ -25,7 +26,7 @@ public class WebAppContainer implements Container {
     }
 
 
-    public void start() throws IOException, InstantiationException {
+    public void start() throws IOException, ServletException {
 
         webAppManager.launchServlets();
 
@@ -33,23 +34,11 @@ public class WebAppContainer implements Container {
 
 
     @Override
-    public void dispatch(HttpRequest req, HttpResponse resp) throws IOException {
+    public void dispatch(HttpRequest req, HttpResponse resp) throws ServletException {
 
         HttpServlet servlet = webAppManager.match(req.getRequestURI());
 
-        switch (req.getMethod().toUpperCase()) {
-            case "GET":
-                servlet.doGet(req, resp);
-                break;
-            case "POST":
-                servlet.doPost(req, resp);
-                break;
-            case "HEAD":
-                servlet.doHead(req, resp);
-                break;
-            default:
-                log.error("Request Method not recognized: " + req.getMethod());
-        }
+        servlet.service(req, resp);
 
     }
 

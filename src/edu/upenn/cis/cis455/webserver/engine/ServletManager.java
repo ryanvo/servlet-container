@@ -4,6 +4,7 @@ import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 
 /**
@@ -11,7 +12,7 @@ import java.io.IOException;
  */
 public interface ServletManager {
 
-    HttpServlet launch(ServletConfig config);
+    HttpServlet launch(ServletConfig config) throws IOException, ServletException ;
     HttpServlet match(String uri);
     void shutdown();
 

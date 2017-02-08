@@ -12,11 +12,12 @@ import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Map;
 
-public class ControlServlet implements HttpServlet {
+public class ControlServlet extends HttpServlet {
 
     private static Logger log = LogManager.getLogger(ControlServlet.class);
 
@@ -29,7 +30,7 @@ public class ControlServlet implements HttpServlet {
     }
 
     @Override
-    public void init(ServletConfig config) {
+    public void init(ServletConfig config)  throws ServletException {
 
         Enumeration paramNames = config.getInitParameterNames();
         while(paramNames.hasMoreElements()) {
@@ -40,7 +41,7 @@ public class ControlServlet implements HttpServlet {
     }
 
     @Override
-    public void destroy() {
+    public void destroy()  {
 
 
 
@@ -51,7 +52,7 @@ public class ControlServlet implements HttpServlet {
      * @param request
      * @param response
      */
-    public void service(HttpRequest request, HttpResponse response) {
+    public void service(HttpRequest request, HttpResponse response)  throws ServletException  {
 
         log.info(String.format("Thread ID %d is Serving URI %s", Thread.currentThread().getId(),
                 request.getRequestURI()));
@@ -76,7 +77,7 @@ public class ControlServlet implements HttpServlet {
 
     }
 
-    public void doGet(HttpRequest request, HttpResponse response) {
+    public void doGet(HttpRequest request, HttpResponse response) throws ServletException {
         log.info(getServletName() + " Serving Control Page Request");
 
         try (ChunkedWriter writer = new ChunkedWriter(response.getOutputStream())) {
@@ -112,12 +113,12 @@ public class ControlServlet implements HttpServlet {
     }
 
     @Override
-    public void doHead(HttpRequest req, HttpResponse resp) {
+    public void doHead(HttpRequest req, HttpResponse resp) throws ServletException  {
 
     }
 
     @Override
-    public void doPost(HttpRequest req, HttpResponse resp) {
+    public void doPost(HttpRequest req, HttpResponse resp)  throws ServletException  {
     }
 
     @Override

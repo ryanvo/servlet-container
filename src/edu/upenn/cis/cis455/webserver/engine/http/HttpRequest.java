@@ -89,15 +89,14 @@ public class HttpRequest {
         this.protocol = protocol;
     }
 
-    public void setHeader(String key, String value) {
-
-        List<String> headerValues = headers.getOrDefault(key, new ArrayList<>());
-        headers.replace(key, headerValues);
-
-
+    public void setHeaders(Map<String, List<String>> headers) {
+        this.headers = headers;
     }
 
 
+    public Map<String, List<String>> getHeaders() {
+        return headers;
+    }
 
     // @Override
     public String getAuthType() {

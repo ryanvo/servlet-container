@@ -7,8 +7,11 @@ import edu.upenn.cis.cis455.webserver.exception.BadRequestException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletException;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.List;
+import java.util.Map;
 
 public class ConnectionHandler implements Runnable {
 
@@ -39,22 +42,35 @@ public class ConnectionHandler implements Runnable {
 
         try {
             request.setInputStream(connection.getInputStream());
-            response.setOutputStream(connection.getOutputStream());
-            response.addHeader("Server", "ryanvo-server/1.00");
-
 
             requestProcessor.process(request);
-
             manager.update(Thread.currentThread().getId(), request.getRequestURI());
-            container.dispatch(request, response);
+
+            /* Check that Host header exists for HTTP/1.1 and up */
+            if (!hasValidHostHeader(request.getProtocol(), request.getHeaders())) {
+                log.debug("Request is missing Host header entry");
+                throw new BadRequestException();
+            }
+
+
+            /* Catch exceptions throw by servlet and re-throw */
+            try {
+                response.setOutputStream(connection.getOutputStream());
+                response.addHeader("Server", "ryanvo-server/1.00");
+                container.dispatch(request, response);
+            }  catch (ServletException e) {
+                log.info("Servlet throw exception: ", e);
+                //todo
+            }
 
         } catch (IOException e) {
             response.sendError(500, "Server IO Error");
-            log.debug("400 Bad Request sent ot client");
+            log.debug("400 Bad Request sent to client");
         } catch (BadRequestException e) {
             response.sendError(400, "Bad Request");
-            log.debug("400 Bad Request sent ot client");
+            log.debug("400 Bad Request sent to client");
         }
+
 
         // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
 
@@ -67,6 +83,10 @@ public class ConnectionHandler implements Runnable {
         }
     }
 
+
+    public boolean hasValidHostHeader(String version, Map<String, List<String>> headers) {
+        return !version.endsWith("1") || headers.containsKey("host");
+    }
 
 }
 

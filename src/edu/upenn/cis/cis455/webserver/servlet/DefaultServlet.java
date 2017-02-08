@@ -10,18 +10,18 @@ import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletException;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Enumeration;
 import java.util.Map;
 
-public class DefaultServlet implements HttpServlet {
+public class DefaultServlet extends HttpServlet {
 
     private static Logger log = LogManager.getLogger(DefaultServlet.class);
 
@@ -39,8 +39,7 @@ public class DefaultServlet implements HttpServlet {
 
     }
 
-    @Override
-    public void init(ServletConfig config) {
+    public void init(ServletConfig config)  throws ServletException  {
 
         Enumeration paramNames = config.getInitParameterNames();
         while(paramNames.hasMoreElements()) {
@@ -50,7 +49,6 @@ public class DefaultServlet implements HttpServlet {
 
     }
 
-    @Override
     public void destroy() {
 
 
@@ -58,7 +56,7 @@ public class DefaultServlet implements HttpServlet {
     }
 
 
-    public void doGet(HttpRequest request, HttpResponse response) {
+    public void doGet(HttpRequest request, HttpResponse response) throws ServletException {
 
         File fileRequested = new File(rootDirectory + request.getRequestURI());
         try {
