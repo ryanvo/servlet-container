@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.List;
 import java.util.Map;
@@ -55,10 +56,7 @@ public class ConnectionHandler implements Runnable {
             }
 
             /* Send 100 Continue after receiving headers if request asked for it */
-            if (request.containsHeader("expect") && request.getHeader("expect").contains("100-continue")) {
-                connection.getOutputStream().write("HTTP/1.1 100 Continue\r\n".getBytes());
-                connection.getOutputStream().flush();
-            }
+            handle100ContinueRequest(request, connection.getOutputStream());
 
             /* Exceptions throw by servlet are caught under ServletException */
             container.dispatch(request, response);
@@ -92,6 +90,20 @@ public class ConnectionHandler implements Runnable {
 
     public boolean hasValidHostHeader(String version, Map<String, List<String>> headers) {
         return !version.endsWith("1") || headers.containsKey("host");
+    }
+
+    public void handle100ContinueRequest(HttpRequest request, OutputStream out) throws IOException {
+
+        if (!request.getProtocol().endsWith("1")) {
+            return;
+        }
+
+        Map<String, List<String>> headers = request.getHeaders();
+        if (headers.containsKey("expect") && headers.get("expect").contains("100-continue")) {
+            out.write("HTTP/1.1 100 Continue\r\n".getBytes());
+            out.flush();
+        }
+
     }
 
 }
