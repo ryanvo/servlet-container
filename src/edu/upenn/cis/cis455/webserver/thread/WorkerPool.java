@@ -26,6 +26,7 @@ public class WorkerPool {
 
         for (Thread thread : threadPool) {
             thread.start();
+            log.debug(String.format("Thread #%d started", thread.getId()));
         }
     }
 
@@ -47,9 +48,10 @@ public class WorkerPool {
 
         for (WorkerThread thread : threadPool) {
             thread.interrupt();
+            log.debug(String.format("Thread #%d stopped", Thread.currentThread().getId()));
         }
 
-        log.info("All threads stopped");
+        log.info(String.format("Worked pool stopped %d threads", threadPool.size()));
     }
 
 

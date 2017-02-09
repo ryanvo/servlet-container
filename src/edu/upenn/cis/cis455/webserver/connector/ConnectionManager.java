@@ -1,6 +1,8 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.thread.WorkerPool;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -11,6 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * and can issue a stop of the entire connector pool. Used for the Control Page
  */
 public class ConnectionManager implements ThreadManager {
+
+    private static Logger log = LogManager.getLogger(ConnectionManager.class);
 
     private final Map<Long, String> idToUri;
     private final WorkerPool workerPool;
@@ -39,6 +43,7 @@ public class ConnectionManager implements ThreadManager {
      */
     public void update(long threadId, String uri) {
         idToUri.put(threadId, uri);
+        log.debug(String.format("ConnectionManager received update threadId:%d, uri:%s", threadId, uri));
     }
 
     /**

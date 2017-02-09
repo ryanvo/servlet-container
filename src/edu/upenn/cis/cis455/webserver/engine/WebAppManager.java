@@ -91,12 +91,11 @@ public class WebAppManager implements ServletManager {
     public HttpServlet match(String uri) {
 
         for (Pattern pattern : servletByPattern.keySet()) {
-
             Matcher uriMatcher = pattern.matcher(uri);
-
             if (uriMatcher.matches()) {
 
-                log.info("Servlet match: name:" + servletByPattern.get(pattern).getServletName());
+                log.debug(String.format("Uri:%s mapped to servletName:%s with servletPattern:%s", uri,
+                        servletByPattern.get(pattern).getServletName(), pattern));
 
                 return servletByPattern.get(pattern);
             }
@@ -114,6 +113,7 @@ public class WebAppManager implements ServletManager {
     public void shutdown() {
         for (String servletName : servlets.keySet()) {
             servlets.get(servletName).destroy();
+            log.debug("Servlet destroyed servletName:" + servletName);
         }
     }
 

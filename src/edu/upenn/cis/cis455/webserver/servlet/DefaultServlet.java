@@ -197,7 +197,7 @@ public class DefaultServlet extends HttpServlet {
                 writer.println(response.getStatusAndHeader());
                 writer.flush();
 
-                log.info("Not Found Error Sent to Client" + request.getRequestURI());
+                log.info("Not Found Error Sent to Client: " + request.getRequestURI());
             }
 
             log.debug(response.getStatusAndHeader());

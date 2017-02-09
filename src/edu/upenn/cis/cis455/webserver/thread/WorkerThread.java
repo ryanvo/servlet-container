@@ -9,7 +9,6 @@ public class WorkerThread extends Thread {
     private static Logger log = LogManager.getLogger(WorkerThread.class);
 
     private final WorkQueue pool;
-    private volatile boolean isRunning = true;
 
     public WorkerThread(WorkQueue pool) {
         this.pool = pool;
@@ -18,7 +17,6 @@ public class WorkerThread extends Thread {
     @Override
     public void run() {
 
-        log.info("Thread Started");
         while (!isInterrupted()) {
             try {
                 pool.take().run();
@@ -26,10 +24,8 @@ public class WorkerThread extends Thread {
                 break;
             } catch (NullPointerException e) {
                 log.error(e);
-                continue;
             }
         }
-        log.info("Thread Stopped");
     }
 
 }

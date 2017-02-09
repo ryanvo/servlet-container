@@ -44,15 +44,17 @@ public class HttpServer {
 
         /* Create WebAppContainer manage servlets */
         WebAppContainer container = WebAppContainerFactory.create(rootDirectory, webXml);
-        log.info("WebAppContainer started: webXmlPath:" + webXmlPath + " rootDirectory:" + rootDirectory);
+        log.info("WebAppContainer created with webXmlPath:" + webXmlPath + ", rootDirectory:" + rootDirectory);
 
         /* Create HttpRequestListener to listening for requests */
         HttpRequestListener requestListener = HttpRequestListenerFactory.create(container, POOL_SIZE, WORK_QUEUE_SIZE);
-        log.info(String.format("Factory Created ConnectionHandler with %d threads, request queue of %d", POOL_SIZE,
+        log.info(String.format("Factory Created ConnectionHandler with %d threads, request queue limit of %d",
+                POOL_SIZE,
                 WORK_QUEUE_SIZE));
 
         /* Power up the servlets specified in web.xml */
         try {
+            log.info("WebAppContainer starting up servlets");
             container.start();
         } catch (ServletException|IOException e) {
             log.error("Error starting servlets", e);
@@ -61,6 +63,7 @@ public class HttpServer {
 
         /* Accept incoming requests and dispatch them to WebAppContainer */
         try {
+            log.info("RequestListener listening on port:" + port);
             requestListener.start(port);
         } catch (IOException e) {
             log.error("Failed to open socket", e);

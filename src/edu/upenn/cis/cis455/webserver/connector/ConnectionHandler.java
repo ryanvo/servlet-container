@@ -59,6 +59,7 @@ public class ConnectionHandler implements Runnable {
             handle100ContinueRequest(request, connection.getOutputStream());
 
             /* Exceptions throw by servlet are caught under ServletException */
+            log.info(String.format("Dispatching requestUri:%s, method:%s", request.getRequestURI(), request.getMethod()));
             container.dispatch(request, response);
 
         } catch (IOException e) {
@@ -91,9 +92,9 @@ public class ConnectionHandler implements Runnable {
         try {
             connection.close();
             manager.update(Thread.currentThread().getId(), "waiting");
-            log.info("Socket Closed");
+            log.debug("Socket closed requestUri:" + request.getRequestURI());
         } catch (IOException e) {
-            log.error("Could Not Close Socket After Sending Response", e);
+            log.error("Failed to close socket", e);
         }
     }
 
@@ -112,6 +113,7 @@ public class ConnectionHandler implements Runnable {
         if (headers.containsKey("expect") && headers.get("expect").contains("100-continue")) {
             out.write("HTTP/1.1 100 Continue\r\n".getBytes());
             out.flush();
+            log.debug(String.format("Sent 100 continue uri:%s, method:%s", request.getRequestURI(), request.getMethod()));
         }
 
     }

@@ -23,7 +23,7 @@ public class WorkQueue {
             try {
                 wait();
             } catch (InterruptedException e) {
-                log.error("Interrupted Exception in put", e);
+                log.error(e);
             }
         }
 

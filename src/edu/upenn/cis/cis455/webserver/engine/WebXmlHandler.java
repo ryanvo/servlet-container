@@ -106,6 +106,8 @@ public class WebXmlHandler extends DefaultHandler {
 
             case "servlet-mapping":
                 servletNameByPattern.put(servletPattern, servletName);
+                log.info(String.format("WebXmlHandler found servletName:%s servletPattern:%s", servletName,
+                        servletPattern));
                 break;
 
             case "servlet":

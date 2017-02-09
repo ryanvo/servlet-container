@@ -38,14 +38,13 @@ public class HttpRequestProcessor implements RequestProcessor {
         for (line = in.readLine(); !line.equals(null) && !line.isEmpty(); line = in.readLine()) {
             lines.add(line);
             log.debug("Header line: " + line);
-
         }
 
         /* Process headers */
         Map<String, List<String>> headers = parseHeaders(lines);
         request.setHeaders(headers);
 
-        log.info("Parsed HTTP Request: " + line);
+        log.info("Processed HTTP Request: " + line);
     }
 
     public Map<String, List<String>> parseHeaders(List<String> headerLines) throws BadRequestException {
@@ -101,6 +100,7 @@ public class HttpRequestProcessor implements RequestProcessor {
 
         String[] statusLine = line.split("\\s+");
         if (statusLine.length != 3) {
+            log.debug("Incorrect number of arguments in status line: " + statusLine[1]);
             throw new BadRequestException();
         }
 
@@ -118,6 +118,7 @@ public class HttpRequestProcessor implements RequestProcessor {
 
         String protocol = statusLine[2];
         if (!protocol.matches("HTTP/\\d.\\d")) {
+            log.debug("Invalid HTTP version: " + statusLine[1]);
             throw new BadRequestException();
         }
 

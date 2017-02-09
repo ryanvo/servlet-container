@@ -31,8 +31,6 @@ public class HttpRequestListener implements SocketListener {
         ServerSocket socket = new ServerSocket(port);
         socket.setSoTimeout(1000);
 
-        log.info(String.format("HTTP ConnectionHandler Started on Port %d", port));
-
         while (connectionManager.isRunning()) {
 
             Socket connection = null;
@@ -49,7 +47,7 @@ public class HttpRequestListener implements SocketListener {
                 }
 
             } catch (SocketException e) {
-                log.info("ServerSocket Closed Due To Shutdown Request");
+                log.error("Socket error", e);
             } catch (IOException e) {
                 log.error("Unable to Open Socket");
                 continue;
@@ -59,7 +57,7 @@ public class HttpRequestListener implements SocketListener {
             try {
                 connectionManager.assign(new ConnectionHandler(connection, container, requestProcessor));
             } catch (IllegalStateException e) {
-                log.info("connectionManager must be off");
+                log.error("ConnectionManager not accepting connections", e);
                 break;
             }
         }
@@ -67,7 +65,7 @@ public class HttpRequestListener implements SocketListener {
         try {
             socket.close();
         } catch (IOException e) {
-            log.error("Failed to close ServerSocket");
+            log.error("Failed to close ServerSocket", e);
         }
 
     }
