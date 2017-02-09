@@ -1,4 +1,4 @@
-package edu.upenn.cis.cis455.webserver.engine.http;
+package edu.upenn.cis.cis455.webserver.servlet.http;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -8,7 +8,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import java.io.*;
-import java.net.URI;
 import java.security.Principal;
 import java.util.*;
 
