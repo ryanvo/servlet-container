@@ -35,8 +35,6 @@ public class DefaultServlet extends HttpServlet {
      */
     public DefaultServlet(String rootDirectory) {
         this.rootDirectory = rootDirectory;
-
-
     }
 
     public void init(ServletConfig config)  throws ServletException  {
@@ -49,12 +47,67 @@ public class DefaultServlet extends HttpServlet {
 
     }
 
-    public void destroy() {
+    public void doHead(HttpRequest request, HttpResponse response) {
+
+        File fileRequested = new File(rootDirectory + request.getRequestURI());
+
+        try (PrintWriter writer = new PrintWriter(response.getOutputStream())) {
+
+            if (fileRequested.canRead() && fileRequested.isDirectory()) {
+
+                log.info(String.format("DefaultServlet Serving HEAD Request for Directory %s",
+                        fileRequested.getName()));
+
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("200");
+                response.setErrorMessage("OK");
+                response.setContentType("text/html");
+
+                writer.println(response.getStatusAndHeader());
+                writer.flush();
+
+                log.info(String.format("Directory Listing of %s Sent to Client", fileRequested
+                        .getName()));
+
+            } else if (fileRequested.canRead()) {
+
+                log.info(String.format("DefaultServlet Serving HEAD Request for %s", fileRequested
+                        .getName()));
+
+                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochMilli(fileRequested.lastModified()), ZoneId.of("GMT"));
+                String lastModifiedTime = time.format(dateFormat);
+                response.addHeader("Last-Modified", lastModifiedTime);
+
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("200");
+                response.setErrorMessage("OK");
+                response.setContentType(FileUtil.probeContentType(fileRequested.getPath()));
+                int contentLength = Long.valueOf(fileRequested.length()).intValue();
+                response.setContentLength(contentLength);
+                writer.println(response.getStatusAndHeader());
+                writer.flush();
+
+                log.info(String.format("%s Sent to Client", fileRequested.getName()));
+
+            } else {
+
+                log.info(String.format("%s Not found", fileRequested.getName()));
 
 
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("404");
+                response.setErrorMessage("Not Found");
 
+                writer.println(response.getStatusAndHeader());
+                writer.flush();
+
+                log.info("Not Found Error Sent to Client" + request.getRequestURI());
+            }
+
+            log.debug(response.getStatusAndHeader());
+
+        }
     }
-
 
     public void doGet(HttpRequest request, HttpResponse response) throws ServletException {
 
@@ -165,67 +218,8 @@ public class DefaultServlet extends HttpServlet {
         log.info("Not Found Error Sent to Client" + file.getName());
     }
 
-    public void doHead(HttpRequest request, HttpResponse response) {
-
-        File fileRequested = new File(rootDirectory + request.getRequestURI());
-
-        try (PrintWriter writer = new PrintWriter(response.getOutputStream())) {
-
-            if (fileRequested.canRead() && fileRequested.isDirectory()) {
-
-                log.info(String.format("DefaultServlet Serving HEAD Request for Directory %s",
-                        fileRequested.getName()));
-
-                response.setVersion(HTTP_VERSION);
-                response.setStatusCode("200");
-                response.setErrorMessage("OK");
-                response.setContentType("text/html");
-
-                writer.println(response.getStatusAndHeader());
-                writer.flush();
-
-                log.info(String.format("Directory Listing of %s Sent to Client", fileRequested
-                        .getName()));
-
-            } else if (fileRequested.canRead()) {
-
-                log.info(String.format("DefaultServlet Serving HEAD Request for %s", fileRequested
-                        .getName()));
-
-                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochMilli(fileRequested.lastModified()), ZoneId.of("GMT"));
-                String lastModifiedTime = time.format(dateFormat);
-                response.addHeader("Last-Modified", lastModifiedTime);
-
-                response.setVersion(HTTP_VERSION);
-                response.setStatusCode("200");
-                response.setErrorMessage("OK");
-                response.setContentType(FileUtil.probeContentType(fileRequested.getPath()));
-                int contentLength = Long.valueOf(fileRequested.length()).intValue();
-                response.setContentLength(contentLength);
-                writer.println(response.getStatusAndHeader());
-                writer.flush();
-
-                log.info(String.format("%s Sent to Client", fileRequested.getName()));
-
-            } else {
-
-                log.info(String.format("%s Not found", fileRequested.getName()));
-
-
-                response.setVersion(HTTP_VERSION);
-                response.setStatusCode("404");
-                response.setErrorMessage("Not Found");
-
-                writer.println(response.getStatusAndHeader());
-                writer.flush();
-
-                log.info("Not Found Error Sent to Client" + request.getRequestURI());
-            }
-
-            log.debug(response.getStatusAndHeader());
-
-        }
-    }
+    @Override
+    public void destroy() {}
 
     @Override
     public void doPost(HttpRequest req, HttpResponse resp) {
