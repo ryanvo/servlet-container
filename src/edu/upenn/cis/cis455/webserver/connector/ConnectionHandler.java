@@ -73,6 +73,16 @@ public class ConnectionHandler implements Runnable {
                 response.sendError(501, "Not Implemented");
                 log.info("501 Not Implemented sent to client");
             }
+
+            if (e.getRootCause() instanceof BadRequestException) {
+                response.sendError(400, "Bad Request");
+                log.debug("400 Bad Request sent to client");
+            }
+
+            if (e.getRootCause() instanceof IOException) {
+                response.sendError(500, "Server IO Error");
+                log.debug("400 Bad Request sent to client");
+            }
         }
 
 

@@ -18,7 +18,7 @@ public abstract class HttpServlet {
 
     public void service(HttpRequest request, HttpResponse response) throws ServletException {
 
-        switch (request.getMethod().toUpperCase()) {
+        switch (request.getMethod()) {
             case "GET":
                 doGet(request, response);
                 break;

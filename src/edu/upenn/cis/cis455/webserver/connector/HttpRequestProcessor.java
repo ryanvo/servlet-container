@@ -60,7 +60,7 @@ public class HttpRequestProcessor implements RequestProcessor {
 
             if (line.startsWith(" ") ||  line.startsWith("\t")) {
 
-                /* Values belong header entry on previous line */
+                /* Values belong to header entry on previous line */
                 currHeaderKey = prevHeaderKey;
                 headerValues = line.split(",");
 
@@ -70,8 +70,14 @@ public class HttpRequestProcessor implements RequestProcessor {
                 if (headerEntry.length != 2) {
                     throw new BadRequestException();
                 }
-                headerValues = headerEntry[1].split(",");
+
                 currHeaderKey = headerEntry[0].trim().toLowerCase();
+
+                if (headerEntry[1].contains("GMT")) { // Apparently date is a single value but has comma
+                    headerValues = new String[] {headerEntry[1]};
+                } else {
+                    headerValues = headerEntry[1].split(",");
+                }
             }
 
             /* Get list of values for the key or create new one */

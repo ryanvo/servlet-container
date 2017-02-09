@@ -14,6 +14,8 @@ import static org.hamcrest.core.Is.is;
  */
 public class ChunkedWriterTest {
 
+    //TODO need to fix these tests with new version
+
     @Test
     public void shouldChunkEncodeWhenWriteIsInvoked() throws Exception {
 

@@ -15,6 +15,8 @@ import static org.mockito.Mockito.*;
  */
 public class ChunkedOutputStreamTest {
 
+    //TODO need to fix these tests with new version
+
     @Test
     public void shouldWriteChunkToOutputStream() throws Exception {
 

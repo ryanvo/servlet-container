@@ -6,29 +6,32 @@ import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
-import edu.upenn.cis.cis455.webserver.util.FileUtil;
+import edu.upenn.cis.cis455.webserver.exception.http.BadRequestException;
+import edu.upenn.cis.cis455.webserver.exception.http.UnsupportedRequestException;
 import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedWriter;
+import edu.upenn.cis.cis455.webserver.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import java.io.*;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.time.format.DateTimeParseException;
+import java.util.Enumeration;
+import java.util.Map;
 
 public class DefaultServlet extends HttpServlet {
 
     private static Logger log = LogManager.getLogger(DefaultServlet.class);
 
-    private final String HTTP_VERSION = "HTTP/1.1";
+    private final static String HTTP_VERSION = "HTTP/1.1";
+    private final static DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z");
+
     private final String rootDirectory;
     private Map<String, String> initParams;
-    private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z");
 
     /**
      * @param rootDirectory path to the www folder
@@ -37,7 +40,7 @@ public class DefaultServlet extends HttpServlet {
         this.rootDirectory = rootDirectory;
     }
 
-    public void init(ServletConfig config)  throws ServletException  {
+    public void init(ServletConfig config)  throws ServletException {
 
         Enumeration paramNames = config.getInitParameterNames();
         while(paramNames.hasMoreElements()) {
@@ -47,7 +50,102 @@ public class DefaultServlet extends HttpServlet {
 
     }
 
-    public void doHead(HttpRequest request, HttpResponse response) {
+    @Override
+    public void service(HttpRequest request, HttpResponse response) throws ServletException {
+
+        if (request.containsHeader("if-modified-since")) {
+            String ifModified = request.getHeader("if-modified-since");
+            log.error(ifModified);
+            File file = new File(rootDirectory + request.getRequestURI());
+
+            ZonedDateTime ifModifiedSinceDate;
+            try {
+                ifModifiedSinceDate = ZonedDateTime.parse(ifModified, HTTP_DATE_FORMAT);
+            } catch (DateTimeParseException e) {
+                throw new ServletException(e);
+            }
+            ZonedDateTime lastModifiedDate = getLastModifiedDate(file);
+
+            if (lastModifiedDate.isAfter(ifModifiedSinceDate)) {
+
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("200");
+                response.setErrorMessage("OK");
+                response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
+
+                try {
+                    handleFile(file, response);
+                } catch (IOException e) {
+                    throw new ServletException(new BadRequestException());
+                }
+
+            } else {
+
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("304");
+                response.setErrorMessage("Not Modified");
+                response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
+                PrintWriter writer = response.getWriter();
+                writer.println(response.getStatusAndHeader());
+                writer.flush();
+            }
+            return;
+        }
+
+        if (request.containsHeader("if-unmodified-since")) {
+            String ifUnmodified = request.getHeader("if-unmodified-since");
+
+            File file = new File(rootDirectory + request.getRequestURI());
+            ZonedDateTime ifUnmodifiedSinceDate;
+            try {
+                ifUnmodifiedSinceDate = ZonedDateTime.parse(ifUnmodified, HTTP_DATE_FORMAT);
+            } catch (DateTimeParseException e) {
+                throw new ServletException(new BadRequestException());
+            }
+
+            ZonedDateTime lastModifiedDate = getLastModifiedDate(file);
+
+            if (ifUnmodifiedSinceDate.isAfter(lastModifiedDate)) {
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("200");
+                response.setErrorMessage("OK");
+                response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
+
+                try {
+                    handleFile(file, response);
+                } catch (IOException e) {
+                    throw new ServletException(e);
+                }
+            } else {
+
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("412");
+                response.setErrorMessage("Precondition Failed");
+                response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
+                PrintWriter writer = response.getWriter();
+                writer.println(response.getStatusAndHeader());
+                writer.flush();
+            }
+            return;
+        }
+
+
+        switch (request.getMethod()) {
+            case "GET":
+                doGet(request, response);
+                break;
+            case "HEAD":
+                doHead(request, response);
+                break;
+            default:
+                throw new ServletException(new UnsupportedRequestException());
+        }
+
+    }
+
+
+    @Override
+    public void doHead(HttpRequest request, HttpResponse response) throws ServletException {
 
         File fileRequested = new File(rootDirectory + request.getRequestURI());
 
@@ -74,9 +172,7 @@ public class DefaultServlet extends HttpServlet {
                 log.info(String.format("DefaultServlet Serving HEAD Request for %s", fileRequested
                         .getName()));
 
-                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochMilli(fileRequested.lastModified()), ZoneId.of("GMT"));
-                String lastModifiedTime = time.format(dateFormat);
-                response.addHeader("Last-Modified", lastModifiedTime);
+                response.addHeader("Last-Modified", getLastModifiedDate(fileRequested).format(HTTP_DATE_FORMAT));
 
                 response.setVersion(HTTP_VERSION);
                 response.setStatusCode("200");
@@ -118,15 +214,18 @@ public class DefaultServlet extends HttpServlet {
                 handleFileNotFound(fileRequested, response);
 
             } else if (fileRequested.canRead() && fileRequested.isDirectory()) {
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("200");
+                response.setErrorMessage("OK");
 
                 handleDirectory(fileRequested, response);
 
             } else if (fileRequested.canRead()) {
+                response.setVersion(HTTP_VERSION);
+                response.setStatusCode("200");
+                response.setErrorMessage("OK");
 
-                ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochMilli(fileRequested.lastModified()), ZoneId.of("GMT"));
-                String lastModifiedTime = time.format(dateFormat);
-                response.addHeader("Last-Modified", lastModifiedTime);
-
+                response.addHeader("Last-Modified", getLastModifiedDate(fileRequested).format(HTTP_DATE_FORMAT));
                 handleFile(fileRequested, response);
 
             } else {
@@ -139,7 +238,6 @@ public class DefaultServlet extends HttpServlet {
             response.sendError(500, "Server IO Error");
 
             log.debug(response.getStatusAndHeader());
-            //TODO error
 
         }
 
@@ -150,14 +248,11 @@ public class DefaultServlet extends HttpServlet {
         log.info(String.format("DefaultServlet Serving GET Request for Directory %s",
                 file.getName()));
 
-        response.setVersion(HTTP_VERSION);
-        response.setStatusCode("200");
-        response.setErrorMessage("OK");
+
         response.setContentType("text/html");
         response.addHeader("Transfer-Encoding", "chunked");
 
         ChunkedWriter writer = new ChunkedWriter(response.getOutputStream());
-
         writer.unchunkedPrintLn(response.getStatusAndHeader());
 
         writer.write("<html><body>");
@@ -176,9 +271,7 @@ public class DefaultServlet extends HttpServlet {
 
         log.info(String.format("DefaultServlet Serving GET Request for %s", file.getName()));
 
-        response.setVersion(HTTP_VERSION);
-        response.setStatusCode("200");
-        response.setErrorMessage("OK");
+
         response.setContentType(FileUtil.probeContentType(file.getPath()));
         int contentLength = Long.valueOf(file.length()).intValue();
         response.setContentLength(contentLength);
@@ -186,15 +279,15 @@ public class DefaultServlet extends HttpServlet {
         response.getOutputStream().write(response.getStatusAndHeader().getBytes());
         response.getOutputStream().write("\n".getBytes());
 
-
         /* Send file as binary to output stream */
-        InputStream fileInputStream = new FileInputStream(file);
-        byte[] buf = new byte[contentLength];
-        int bytesRead;
-        while ((bytesRead = fileInputStream.read(buf, 0, buf.length)) > 0) {
-            response.getOutputStream().write(buf, 0, bytesRead);
-        }
-        response.getOutputStream().flush();
+//        InputStream fileInputStream = new FileInputStream(file);
+//        byte[] buf = new byte[contentLength];
+//        int bytesRead;
+//        while ((bytesRead = fileInputStream.read(buf, 0, buf.length)) > 0) {
+//            response.getOutputStream().write(buf, 0, bytesRead);
+//        }
+//        response.getOutputStream().flush();
+        copyFile(file, response.getOutputStream());
 
         log.info(String.format("%s Sent to Client", file.getName()));
     }
@@ -216,6 +309,26 @@ public class DefaultServlet extends HttpServlet {
         response.getWriter().flush();
 
         log.info("Not Found Error Sent to Client" + file.getName());
+    }
+
+
+
+    public ZonedDateTime getLastModifiedDate(File file) {
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.of("GMT"));
+    }
+
+    public void copyFile(File file, OutputStream out) throws IOException {
+        int len = Long.valueOf(file.length()).intValue();
+        log.error("going to copy " + file.getName() + " with size " + len);
+
+        InputStream fileInputStream = new FileInputStream(file);
+        byte[] buf = new byte[len];
+        int bytesRead;
+        while ((bytesRead = fileInputStream.read(buf, 0, buf.length)) > 0) {
+            out.write(buf, 0, bytesRead);
+        }
+        out.flush();
+        log.error("file copied");
     }
 
     @Override
@@ -240,9 +353,6 @@ public class DefaultServlet extends HttpServlet {
     public String getServletName() {
         return null;
     }
-
-
-
 
 
 }
