@@ -2,6 +2,7 @@ package edu.upenn.cis.cis455.webserver.util;
 
 import edu.upenn.cis.cis455.webserver.exception.file.IllegalFilePathException;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -125,5 +126,15 @@ public class FileUtil {
 
     }
 
+    public static void copy(File file, OutputStream out) throws IOException {
+        int len = Long.valueOf(file.length()).intValue();
 
+        InputStream fileInputStream = new FileInputStream(file);
+        byte[] buf = new byte[len];
+        int bytesRead;
+        while ((bytesRead = fileInputStream.read(buf, 0, buf.length)) > 0) {
+            out.write(buf, 0, bytesRead);
+        }
+        out.flush();
+    }
 }

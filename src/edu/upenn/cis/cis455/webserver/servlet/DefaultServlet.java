@@ -280,14 +280,7 @@ public class DefaultServlet extends HttpServlet {
         response.getOutputStream().write("\n".getBytes());
 
         /* Send file as binary to output stream */
-//        InputStream fileInputStream = new FileInputStream(file);
-//        byte[] buf = new byte[contentLength];
-//        int bytesRead;
-//        while ((bytesRead = fileInputStream.read(buf, 0, buf.length)) > 0) {
-//            response.getOutputStream().write(buf, 0, bytesRead);
-//        }
-//        response.getOutputStream().flush();
-        copyFile(file, response.getOutputStream());
+        FileUtil.copy(file, response.getOutputStream());
 
         log.info(String.format("%s Sent to Client", file.getName()));
     }
@@ -315,20 +308,6 @@ public class DefaultServlet extends HttpServlet {
 
     public ZonedDateTime getLastModifiedDate(File file) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.of("GMT"));
-    }
-
-    public void copyFile(File file, OutputStream out) throws IOException {
-        int len = Long.valueOf(file.length()).intValue();
-        log.error("going to copy " + file.getName() + " with size " + len);
-
-        InputStream fileInputStream = new FileInputStream(file);
-        byte[] buf = new byte[len];
-        int bytesRead;
-        while ((bytesRead = fileInputStream.read(buf, 0, buf.length)) > 0) {
-            out.write(buf, 0, bytesRead);
-        }
-        out.flush();
-        log.error("file copied");
     }
 
     @Override
