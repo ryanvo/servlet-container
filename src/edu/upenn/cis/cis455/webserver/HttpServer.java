@@ -38,7 +38,7 @@ public class HttpServer {
         try {
             webXml.parse();
         } catch (SAXException|IOException e) {
-            log.error("Error reading xml: " + webXmlPath, e);
+            log.error("Error reading web.xml: " + webXmlPath, e);
             System.exit(1);
         }
 
@@ -67,7 +67,7 @@ public class HttpServer {
             requestListener.start(port);
         } catch (IOException e) {
             log.error("Failed to open socket", e);
-            System.exit(-1);
+            System.exit(1);
         }
 
         log.info("Exiting Main");
