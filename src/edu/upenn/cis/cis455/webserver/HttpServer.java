@@ -23,6 +23,7 @@ public class HttpServer {
         if (args.length != 5) {
             System.out.println("Name: Ryan Vo");
             System.out.println("SEAS Login: ryanvo");
+            System.exit(1);
         }
 
         int port = Integer.valueOf(args[0]);
@@ -36,17 +37,16 @@ public class HttpServer {
         WebXmlHandler webXml = new WebXmlHandler(webXmlPath);
         try {
             webXml.parse();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (SAXException|IOException e) {
+            log.error("Error reading xml: " + webXmlPath, e);
+            System.exit(1);
         }
 
-        /* Create WebAppContainer and composite WebAppManager */
+        /* Create WebAppContainer manage servlets */
         WebAppContainer container = WebAppContainerFactory.create(rootDirectory, webXml);
         log.info("WebAppContainer started: webXmlPath:" + webXmlPath + " rootDirectory:" + rootDirectory);
 
-        /* Create ConnectionHandler for listening on port */
+        /* Create HttpRequestListener to listening for requests */
         HttpRequestListener requestListener = HttpRequestListenerFactory.create(container, POOL_SIZE, WORK_QUEUE_SIZE);
         log.info(String.format("Factory Created ConnectionHandler with %d threads, request queue of %d", POOL_SIZE,
                 WORK_QUEUE_SIZE));
@@ -54,21 +54,20 @@ public class HttpServer {
         /* Power up the servlets specified in web.xml */
         try {
             container.start();
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (ServletException|IOException e) {
+            log.error("Error starting servlets", e);
+            System.exit(1);
         }
 
-        /* ConnectionHandler accepts incoming requests and dispatches them to WebAppContainer */
+        /* Accept incoming requests and dispatch them to WebAppContainer */
         try {
             requestListener.start(port);
         } catch (IOException e) {
-            log.error("Failed to open ServerSocket", e);
+            log.error("Failed to open socket", e);
+            System.exit(-1);
         }
 
         log.info("Exiting Main");
-        System.exit(0);
 
 
     }
