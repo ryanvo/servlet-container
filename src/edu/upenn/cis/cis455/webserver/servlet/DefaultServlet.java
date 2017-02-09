@@ -109,12 +109,8 @@ public class DefaultServlet extends HttpServlet {
 
         writer.write("<html><body>");
         for (File f : file.listFiles()) {
-            Path rootPath = Paths.get(rootDirectory);
-            Path fileAbsolutePath = Paths.get(f.getAbsolutePath());
-            Path relativePath = rootPath.relativize(fileAbsolutePath);
-            log.error("root:"+ rootPath + ";abs:" + fileAbsolutePath + ";rel:" + relativePath);
-            writer.write(String.format("<p><a href=\"%s\">%s</a></p>",
-                    relativePath.toString(), f.getName()));
+            String relativePath = FileUtil.relativizePath(f.getAbsolutePath(), rootDirectory);
+            writer.write(String.format("<p><a href=\"%s\">%s</a></p>", relativePath, f.getName()));
         }
         writer.write("</html></body>");
         writer.finish();

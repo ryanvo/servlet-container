@@ -1,11 +1,14 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.exception.file.IllegalFilePathException;
 import edu.upenn.cis.cis455.webserver.exception.http.BadRequestException;
+import edu.upenn.cis.cis455.webserver.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +44,6 @@ public class HttpRequestProcessor implements RequestProcessor {
         /* Process headers */
         Map<String, List<String>> headers = parseHeaders(lines);
         request.setHeaders(headers);
-
 
         log.info("Parsed HTTP Request: " + line);
     }
@@ -96,8 +98,19 @@ public class HttpRequestProcessor implements RequestProcessor {
             throw new BadRequestException();
         }
 
-        String protocol = statusLine[2];
+        String path = statusLine[1];
+        if (!path.startsWith("http://")) {
+            path = FileUtil.getUrlPath(path);
+        }
 
+        try {
+            statusLine[1] = FileUtil.normalizePath(path);
+        } catch (IllegalFilePathException e) {
+            log.debug("Received illegal path: " + statusLine[1]);
+            throw new BadRequestException();
+        }
+
+        String protocol = statusLine[2];
         if (!protocol.matches("HTTP/\\d.\\d")) {
             throw new BadRequestException();
         }

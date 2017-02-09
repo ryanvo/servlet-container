@@ -11,9 +11,37 @@ import java.util.StringTokenizer;
  */
 public class FileUtil {
 
+    public static String relativizePath(String absPath, String absRoot) {
+        String relativePath = absPath.replaceFirst(absRoot, "");
 
-    public static String normalizePath(String path) throws IllegalFilePathException
-    {
+        if (relativePath.startsWith("/")) {
+            relativePath = relativePath.substring(1);
+        }
+
+        return relativePath;
+    }
+
+    public static String getUrlPath(String url) {
+
+        final String protocol = "http://";
+
+        int indexOfHost;
+        if (url.startsWith(protocol)) {
+            indexOfHost = protocol.length();
+        } else {
+            indexOfHost = 0;
+        }
+
+        String urlWithoutProtocol = url.substring(indexOfHost);
+        int indexOfUrlPath = urlWithoutProtocol.indexOf('/');
+        if (indexOfUrlPath == -1) {
+            return "/";
+        }
+
+        return urlWithoutProtocol.substring(indexOfUrlPath);
+    }
+
+    public static String normalizePath(String path) throws IllegalFilePathException {
         if (path.isEmpty()) {
             throw new IllegalFilePathException();
         }
@@ -40,7 +68,6 @@ public class FileUtil {
                     pathStack.remove(pathStack.size() - 1);
                 }
             } else if (!token.equals(".") && !token.isEmpty()) {
-
                 pathStack.add(token);
             }
         }
