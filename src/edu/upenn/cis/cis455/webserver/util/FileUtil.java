@@ -3,6 +3,9 @@ package edu.upenn.cis.cis455.webserver.util;
 import edu.upenn.cis.cis455.webserver.exception.file.IllegalFilePathException;
 
 import java.io.*;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -137,4 +140,9 @@ public class FileUtil {
         }
         out.flush();
     }
+
+    public static ZonedDateTime getLastModifiedGmt(File file) {
+        return ZonedDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.of("GMT"));
+    }
+
 }
