@@ -4,10 +4,9 @@ package edu.upenn.cis.cis455.webserver.servlet;
 import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
 import edu.upenn.cis.cis455.webserver.engine.ServletConfig;
 import edu.upenn.cis.cis455.webserver.engine.ServletContext;
-import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
-import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
-import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
-import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedOutputStream;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpResponse;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpServlet;
 import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -82,9 +81,7 @@ public class ControlServlet extends HttpServlet {
 
         try (ChunkedWriter writer = new ChunkedWriter(response.getOutputStream())) {
 
-            response.setVersion(HTTP_VERSION);
-            response.setStatusCode("200");
-            response.setErrorMessage("OK");
+            response.setStatus(200, "OK");
             response.setContentType("text/html");
             response.addHeader("Transfer-Encoding", "chunked");
 
