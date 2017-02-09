@@ -6,6 +6,7 @@ import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
+import edu.upenn.cis.cis455.webserver.util.FileUtil;
 import edu.upenn.cis.cis455.webserver.servlet.io.ChunkedWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,8 +19,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Enumeration;
-import java.util.Map;
+import java.util.*;
 
 public class DefaultServlet extends HttpServlet {
 
@@ -61,19 +61,25 @@ public class DefaultServlet extends HttpServlet {
         File fileRequested = new File(rootDirectory + request.getRequestURI());
         try {
             if (!fileRequested.exists()) {
+
                 handleFileNotFound(fileRequested, response);
+
             } else if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
                 handleDirectory(fileRequested, response);
 
             } else if (fileRequested.canRead()) {
+
                 ZonedDateTime time = ZonedDateTime.ofInstant(Instant.ofEpochMilli(fileRequested.lastModified()), ZoneId.of("GMT"));
                 String lastModifiedTime = time.format(dateFormat);
                 response.addHeader("Last-Modified", lastModifiedTime);
 
                 handleFile(fileRequested, response);
+
             } else {
+
                 response.sendError(401, "Unauthorized");
+
             }
         } catch (IOException e) {
 
@@ -106,6 +112,7 @@ public class DefaultServlet extends HttpServlet {
             Path rootPath = Paths.get(rootDirectory);
             Path fileAbsolutePath = Paths.get(f.getAbsolutePath());
             Path relativePath = rootPath.relativize(fileAbsolutePath);
+            log.error("root:"+ rootPath + ";abs:" + fileAbsolutePath + ";rel:" + relativePath);
             writer.write(String.format("<p><a href=\"%s\">%s</a></p>",
                     relativePath.toString(), f.getName()));
         }
@@ -123,7 +130,7 @@ public class DefaultServlet extends HttpServlet {
         response.setVersion(HTTP_VERSION);
         response.setStatusCode("200");
         response.setErrorMessage("OK");
-        response.setContentType(probeContentType(file.getPath()));
+        response.setContentType(FileUtil.probeContentType(file.getPath()));
         int contentLength = Long.valueOf(file.length()).intValue();
         response.setContentLength(contentLength);
 
@@ -196,7 +203,7 @@ public class DefaultServlet extends HttpServlet {
                 response.setVersion(HTTP_VERSION);
                 response.setStatusCode("200");
                 response.setErrorMessage("OK");
-                response.setContentType(probeContentType(fileRequested.getPath()));
+                response.setContentType(FileUtil.probeContentType(fileRequested.getPath()));
                 int contentLength = Long.valueOf(fileRequested.length()).intValue();
                 response.setContentLength(contentLength);
                 writer.println(response.getStatusAndHeader());
@@ -245,36 +252,7 @@ public class DefaultServlet extends HttpServlet {
     }
 
 
-    public String probeContentType(String filePath) {
 
-        filePath = filePath.toLowerCase();
 
-        if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) {
-
-            return "image/jpeg";
-
-        } else if (filePath.endsWith(".gif")) {
-
-            return "image/gif";
-
-        } else if (filePath.endsWith(".png")) {
-
-            return "image/png";
-
-        } else if (filePath.endsWith(".txt")) {
-
-            return "text/plain";
-
-        } else if (filePath.endsWith(".html") || filePath.endsWith(".htm")) {
-
-            return "text/html";
-
-        } else {
-
-            return "application/octet-stream";
-
-        }
-
-    }
 
 }

@@ -1,7 +1,7 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
-import edu.upenn.cis.cis455.webserver.exception.BadRequestException;
+import edu.upenn.cis.cis455.webserver.exception.http.BadRequestException;
 
 import java.io.IOException;
 

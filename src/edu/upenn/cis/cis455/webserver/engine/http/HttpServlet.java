@@ -2,7 +2,7 @@ package edu.upenn.cis.cis455.webserver.engine.http;
 
 import edu.upenn.cis.cis455.webserver.engine.ServletConfig;
 import edu.upenn.cis.cis455.webserver.engine.ServletContext;
-import edu.upenn.cis.cis455.webserver.exception.UnsupportedRequestException;
+import edu.upenn.cis.cis455.webserver.exception.http.UnsupportedRequestException;
 
 import javax.servlet.ServletException;
 

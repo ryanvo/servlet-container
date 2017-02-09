@@ -1,11 +1,16 @@
-package edu.upenn.cis.cis555.webserver.connector;
+ package edu.upenn.cis.cis555.webserver.connector;
 
 import edu.upenn.cis.cis455.webserver.connector.ConnectionHandler;
+import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
 import edu.upenn.cis.cis455.webserver.connector.RequestProcessor;
 import edu.upenn.cis.cis455.webserver.engine.Container;
+import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
+import org.apache.tools.ant.taskdefs.condition.Http;
 import org.junit.Test;
 
+import javax.servlet.Servlet;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;
@@ -23,6 +28,30 @@ import static org.mockito.Mockito.*;
  */
 public class ConnectionHandlerTest {
 
+    @Test
+    public void shouldInvokeTheHelperMethods() throws Exception {
+
+        Socket mockSocket = mock(Socket.class);
+        Container mockContainer = mock(Container.class);
+        RequestProcessor mockProcessor = mock(RequestProcessor.class);
+        ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
+        ServletContext mockServletContext = mock(ServletContext.class);
+        when(mockContainer.getContext(any())).thenReturn(mockServletContext);
+        when(mockServletContext.getAttribute(any())).thenReturn(mockConnectionManager);
+
+        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor);
+        ConnectionHandler spyConnectionHandler = spy(connectionHandler);
+        doReturn(true).when(spyConnectionHandler).hasValidHostHeader(any(), any());
+        doNothing().when(spyConnectionHandler).handle100ContinueRequest(any(), any());
+        spyConnectionHandler.run();
+
+//        verify(mockConnectionManager, times(2)).update(any(), any());
+        verify(mockProcessor).process(isA(HttpRequest.class));
+        verify(spyConnectionHandler).handle100ContinueRequest(any(), any());
+        verify(spyConnectionHandler).hasValidHostHeader(any(), any());
+        verify(mockContainer).dispatch(isA(HttpRequest.class), isA(HttpResponse.class));
+        verify(mockSocket).close();
+    }
 
     @Test
     public void shouldRequireHostHeaderForHttpVersionAbove1point0() throws Exception {
