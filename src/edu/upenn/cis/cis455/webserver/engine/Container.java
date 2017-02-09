@@ -1,10 +1,9 @@
 package edu.upenn.cis.cis455.webserver.engine;
 
-import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
-import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpResponse;
 
 import javax.servlet.ServletException;
-import java.io.IOException;
 
 /**
  * @author rtv

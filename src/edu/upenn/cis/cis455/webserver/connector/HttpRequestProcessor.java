@@ -1,6 +1,6 @@
 package edu.upenn.cis.cis455.webserver.connector;
 
-import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpRequest;
 import edu.upenn.cis.cis455.webserver.exception.file.IllegalFilePathException;
 import edu.upenn.cis.cis455.webserver.exception.http.BadRequestException;
 import edu.upenn.cis.cis455.webserver.util.FileUtil;
@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * Proceses a request before handling it to the container
  * @author rtv
  */
 public class HttpRequestProcessor implements RequestProcessor {
@@ -55,7 +55,6 @@ public class HttpRequestProcessor implements RequestProcessor {
         for (String line : headerLines) {
             String currHeaderKey;
             String[] headerEntry, headerValues;
-
 
             if (line.startsWith(" ") ||  line.startsWith("\t")) {
 

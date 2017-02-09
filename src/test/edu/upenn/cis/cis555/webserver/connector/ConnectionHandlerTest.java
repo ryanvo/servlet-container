@@ -5,12 +5,10 @@ import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
 import edu.upenn.cis.cis455.webserver.connector.RequestProcessor;
 import edu.upenn.cis.cis455.webserver.engine.Container;
 import edu.upenn.cis.cis455.webserver.engine.ServletContext;
-import edu.upenn.cis.cis455.webserver.engine.http.HttpRequest;
-import edu.upenn.cis.cis455.webserver.engine.http.HttpResponse;
-import org.apache.tools.ant.taskdefs.condition.Http;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpRequest;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpResponse;
 import org.junit.Test;
 
-import javax.servlet.Servlet;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.util.Arrays;

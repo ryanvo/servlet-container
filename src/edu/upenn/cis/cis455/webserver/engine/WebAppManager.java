@@ -1,7 +1,7 @@
 package edu.upenn.cis.cis455.webserver.engine;
 
 import edu.upenn.cis.cis455.webserver.connector.ConnectionManager;
-import edu.upenn.cis.cis455.webserver.engine.http.HttpServlet;
+import edu.upenn.cis.cis455.webserver.servlet.http.HttpServlet;
 import edu.upenn.cis.cis455.webserver.servlet.ControlServlet;
 import edu.upenn.cis.cis455.webserver.servlet.DefaultServlet;
 import edu.upenn.cis.cis455.webserver.servlet.ShutdownServlet;
