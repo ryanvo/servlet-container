@@ -8,7 +8,7 @@ Did you complete any extra-credit tasks? If so, which ones?
   Chunked Encoding (write only so far) and Persistent connections
 
 Any special instructions for building and running your solution?
-  None
+  Dependency on log4j2 and Mockito
 
 Did you personally write _all_ the code you are submitting
 (other than code from the course web page)?

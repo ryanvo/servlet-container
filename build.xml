@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<project name="webserver" default="run" basedir=".">
+<project name="webserver" default="build" basedir=".">
     <property name="shared.root" location="${basedir}"/>
     <property name="project.root" location="${basedir}"/>
     <property name="build.dir" location="${project.root}"/>
@@ -12,14 +12,10 @@
     <property name="test-lib.dir"     location="${build.target.dir}${file.separator}test${file.separator}lib"/>
     <property name="src.main.dir"  location="${build.dir}${file.separator}src${file.separator}"/>
     <property name="inputlib.dir"  location="${shared.root}${file.separator}lib"/>
-    <property name="src.test.dir"  location="${build.dir}${file.separator}test"/>
+    <property name="src.test.dir"  location="${build.dir}${file.separator}src${file.separator}test"/>
     <property name="resources.dir" location="${build.dir}${file.separator}resources"/>
     <property name="conf.dir"      location="${build.dir}${file.separator}conf"/>
-    <property name="main-class"      value="edu.upenn.cis.cis455.webserver.HttpServer"/>
-    <path id="classpath">
-        <fileset dir="${inputlib.dir}" includes="**/*.jar"/>
-    </path>
-	
+
     <target name="clobber" description="create target directory and all the subdirectories">
         <delete dir="${build.target.dir}"/>
         <mkdir dir="${classes.dir}"/>
@@ -37,18 +33,18 @@
             </classpath>
         </javac>
     </target>
-    
+
     <target name="compilejavatest" description="compiles test Java source code">
-      <javac srcdir="${src.test.dir}${file.separator}" destdir="${test-classes.dir}" debug="on" deprecation="off" optimize="on" includeAntRuntime="no">
-	<classpath>
-	  <pathelement path="${classes.dir}" />
-	  <fileset dir="${inputlib.dir}">
-	    <include name="*.jar"/>
-	  </fileset>
-	</classpath>
-      </javac>
+        <javac srcdir="${src.test.dir}${file.separator}" destdir="${test-classes.dir}" debug="on" deprecation="off" optimize="on" includeAntRuntime="no">
+            <classpath>
+                <pathelement path="${classes.dir}" />
+                <fileset dir="${inputlib.dir}">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
     </target>
-    
+
     <target name="clean" description="deletes all the compiled class files">
         <delete failonerror="false" includeemptydirs="true">
             <fileset dir="${classes.dir}">
@@ -61,9 +57,9 @@
     </target>
 
     <target name="pack" description="Create an archive for submission">
-      <zip destfile="submit-hw1.zip">
-        <zipfileset dir="." excludes="target/**,extra/**,**/*.class,submit-hw1.zip"/>
-      </zip>
+        <zip destfile="submit-hw1.zip">
+            <zipfileset dir="." excludes="target/**,extra/**,**/*.class,submit-hw1.zip"/>
+        </zip>
     </target>
 
     <target name="build" depends="clobber">
@@ -72,9 +68,6 @@
             <fileset dir="${classes.dir}">
                 <include name="**/*.class"/>
             </fileset>
-            <manifest>
-                <attribute name="Main-Class" value="${main-class}"/>
-            </manifest>
         </jar>
         <copy file="${conf.dir}${file.separator}web.xml" tofile="${web-inf.dir}${file.separator}web.xml" overwrite="true" />
         <copy todir="${classes.dir}" overwrite="true">
@@ -98,30 +91,9 @@
         <jar destfile="${test-lib.dir}${file.separator}webserver-test.jar" update="true">
             <fileset dir="${test-classes.dir}">
                 <include name="**"/>
-              </fileset>
+            </fileset>
         </jar>
         <!-- <antcall target="cleanup"/> -->
     </target>
-	
-	<target name="run" depends="build">
-		<parallel>
-        <java classname="${main-class}" fork="true" timeout="10000">
-        	<classpath>
-    	        <path refid="classpath"/>
-        		<path location="${build.target.dir}${file.separator}WEB-INF${file.separator}lib${file.separator}${ant.project.name}.jar"/>
-            	<path location="${resources.dir}"/>
-			</classpath>
-        </java>
-		<sequential>
-			<sleep milliseconds="500"/>
-			<exec executable="curl">
-			        <arg line="http://localhost:8080/index.html"/>
-		    </exec>
-			<exec executable="curl">
-			        <arg line="http://localhost:8080/shutdown"/>
-		    </exec>
-			</sequential>
-		</parallel>
-	</target>
 
 </project>

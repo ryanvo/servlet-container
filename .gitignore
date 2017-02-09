@@ -7,3 +7,4 @@ www/*
 .idea/
 out/
 test/resources/log.log
+target/*
