@@ -129,16 +129,22 @@ public class FileUtil {
 
     }
 
+    public static void copy(InputStream in, OutputStream out) throws IOException {
+        byte[] buf = new byte[0x1000];
+        int bytesRead;
+        while ((bytesRead = in.read(buf, 0, buf.length)) > 0) {
+            out.write(buf, 0, bytesRead);
+        }
+    }
+
     public static void copy(File file, OutputStream out) throws IOException {
         int len = Long.valueOf(file.length()).intValue();
-
         InputStream fileInputStream = new FileInputStream(file);
         byte[] buf = new byte[len];
         int bytesRead;
         while ((bytesRead = fileInputStream.read(buf, 0, buf.length)) > 0) {
             out.write(buf, 0, bytesRead);
         }
-        out.flush();
     }
 
     public static ZonedDateTime getLastModifiedGmt(File file) {

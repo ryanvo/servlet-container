@@ -11,9 +11,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
+
+import static java.lang.Thread.sleep;
 
 public class ShutdownServlet extends HttpServlet {
 
@@ -54,17 +57,23 @@ public class ShutdownServlet extends HttpServlet {
 
         log.info(getServletName() + " Serving Shutdown Request");
 
-        manager.shutdown();
 
         response.setStatus(200, "OK");
-        response.setContentType("text/html");
-        response.setContentLength(SHUTDOWN_MESSAGE.length());
+//        response.setContentType("text/html");
+//        response.setContentLength(SHUTDOWN_MESSAGE.length());
+                response.setContentLength(-1);
 
-        PrintWriter writer = response.getWriter();
-        log.debug(response.getStatusAndHeader());
-        writer.println(response.getStatusAndHeader());
-        writer.println(SHUTDOWN_MESSAGE);
-        writer.flush();
+        response.setHeader("Connection", "close");
+
+//        response.getWriter().println(SHUTDOWN_MESSAGE);
+
+        try {
+            response.flushBuffer();
+        } catch (IOException e) {
+            log.error("couldnt flush buffer" + e);
+            e.printStackTrace();
+        }
+        manager.shutdown();
 
     }
 

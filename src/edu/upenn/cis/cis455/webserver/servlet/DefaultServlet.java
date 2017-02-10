@@ -52,73 +52,53 @@ public class DefaultServlet extends HttpServlet {
     }
 
     @Override
-    public void service(HttpRequest request, HttpResponse response) throws ServletException {
-        switch (request.getMethod()) {
-            case "GET":
-                doGet(request, response);
-                break;
-            case "HEAD":
-                doHead(request, response);
-                break;
-            default:
-                throw new ServletException(new UnsupportedRequestException());
-        }
-
-    }
-
-
-    @Override
     public void doHead(HttpRequest request, HttpResponse response) throws ServletException {
 
         File fileRequested = new File(rootDirectory + request.getRequestURI());
 
-        try (PrintWriter writer = new PrintWriter(response.getOutputStream())) {
+        PrintWriter writer = response.getWriter();
 
-            if (fileRequested.canRead() && fileRequested.isDirectory()) {
+        if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
-                log.info(String.format("DefaultServlet Serving HEAD Request for Directory %s",
-                        fileRequested.getName()));
+            log.info(String.format("DefaultServlet Serving HEAD Request for Directory %s",
+                    fileRequested.getName()));
 
-                response.setStatus(200, "OK");
-                response.setContentType("text/html");
+            response.setStatus(200, "OK");
+            response.setContentType("text/html");
 
-                writer.println(response.getStatusAndHeader());
-                writer.flush();
+            log.info(String.format("Directory Listing of %s Sent to Client", fileRequested
+                    .getName()));
 
-                log.info(String.format("Directory Listing of %s Sent to Client", fileRequested
-                        .getName()));
+        } else if (fileRequested.canRead()) {
 
-            } else if (fileRequested.canRead()) {
+            log.info(String.format("DefaultServlet Serving HEAD Request for %s", fileRequested
+                    .getName()));
 
-                log.info(String.format("DefaultServlet Serving HEAD Request for %s", fileRequested
-                        .getName()));
+            response.addHeader("Last-Modified", FileUtil.getLastModifiedGmt(fileRequested).format(HTTP_DATE_FORMAT));
+            response.setStatus(200, "OK");
 
-                response.addHeader("Last-Modified", FileUtil.getLastModifiedGmt(fileRequested).format(HTTP_DATE_FORMAT));
-                response.setStatus(200, "OK");
+            response.setContentType(FileUtil.probeContentType(fileRequested.getPath()));
+            int contentLength = Long.valueOf(fileRequested.length()).intValue();
+            response.setContentLength(contentLength);
 
-                response.setContentType(FileUtil.probeContentType(fileRequested.getPath()));
-                int contentLength = Long.valueOf(fileRequested.length()).intValue();
-                response.setContentLength(contentLength);
-                writer.println(response.getStatusAndHeader());
-                writer.flush();
+            log.info(String.format("%s Sent to Client", fileRequested.getName()));
 
-                log.info(String.format("%s Sent to Client", fileRequested.getName()));
+        } else {
 
-            } else {
-
-                log.info(String.format("%s Not found", fileRequested.getName()));
-
-                response.setStatus(404, "Not Found");
-
-                writer.println(response.getStatusAndHeader());
-                writer.flush();
-
-                log.info("Not Found Error Sent to Client: " + request.getRequestURI());
-            }
-
-            log.debug(response.getStatusAndHeader());
-
+            log.info(String.format("%s Not found", fileRequested.getName()));
+            response.setStatus(404, "Not Found");
+            log.info("Not Found Error Sent to Client: " + request.getRequestURI());
         }
+
+        try {
+            response.flushBuffer();
+        } catch (IOException e) {
+            log.error(e);
+           throw new ServletException(e);
+        }
+
+
+
     }
 
     public void doGet(HttpRequest request, HttpResponse response) throws ServletException {
@@ -151,13 +131,13 @@ public class DefaultServlet extends HttpServlet {
                 handleFile(fileRequested, response);
 
             } else {
-
                 response.sendError(401, "Unauthorized");
-
             }
 
+//            response.flushBuffer();
+
         } catch (IOException e) {
-            log.error(response.getStatusAndHeader(), e);
+            log.error(e);
             throw new ServletException(e);
         }
 
@@ -169,15 +149,13 @@ public class DefaultServlet extends HttpServlet {
             return;
         }
 
-        log.info(String.format("DefaultServlet Serving GET Request for Directory %s",
-                file.getName()));
+        log.info(String.format("DefaultServlet Serving GET Request for Directory %s", file.getName()));
 
 
         response.setContentType("text/html");
-        response.addHeader("Transfer-Encoding", "chunked");
+//        response.addHeader("Transfer-Encoding", "chunked");
 
         ChunkedWriter writer = new ChunkedWriter(response.getOutputStream());
-        writer.unchunkedPrintLn(response.getStatusAndHeader());
 
         File[] directoryListing = file.listFiles();
         if (directoryListing == null) {
@@ -190,7 +168,7 @@ public class DefaultServlet extends HttpServlet {
             writer.write(String.format("<p><a href=\"%s\">%s</a></p>", relativePath, f.getName()));
         }
         writer.write("</html></body>");
-        writer.finish();
+        writer.close();
 
         log.info(String.format("Directory Listing of %s Sent to Client", file.getName()));
 
@@ -205,9 +183,6 @@ public class DefaultServlet extends HttpServlet {
         int contentLength = Long.valueOf(file.length()).intValue();
         response.setContentLength(contentLength);
 
-        response.getOutputStream().write(response.getStatusAndHeader().getBytes());
-        response.getOutputStream().write("\n".getBytes());
-
         /* Send file as binary to output stream */
         FileUtil.copy(file, response.getOutputStream());
 
@@ -221,12 +196,14 @@ public class DefaultServlet extends HttpServlet {
         log.info(String.format("%s Not found", file.getName()));
 
         response.setStatus(404, "Not Found");
-        response.setContentType("text/html");
-        response.setContentLength(NOT_FOUND_MESSAGE.length());
-
-        response.getWriter().println(response.getStatusAndHeader());
-        response.getWriter().println(NOT_FOUND_MESSAGE);
-        response.getWriter().flush();
+//        response.setContentType("text/html");
+        response.setContentLength(0);
+//        response.getWriter().println(NOT_FOUND_MESSAGE);
+//        try {
+//            response.flushBuffer();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         log.info("Not Found Error Sent to Client" + file.getName());
     }
@@ -281,9 +258,7 @@ public class DefaultServlet extends HttpServlet {
 
             response.setStatus(412, "Precondition Failed");
             response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
-            PrintWriter writer = response.getWriter();
-            writer.println(response.getStatusAndHeader());
-            writer.flush();
+
         }
     }
 
@@ -313,9 +288,6 @@ public class DefaultServlet extends HttpServlet {
 
             response.setStatus(304, "Not Modified");
             response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
-            PrintWriter writer = response.getWriter();
-            writer.println(response.getStatusAndHeader());
-            writer.flush();
         }
     }
 }

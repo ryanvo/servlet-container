@@ -46,36 +46,6 @@ public class ControlServlet extends HttpServlet {
 
     }
 
-    /**
-     * Sends the request to the appropriate handling method
-     * @param request
-     * @param response
-     */
-    public void service(HttpRequest request, HttpResponse response)  throws ServletException  {
-
-        log.info(String.format("Thread ID %d is Serving URI %s", Thread.currentThread().getId(),
-                request.getRequestURI()));
-
-//        switch (request.getMethod()) {
-//            case "get":
-//                doGet(request, response);
-//                break;
-//            case "control":
-//                doControl(response);
-//                break;
-//            case "stop":
-//                doShutdown(response);
-//                break;
-//            default:
-//                log.error("DefaultServlet Did Not Recognize Request Type");
-//                manager.update(Thread.currentThread().getId(), "waiting");
-//                throw new IllegalStateException();
-//        }
-
-        doGet(request, response);
-
-    }
-
     public void doGet(HttpRequest request, HttpResponse response) throws ServletException {
         log.info(getServletName() + " Serving Control Page Request");
 
@@ -83,9 +53,6 @@ public class ControlServlet extends HttpServlet {
 
             response.setStatus(200, "OK");
             response.setContentType("text/html");
-            response.addHeader("Transfer-Encoding", "chunked");
-
-            writer.unchunkedPrintLn(response.getStatusAndHeader());
 
             writer.write("<html><body><h1>Control Panel</h1>");
             writer.write("<p><h2>Thread &nbsp; &nbsp; &nbsp; &nbsp;Running</h2></p>");
@@ -100,12 +67,15 @@ public class ControlServlet extends HttpServlet {
             }
 
             writer.write("<p><a href=\"/shutdown/\">Shutdown</a></p></body></html>");
-
+            writer.close();
         } catch (IOException e) {
-            log.debug(response.getStatusAndHeader());
-            //TODO http server error
+            throw new ServletException(e);//TODO http server error
         }
-
+        try {
+            response.flushBuffer();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         log.info("Wrote Control Page Response to Socket");
     }
 

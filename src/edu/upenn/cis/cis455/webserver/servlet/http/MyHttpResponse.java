@@ -157,7 +157,7 @@
 //            writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(outputStream,
 //                    getCharacterEncoding()), getBufferSize()), false);
 //            setDateHeader("Date", System.currentTimeMillis() / 1000);
-//            writer.println(getStatusAndHeader());
+//            writer.println(generateStatusAndHeaders());
 //            flushBuffer();
 //            isCommitted = true;
 //        }
@@ -330,7 +330,7 @@
 //        this.url = url;
 //    }
 //
-//    private String getStatusAndHeader() {
+//    private String generateStatusAndHeaders() {
 //        StringBuilder sb = new StringBuilder();
 //
 //        /* Status */

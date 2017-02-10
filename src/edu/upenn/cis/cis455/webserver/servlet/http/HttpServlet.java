@@ -5,6 +5,7 @@ import edu.upenn.cis.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis.cis455.webserver.exception.http.UnsupportedRequestException;
 
 import javax.servlet.ServletException;
+import java.io.IOException;
 
 /**
  * @author rtv
@@ -30,6 +31,17 @@ public abstract class HttpServlet {
                 break;
             default:
                 throw new ServletException(new UnsupportedRequestException());
+        }
+
+
+        if (!response.isCommitted()) {
+            try {
+                response.flushBuffer();
+            } catch (IllegalStateException e) {
+
+            } catch (IOException e) {
+                throw new ServletException(e);
+            }
         }
     }
 

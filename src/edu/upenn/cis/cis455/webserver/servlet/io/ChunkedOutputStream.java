@@ -55,7 +55,8 @@ public class ChunkedOutputStream extends OutputStream {
 
     @Override
     public void close() throws IOException {
-        out.close();
+        writeTerminalChunk();
+        out.flush();
     }
 
     @Override

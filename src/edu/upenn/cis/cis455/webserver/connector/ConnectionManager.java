@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static java.lang.Thread.sleep;
+
 /**
  * Manages the HTTP requests delegated to HttpRequestProcessor. Maintains the status of each connector
  * and can issue a stop of the entire connector pool. Used for the Control Page

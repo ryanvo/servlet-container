@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,10 @@ public class HttpRequestProcessor implements RequestProcessor {
     public void process(HttpRequest request) throws IOException, BadRequestException {
         BufferedReader in = request.getReader();
         String line = in.readLine();
+
+        if (line == null) {
+            throw new SocketException();
+        }
 
         /* Process status line */
         String[] statusLine = parseStatusLine(line);
@@ -99,7 +104,7 @@ public class HttpRequestProcessor implements RequestProcessor {
 
         String[] statusLine = line.split("\\s+");
         if (statusLine.length != 3) {
-            log.debug("Incorrect number of arguments in status line: " + statusLine[1]);
+            log.debug("Incorrect number of arguments in status line: " + line);
             throw new BadRequestException();
         }
 

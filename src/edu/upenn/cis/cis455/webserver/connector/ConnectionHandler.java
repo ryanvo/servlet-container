@@ -7,13 +7,18 @@ import edu.upenn.cis.cis455.webserver.exception.http.BadRequestException;
 import edu.upenn.cis.cis455.webserver.exception.http.UnsupportedRequestException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mockito.internal.matchers.Null;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.net.SocketException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Map;
+
+import static java.lang.Thread.sleep;
 
 public class ConnectionHandler implements Runnable {
 
@@ -38,61 +43,81 @@ public class ConnectionHandler implements Runnable {
     public void run() {
 
         ConnectionManager manager = (ConnectionManager) container.getContext("webapp").getAttribute("ConnectionManager");
-        HttpRequest request = new HttpRequest();
-        HttpResponse response = new HttpResponse();
 
         try {
-            response.setOutputStream(connection.getOutputStream());
-            response.addHeader("Server", "ryanvo-server/1.00");
-            request.setInputStream(connection.getInputStream());
-
-            requestProcessor.process(request);
-            manager.update(Thread.currentThread().getId(), request.getRequestURI());
-
-            /* Check that Host header exists for HTTP/1.1 and up */
-            if (!hasValidHostHeader(request.getProtocol(), request.getHeaders())) {
-                log.debug("Request is missing Host header entry");
-                throw new BadRequestException();
-            }
-
-            /* Send 100 Continue after receiving headers if request asked for it */
-            handle100ContinueRequest(request, connection.getOutputStream());
-
-            /* Exceptions throw by servlet are caught under ServletException */
-            log.info(String.format("Dispatching requestUri:%s, method:%s", request.getRequestURI(), request.getMethod()));
-            container.dispatch(request, response);
-
-        } catch (IOException e) {
-            response.sendError(500, "Server IO Error");
-            log.debug("400 Bad Request sent to client");
-        } catch (BadRequestException e) {
-            response.sendError(400, "Bad Request");
-            log.debug("400 Bad Request sent to client");
-        } catch (ServletException e) {
-            log.info("Servlet throw exception: ", e);
-            if (e.getRootCause() instanceof UnsupportedRequestException) {
-                response.sendError(501, "Not Implemented");
-                log.info("501 Not Implemented sent to client");
-            }
-
-            if (e.getRootCause() instanceof BadRequestException) {
-                response.sendError(400, "Bad Request");
-                log.debug("400 Bad Request sent to client");
-            }
-
-            if (e.getRootCause() instanceof IOException) {
-                response.sendError(500, "Server IO Error");
-                log.debug("400 Bad Request sent to client");
-            }
+            connection.setSoTimeout(30000);
+        } catch (SocketException e) {
+            return;
         }
 
+        while (true) {
 
+            if (connection.isClosed()) {
+                log.error("connection was closed but shouldnt be");
+                return;
+            }
+
+            HttpRequest request = new HttpRequest();
+            HttpResponse response = new HttpResponse();
+
+            try {
+                response.setOutputStream(connection.getOutputStream());
+                request.setInputStream(connection.getInputStream());
+                response.addHeader("Server", "ryanvo-server/1.00");
+
+                requestProcessor.process(request);
+                manager.update(Thread.currentThread().getId(), request.getRequestURI());
+
+            /* Check that Host header exists for HTTP/1.1 and up */
+                if (!hasValidHostHeader(request.getProtocol(), request.getHeaders())) {
+                    log.debug("Request is missing Host header entry");
+                    throw new BadRequestException();
+                }
+
+            /* Send 100 Continue after receiving headers if request asked for it */
+                handle100ContinueRequest(request, connection.getOutputStream());
+
+            /* Exceptions throw by servlet are caught under ServletException */
+                log.info(String.format("Dispatching requestUri:%s, method:%s", request.getRequestURI(), request.getMethod()));
+                container.dispatch(request, response);
+
+            } catch (SocketException e) {
+                continue;
+            } catch (NullPointerException e) {
+                log.error(e);
+            } catch (SocketTimeoutException e) {
+                log.debug("Socket timeout, disconnecting from client with requestUri:" + request.getRequestURI());
+                break;
+            } catch (IOException e) {
+                response.sendError(500, "Server IO Error");
+                log.debug("400 Bad Request sent to client");
+            } catch (BadRequestException e) {
+                response.sendError(400, "Bad Request");
+                log.debug("400 Bad Request sent to client");
+            } catch (ServletException e) {
+                log.info("Servlet threw exception: ", e);
+                if (e.getRootCause() instanceof UnsupportedRequestException) {
+                    response.sendError(501, "Not Implemented");
+                    log.info("501 Not Implemented sent to client");
+                }
+
+                if (e.getRootCause() instanceof BadRequestException) {
+                    response.sendError(400, "Bad Request");
+                    log.debug("400 Bad Request sent to client");
+                }
+
+                if (e.getRootCause() instanceof IOException) {
+                    response.sendError(500, "Server IO Error");
+                    log.debug("400 Bad Request sent to client");
+                }
+            }
+        }
         // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
 
         try {
             connection.close();
             manager.update(Thread.currentThread().getId(), "waiting");
-            log.debug("Socket closed requestUri:" + request.getRequestURI());
+            log.debug("Socket closed");
         } catch (IOException e) {
             log.error("Failed to close socket", e);
         }
@@ -112,7 +137,6 @@ public class ConnectionHandler implements Runnable {
         Map<String, List<String>> headers = request.getHeaders();
         if (headers.containsKey("expect") && headers.get("expect").contains("100-continue")) {
             out.write("HTTP/1.1 100 Continue\r\n".getBytes());
-            out.flush();
             log.debug(String.format("Sent 100 continue uri:%s, method:%s", request.getRequestURI(), request.getMethod()));
         }
 

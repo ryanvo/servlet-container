@@ -27,9 +27,8 @@ public class ChunkedWriter extends Writer {
         out.unchunkedWrite(b, i, i1);
     }
 
-    public void finish() throws IOException {
-        out.writeTerminalChunk();
-    }
+//    public void finish() throws IOException {
+//    }
 
 
     @Override
@@ -64,40 +63,6 @@ public class ChunkedWriter extends Writer {
 
     @Override
     public void close() throws IOException {
-        finish();
+        out.close();
     }
-
-
-
-//    public void println(String s) throws IOException {
-//        out.println(s);
-//    }
-//
-//    public void write(byte[] b) throws IOException {
-//        out.write(b);
-//    }
-
-//    @Override
-//    public void write(String s) {
-//        out.write(s.getBytes(), 0, s.length());
-//        out.flush();
-//    }
-
-
-
-//    @Override
-//    public void write(char[] chars, int i, int i1) throws IOException {
-//        out.write(new String(chars).getBytes(StandardCharsets.UTF_8), 0, chars.length);
-//        out.flush();
-//    }
-
-//    @Override
-//    public void flush() throws IOException {
-//        out.flush();
-//    }
-
-//    @Override
-//    public void close() throws IOException {
-//        out.close();
-//    }
 }

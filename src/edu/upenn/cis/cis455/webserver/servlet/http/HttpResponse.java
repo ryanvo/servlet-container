@@ -1,21 +1,25 @@
 package edu.upenn.cis.cis455.webserver.servlet.http;
 
 
-import edu.upenn.cis.cis455.webserver.servlet.MyHttpResponse;
-import org.apache.log4j.Logger;
+import edu.upenn.cis.cis455.webserver.servlet.io.ResponseBufferOutputStream;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class HttpResponse implements HttpServletResponse {
 
-    static Logger log = Logger.getLogger(MyHttpResponse.class);
+    private static Logger log = LogManager.getLogger(HttpResponse.class);
+
     private final static String HTTP_1_1 = "HTTP/1.1";
     private String characterEncoding = "ISO-8859-1";
+    private final static DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z");
     private Locale locale = Locale.getDefault();
 
     private String url;
@@ -33,20 +37,18 @@ public class HttpResponse implements HttpServletResponse {
     private Map<String, List<String>> headers = new HashMap<>();
     private Map<String, List<Integer>> intHeaders = new HashMap<>();
 
-    private OutputStream socketOutputStream;
-    private ServletOutputStream responseBuffer;
+    private OutputStream socketOut;
+    private ResponseBufferOutputStream msgBodyBuffer;
     private PrintWriter writerBuffer;
 
-    public HttpResponse() {
-        date = getHttpDate();
-    }
-
-    public void addHeader(String name, String value) {
-        headers.put(name, value);
+    public void addHeader(String key, String value) {
+        List<String> headerValues = headers.getOrDefault(key, new ArrayList<>());
+        headerValues.add(value);
+        headers.put(key, headerValues);
     }
 
     public void setOutputStream(OutputStream out) {
-        socketOutputStream = out;
+        socketOut = out;
     }
 
     @Override
@@ -54,9 +56,10 @@ public class HttpResponse implements HttpServletResponse {
         if (isCommitted()) {
             return;
         }
-        ArrayList<Integer> intValues = new ArrayList<>();
+
+        List<Integer> intValues = new ArrayList<>();
         intValues.add(i);
-        intHeaders.replace(i, intValues);
+        intHeaders.put(s, intValues);
     }
 
     @Override
@@ -66,6 +69,7 @@ public class HttpResponse implements HttpServletResponse {
         }
         List<Integer> intValues = intHeaders.getOrDefault(s, new ArrayList<>());
         intValues.add(i);
+        intHeaders.put(s, intValues);
     }
 
     @Override
@@ -73,7 +77,7 @@ public class HttpResponse implements HttpServletResponse {
         this.statusCode = i;
     }
 
-    @Override
+    @Override @Deprecated
     public void setStatus(int i, String s) {
         this.statusCode = i;
         this.errorMessage = s;
@@ -120,28 +124,30 @@ public class HttpResponse implements HttpServletResponse {
 
     @Override
     public void flushBuffer() throws IOException {
-
-        // TODO: 2/9/17
-        // outputstream
-        if (writerBuffer == null) {
-
-            responseBuffer.write(HTTP_1_1.getBytes());
-
-
-
-        } else {
-
-            writerBuffer.write(HTTP_1_1);
-
-
-
+        if (isCommitted()) {
+            throw new IllegalStateException();
         }
 
+        isCommitted = true;
 
+//        /* Close output stream that was used */
+//        if (msgBodyBuffer != null && writerBuffer == null) {
+//            msgBodyBuffer.flush();
+//        } else if (writerBuffer != null)  {
+//            writerBuffer.flush();
+//        }
 
-        
+        /* Write status line, headers, and CRLF */
+        socketOut.write(generateStatusAndHeaders().getBytes());
+        socketOut.write("\n".getBytes());
+
+        log.error("Just wrote:\n" + generateStatusAndHeaders());
+
+        /* Write msg body to socket */
+        if (msgBodyBuffer != null) {
+            msgBodyBuffer.writeTo(socketOut);
+        }
     }
-
     @Override
     public void resetBuffer() {
 
@@ -158,7 +164,7 @@ public class HttpResponse implements HttpServletResponse {
     public void reset() {
         resetBuffer();
         setStatus(-1);
-        setErrorMessage(null);
+//        setErrorMessage(null);
         dateHeaders.clear();
         headers.clear();
         intHeaders.clear();
@@ -196,8 +202,9 @@ public class HttpResponse implements HttpServletResponse {
 
     @Override
     public PrintWriter getWriter() {
-        if (writerBuffer == null && responseBuffer == null) {
-            writerBuffer = new PrintWriter(new ResponseBufferOutputStream(bufferSize));
+        if (writerBuffer == null && msgBodyBuffer == null) {
+            msgBodyBuffer = new ResponseBufferOutputStream(bufferSize);
+            writerBuffer = new PrintWriter(msgBodyBuffer);
         } else if (writerBuffer == null) {
             throw new IllegalStateException();
         }
@@ -206,73 +213,83 @@ public class HttpResponse implements HttpServletResponse {
 
     @Override
     public ServletOutputStream getOutputStream() {
-        if (responseBuffer == null && writerBuffer == null) {
-            responseBuffer = new ResponseBufferOutputStream(bufferSize);
-        } else if (responseBuffer == null) {
+        if (msgBodyBuffer == null && writerBuffer == null) {
+            msgBodyBuffer = new ResponseBufferOutputStream(bufferSize);
+        } else if (msgBodyBuffer == null) {
             throw new IllegalStateException();
         }
-        return responseBuffer;
+        return msgBodyBuffer;
     }
 
-    public String getStatusAndHeader() {
+    private String generateStatusAndHeaders() {
         StringBuilder sb = new StringBuilder();
-        sb.append(HTTP_1_1).append(" ").append(statusCode).append(" ").append(errorMessage).append('\n')
-                .append("Date: ").append(date).append('\n');
 
+        sb.append(HTTP_1_1).append(" ").append(statusCode).append(" ").append(errorMessage).append('\n');
+        sb.append("Date: ").append(ZonedDateTime.now().format(HTTP_DATE_FORMAT)).append('\n');
+
+        if (!headers.containsKey("Connection")) {
+            log.error("it has no connection header??");
+            sb.append("Connection: keep-alive").append('\n');
+        }
         if (contentType != null) {
             sb.append("Content-Type: ").append(contentType).append('\n');
         }
 
         if (contentLength > 0) {
             sb.append("Content-Length: ").append(contentLength).append('\n');
-            sb.append("Connection: close").append('\n');
         } else {
-            sb.append("Connection: keep-alive").append('\n');
+            sb.append("Transfer-Encoding: chunked").append('\n');
         }
 
         for (Map.Entry<String, List<String>> header : headers.entrySet()) {
-            sb.append(header.getKey()).append(": ").append(header.getValue()).append('\n');
+            sb.append(header.getKey()).append(": ");
+            String comma = "";
+            for (String val : header.getValue()) {
+                sb.append(comma).append(val);
+                comma = ", ";
+            }
+            sb.append("\n");
         }
 
         return sb.toString();
     }
 
-    private static String getHttpDate() { // TODO: 2/9/17 depricated to zonedtimedate
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-        dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return dateFormat.format(Calendar.getInstance().getTime());
-    }
-
-
     @Override // TODO: 2/9/17 figureout how to do it right
     public void sendError(int code, String msg) {
 
-        String statusLn = String.format("HTTP/1.1 %d %s", code, msg);
-        getWriter().println(statusLn);
-        getWriter().println();
-        getWriter().flush();
+        if (isCommitted()) {
+            throw new IllegalStateException();
+        }
 
+        isCommitted = true;
+        errorMessage = msg;
+        statusCode = code;
+        try {
+            socketOut.write(generateStatusAndHeaders().getBytes());
+            socketOut.write("\n".getBytes());
+//            socketOut.flush();
+        } catch (IOException e){
+            log.error("Failed to commit sendError response", e);
+            return;
+        }
 
-//        if (isCommitted()) {
-//            throw new IllegalStateException();
-//        }
-//        setStatus(statusCode);
-//        setErrorMessage(msg);
-//        setContentType("text/html");
-//        getWriter().println(msg);
-//        flushBuffer();
+        log.error("Commit response:\n" + generateStatusAndHeaders());
     }
 
     @Override
     public void sendError(int i) throws IOException {
-        if (isCommitted()) {
-            throw new IllegalStateException();
-        }
-        setStatus(statusCode);
-        setErrorMessage(msg);
-        setContentType("text/html");
-        getWriter().println(msg);
-        flushBuffer();
+//        isCommitted = true;
+//        errorMessage = "MSG";
+//        statusCode = i;
+//        try {
+//            socketOut.write(generateStatusAndHeaders().getBytes());
+//            socketOut.write("\n".getBytes());
+//            socketOut.flush();
+//        } catch (IOException e){
+//            log.error("Failed to commit response", e);
+//        }
+//
+//        log.error("Commit response:\n" + generateStatusAndHeaders());
     }
 
     @Override
@@ -282,7 +299,7 @@ public class HttpResponse implements HttpServletResponse {
         }
 
         setStatus(SC_FOUND);
-        setErrorMessage("Found");
+//        setErrorMessage("Found");
         resetBuffer();
         addHeader("Location", encodeURL(s));
         flushBuffer();
@@ -293,7 +310,7 @@ public class HttpResponse implements HttpServletResponse {
     public void setDateHeader(String key, long val) {
         ArrayList<Long> dateValues = new ArrayList<>();
         dateValues.add(val);
-        dateHeaders.replace(key, dateValues);
+        dateHeaders.put(key, dateValues);
     }
 
     @Override
@@ -312,7 +329,7 @@ public class HttpResponse implements HttpServletResponse {
         }
         ArrayList<String> headerValues = new ArrayList<>();
         headerValues.add(val);
-        headers.replace(key, headerValues);
+        headers.put(key, headerValues);
     }
 
     @Override @Deprecated

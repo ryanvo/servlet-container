@@ -42,13 +42,13 @@ public class WorkerPool {
 
         while (!queue.isEmpty()) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(1000);
             } catch (InterruptedException ignore) {}
         }
 
         for (WorkerThread thread : threadPool) {
             thread.interrupt();
-            log.debug(String.format("Thread #%d stopped", Thread.currentThread().getId()));
+            log.debug(String.format("Thread #%d stopped", thread.getId()));
         }
 
         log.info(String.format("Worked pool stopped %d threads", threadPool.size()));
