@@ -211,11 +211,9 @@ public class HttpResponse implements HttpServletResponse {
         StringBuilder sb = new StringBuilder();
 
         sb.append(HTTP_1_1).append(" ").append(statusCode).append(" ").append(errorMessage).append('\n');
+
         sb.append("Date: ").append(ZonedDateTime.now().format(HTTP_DATE_FORMAT)).append('\n');
 
-        if (!headers.containsKey("Connection")) {
-            sb.append("Connection: keep-alive").append('\n');
-        }
         if (contentType != null) {
             sb.append("Content-Type: ").append(contentType).append('\n');
         }

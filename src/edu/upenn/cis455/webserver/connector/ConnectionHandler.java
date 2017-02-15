@@ -46,16 +46,11 @@ public class ConnectionHandler implements Runnable {
         try {
             connection.setSoTimeout(30000);
         } catch (SocketException e) {
+            log.error("Failed to set socket timeout", e);
             return;
         }
 
         while (!connection.isClosed()) {
-
-//
-//            if () {
-//                log.error("connection was closed but shouldnt be");
-//                return;
-//            }
 
             HttpRequest request = new HttpRequest();
             HttpResponse response = new HttpResponse();
@@ -67,19 +62,24 @@ public class ConnectionHandler implements Runnable {
                 response.addHeader("Server", "ryanvo-server/1.00");
 
                 requestProcessor.process(request);
+                if (request.getProtocol().endsWith("1.0")) {
+                    response.setHeader("Connection", "close");
+                } else {
+                    response.setHeader("Connection", "keep-alive");
+                }
 
                 manager.update(Thread.currentThread().getId(), request.getRequestURI());
 
-            /* Check that Host header exists for HTTP/1.1 and up */
+                /* Check that Host header exists for HTTP/1.1 and up */
                 if (!hasValidHostHeader(request.getProtocol(), request.getHeaders())) {
                     log.debug("Request is missing Host header entry");
                     throw new BadRequestException();
                 }
 
-            /* Send 100 Continue after receiving headers if request asked for it */
+                /* Send 100 Continue after receiving headers if request asked for it */
                 handle100ContinueRequest(request, connection.getOutputStream());
 
-            /* Exceptions throw by servlet are caught under ServletException */
+                /* Exceptions throw by servlet are caught under ServletException */
                 log.info(String.format("Dispatching requestUri:%s, method:%s", request.getRequestURI(), request.getMethod()));
                 container.dispatch(request, response);
 
