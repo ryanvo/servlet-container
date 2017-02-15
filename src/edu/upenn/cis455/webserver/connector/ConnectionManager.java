@@ -11,8 +11,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import static java.lang.Thread.sleep;
 
 /**
- * Manages the HTTP requests delegated to HttpRequestProcessor. Maintains the status of each connector
- * and can issue a stop of the entire connector pool. Used for the Control Page
+ * Manages the HTTP requests delegated to HttpRequestProcessor.
+ *
+ * Maintains the status of each connection and can shutdown the
+ * the worker pool.
+ *
+ * Used by the control page to monitor thread statuses.
  */
 public class ConnectionManager implements ThreadManager {
 

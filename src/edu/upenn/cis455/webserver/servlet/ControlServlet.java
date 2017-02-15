@@ -49,7 +49,8 @@ public class ControlServlet extends HttpServlet {
     public void doGet(HttpRequest request, HttpResponse response) throws ServletException {
         log.info(getServletName() + " Serving Control Page Request");
 
-        try (ChunkedWriter writer = new ChunkedWriter(response.getOutputStream())) {
+        try {
+            ChunkedWriter writer = new ChunkedWriter(response.getOutputStream());
 
             response.setStatus(200, "OK");
             response.setContentType("text/html");
@@ -71,11 +72,11 @@ public class ControlServlet extends HttpServlet {
         } catch (IOException e) {
             throw new ServletException(e);//TODO http server error
         }
-        try {
-            response.flushBuffer();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            response.flushBuffer();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
         log.info("Wrote Control Page Response to Socket");
     }
 

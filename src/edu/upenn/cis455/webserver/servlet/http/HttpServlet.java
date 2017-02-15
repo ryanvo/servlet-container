@@ -16,7 +16,6 @@ public abstract class HttpServlet {
 
     abstract public void destroy();
 
-
     public void service(HttpRequest request, HttpResponse response) throws ServletException {
 
         switch (request.getMethod()) {

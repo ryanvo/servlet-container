@@ -21,16 +21,20 @@ import java.util.Map;
  */
 public class HttpRequestProcessor implements RequestProcessor {
 
+    static int i = 0;
+
     private static Logger log = LogManager.getLogger(HttpRequestProcessor.class);
 
+    /**
+     * Reads the input stream of an HTTP request and populates an HttpRequest object
+     * @param request empty HttpRequest object
+     * @throws IOException error reading socket
+     * @throws BadRequestException illegal request format
+     */
     @Override
     public void process(HttpRequest request) throws IOException, BadRequestException {
         BufferedReader in = request.getReader();
         String line = in.readLine();
-
-        if (line == null) {
-            throw new SocketException();
-        }
 
         /* Process status line */
         String[] statusLine = parseStatusLine(line);
@@ -40,7 +44,7 @@ public class HttpRequestProcessor implements RequestProcessor {
 
         /* Read in headers from request */
         List<String> lines = new ArrayList<>();
-        for (line = in.readLine(); !line.equals(null) && !line.isEmpty(); line = in.readLine()) {
+        for (line = in.readLine(); line != null && !line.isEmpty(); line = in.readLine()) {
             lines.add(line);
             log.debug("Header line: " + line);
         }
@@ -52,6 +56,12 @@ public class HttpRequestProcessor implements RequestProcessor {
         log.info("Processed HTTP Request: " + line);
     }
 
+    /**
+     * Creates a map of the headers given in a response method. Handles multiline headers.
+     * @param headerLines part of response after status line and before CRLF
+     * @return map of header field to values
+     * @throws BadRequestException illegal headers in the request
+     */
     public Map<String, List<String>> parseHeaders(List<String> headerLines) throws BadRequestException {
 
         Map<String, List<String>> headers = new HashMap<>();
@@ -96,6 +106,17 @@ public class HttpRequestProcessor implements RequestProcessor {
         return headers;
     }
 
+    /**
+     * Splits and normalizes HTTP request status line into an array with:
+     *  Method @ index 0
+     *  Path @ index 1
+     *  HTTP version @ index 2
+     * @param line status line of HTTP request
+     * @return array of normalized components of status line
+     * @throws BadRequestException - line contains incorrect number of arguments
+     *                             - illegal file path
+     *                             - invalid HTTP version
+     */
     public String[] parseStatusLine(String line) throws BadRequestException {
 
         if (line == null) {
@@ -107,12 +128,14 @@ public class HttpRequestProcessor implements RequestProcessor {
             log.debug("Incorrect number of arguments in status line: " + line);
             throw new BadRequestException();
         }
-
         String path = statusLine[1];
+
+        /* Handle absolute path case */
         if (path.startsWith("http://")) {
             path = FileUtil.getUrlPath(path);
         }
 
+        /* Normalize all paths */
         try {
             statusLine[1] = FileUtil.normalizePath(path);
         } catch (IllegalFilePathException e) {
@@ -120,6 +143,7 @@ public class HttpRequestProcessor implements RequestProcessor {
             throw new BadRequestException();
         }
 
+        /* Validate legal HTTP version */
         String protocol = statusLine[2];
         if (!protocol.matches("HTTP/\\d.\\d")) {
             log.debug("Invalid HTTP version: " + statusLine[1]);

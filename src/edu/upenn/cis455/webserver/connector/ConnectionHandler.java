@@ -49,22 +49,25 @@ public class ConnectionHandler implements Runnable {
             return;
         }
 
-        while (true) {
+        while (!connection.isClosed()) {
 
-            if (connection.isClosed()) {
-                log.error("connection was closed but shouldnt be");
-                return;
-            }
+//
+//            if () {
+//                log.error("connection was closed but shouldnt be");
+//                return;
+//            }
 
             HttpRequest request = new HttpRequest();
             HttpResponse response = new HttpResponse();
 
             try {
+
                 response.setOutputStream(connection.getOutputStream());
                 request.setInputStream(connection.getInputStream());
                 response.addHeader("Server", "ryanvo-server/1.00");
 
                 requestProcessor.process(request);
+
                 manager.update(Thread.currentThread().getId(), request.getRequestURI());
 
             /* Check that Host header exists for HTTP/1.1 and up */
@@ -81,7 +84,7 @@ public class ConnectionHandler implements Runnable {
                 container.dispatch(request, response);
 
             } catch (SocketException e) {
-                continue;
+                // For timeout
             } catch (NullPointerException e) {
                 log.error(e);
             } catch (SocketTimeoutException e) {
@@ -89,10 +92,10 @@ public class ConnectionHandler implements Runnable {
                 break;
             } catch (IOException e) {
                 response.sendError(500, "Server IO Error");
-                log.debug("400 Bad Request sent to client");
+                log.info("400 Bad Request sent to client for server IO");
             } catch (BadRequestException e) {
                 response.sendError(400, "Bad Request");
-                log.debug("400 Bad Request sent to client");
+                log.info("400 Bad Request sent to client");
             } catch (ServletException e) {
                 log.info("Servlet threw exception: ", e);
                 if (e.getRootCause() instanceof UnsupportedRequestException) {
@@ -102,12 +105,12 @@ public class ConnectionHandler implements Runnable {
 
                 if (e.getRootCause() instanceof BadRequestException) {
                     response.sendError(400, "Bad Request");
-                    log.debug("400 Bad Request sent to client");
+                    log.info("400 Bad Request sent to client");
                 }
 
                 if (e.getRootCause() instanceof IOException) {
                     response.sendError(500, "Server IO Error");
-                    log.debug("400 Bad Request sent to client");
+                    log.info("400 Bad Request sent to client for server IO error");
                 }
             }
         }

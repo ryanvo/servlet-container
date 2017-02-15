@@ -8,7 +8,9 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -77,19 +79,13 @@ public class HttpResponse implements HttpServletResponse {
         this.statusCode = i;
     }
 
-    @Override @Deprecated
-    public void setStatus(int i, String s) {
-        this.statusCode = i;
-        this.errorMessage = s;
-    }
-
     @Override
     public void addCookie(Cookie cookie) {
         cookies.add(cookie);
         addHeader("Set-Cookie", cookie.getName() + "=" + cookie.getValue());
     }
-    
 
+    @Override
     public boolean containsHeader(String name) {
         return dateHeaders.containsKey(name) || headers.containsKey(name) || intHeaders.containsKey(name);
     }
@@ -148,9 +144,9 @@ public class HttpResponse implements HttpServletResponse {
             msgBodyBuffer.writeTo(socketOut);
         }
     }
+
     @Override
     public void resetBuffer() {
-
 
 
     }
@@ -191,16 +187,6 @@ public class HttpResponse implements HttpServletResponse {
     }
 
     @Override
-    public String getCharacterEncoding() {
-        return characterEncoding;
-    }
-
-    @Override
-    public String getContentType() {
-        return contentType;
-    }
-
-    @Override
     public PrintWriter getWriter() {
         if (writerBuffer == null && msgBodyBuffer == null) {
             msgBodyBuffer = new ResponseBufferOutputStream(bufferSize);
@@ -228,14 +214,13 @@ public class HttpResponse implements HttpServletResponse {
         sb.append("Date: ").append(ZonedDateTime.now().format(HTTP_DATE_FORMAT)).append('\n');
 
         if (!headers.containsKey("Connection")) {
-            log.error("it has no connection header??");
             sb.append("Connection: keep-alive").append('\n');
         }
         if (contentType != null) {
             sb.append("Content-Type: ").append(contentType).append('\n');
         }
 
-        if (contentLength > 0) {
+        if (contentLength >= 0) {
             sb.append("Content-Length: ").append(contentLength).append('\n');
         } else {
             sb.append("Transfer-Encoding: chunked").append('\n');
@@ -254,7 +239,7 @@ public class HttpResponse implements HttpServletResponse {
         return sb.toString();
     }
 
-    @Override // TODO: 2/9/17 figureout how to do it right
+    @Override
     public void sendError(int code, String msg) {
 
         if (isCommitted()) {
@@ -264,11 +249,12 @@ public class HttpResponse implements HttpServletResponse {
         isCommitted = true;
         errorMessage = msg;
         statusCode = code;
+        setContentLength(0);
         try {
             socketOut.write(generateStatusAndHeaders().getBytes());
             socketOut.write("\n".getBytes());
 //            socketOut.flush();
-        } catch (IOException e){
+        } catch (IOException e) {
             log.error("Failed to commit sendError response", e);
             return;
         }
@@ -278,18 +264,34 @@ public class HttpResponse implements HttpServletResponse {
 
     @Override
     public void sendError(int i) throws IOException {
-//        isCommitted = true;
-//        errorMessage = "MSG";
-//        statusCode = i;
-//        try {
-//            socketOut.write(generateStatusAndHeaders().getBytes());
-//            socketOut.write("\n".getBytes());
-//            socketOut.flush();
-//        } catch (IOException e){
-//            log.error("Failed to commit response", e);
-//        }
-//
-//        log.error("Commit response:\n" + generateStatusAndHeaders());
+
+        if (isCommitted()) {
+            throw new IllegalStateException();
+        }
+
+        switch (i) {
+            case HttpServletResponse.SC_INTERNAL_SERVER_ERROR:
+                sendError(i, "Internal Server Error");
+                break;
+            case HttpServletResponse.SC_NOT_FOUND:
+                sendError(i, "Not Found");
+                break;
+            case HttpServletResponse.SC_FORBIDDEN:
+                sendError(i, "Forbidden");
+                break;
+            case HttpServletResponse.SC_PRECONDITION_FAILED:
+                sendError(i, "Precondition Failed");
+                break;
+            case HttpServletResponse.SC_UNAUTHORIZED:
+                sendError(i, "Unauthorized");
+                break;
+            case HttpServletResponse.SC_NOT_MODIFIED:
+                sendError(i, "Not Modified");
+                break;
+            default:
+                sendError(i, "Bad Request");
+                break;
+        }
     }
 
     @Override
@@ -318,6 +320,7 @@ public class HttpResponse implements HttpServletResponse {
         if (isCommitted()) {
             return;
         }
+
         List<Long> dateValues = dateHeaders.getOrDefault(s, new ArrayList<>());
         dateValues.add(l);
     }
@@ -332,15 +335,33 @@ public class HttpResponse implements HttpServletResponse {
         headers.put(key, headerValues);
     }
 
-    @Override @Deprecated
+    @Override
+    public String getCharacterEncoding() {
+        return characterEncoding;
+    }
+
+    @Override
+    public String getContentType() {
+        return contentType;
+    }
+
+    /* Deprecated methods */
+    @Override
+    @Deprecated
     public String encodeUrl(String s) {
         return null;
     }
 
-    @Override @Deprecated
+    @Override
+    @Deprecated
     public String encodeRedirectUrl(String s) {
         return null;
     }
 
-
+    @Override
+    @Deprecated
+    public void setStatus(int i, String s) {
+        this.statusCode = i;
+        this.errorMessage = s;
+    }
 }
