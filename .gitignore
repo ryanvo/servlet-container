@@ -8,3 +8,4 @@ www/*
 out/
 test/resources/log.log
 target/*
+*.iml
