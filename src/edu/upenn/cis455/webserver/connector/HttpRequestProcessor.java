@@ -109,7 +109,7 @@ public class HttpRequestProcessor implements RequestProcessor {
         }
 
         String path = statusLine[1];
-        if (!path.startsWith("http://")) {
+        if (path.startsWith("http://")) {
             path = FileUtil.getUrlPath(path);
         }
 
