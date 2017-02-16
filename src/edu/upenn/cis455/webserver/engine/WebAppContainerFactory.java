@@ -16,6 +16,7 @@ public class WebAppContainerFactory {
         ServletContextBuilder contextBuilder = new ServletContextBuilder();
         ServletContext context = contextBuilder.setRealPath(rootDirectory)
                 .setContextParams(webXml.getContextParams())
+                .setName(webXml.getWebAppName())
                 .build();
 
         /* Create WebAppContainer and composite WebAppManager */

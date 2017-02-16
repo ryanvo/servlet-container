@@ -28,8 +28,10 @@ public class ServletContext implements javax.servlet.ServletContext {
     private Map<String, Object> attributes = new ConcurrentHashMap<>();
     private Map<String, String> contextParams;
     private String realPath;
+    private String name;
 
     public ServletContext(ServletContextBuilder builder) {
+        name = builder.name;
         contextParams = new ConcurrentHashMap<>(builder.getContextParams());
         realPath = builder.getRealPath();
     }

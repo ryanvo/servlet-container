@@ -20,6 +20,12 @@ public class ServletContextBuilder {
 
     public Map<String, String> contextParams;
 
+    public String name;
+
+    public ServletContextBuilder setName(String name) {
+        this.name = name;
+        return this;
+    }
 
     public ServletContextBuilder setRealPath(String realPath) {
         this.realPath = realPath;

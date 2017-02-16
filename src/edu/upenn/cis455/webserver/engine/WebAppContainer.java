@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
-import java.io.IOException;
 
 
 /**
@@ -26,7 +25,7 @@ public class WebAppContainer implements Container {
     }
 
 
-    public void start() throws IOException, ServletException {
+    public void start() throws ServletException, ReflectiveOperationException {
 
         webAppManager.launchServlets();
 
