@@ -18,11 +18,14 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author rtv
  */
-public class ServletContext implements javax.servlet.ServletContext{
+public class ServletContext implements javax.servlet.ServletContext {
 
     private static Logger log = LogManager.getLogger(ServletContext.class);
 
-    private Map<String, Object> attributes  = new ConcurrentHashMap<>();
+    private static int MAJOR_VERSION = 2;
+    private static int MINOR_VERSION = 4;
+
+    private Map<String, Object> attributes = new ConcurrentHashMap<>();
     private Map<String, String> contextParams;
     private String realPath;
 
@@ -32,8 +35,9 @@ public class ServletContext implements javax.servlet.ServletContext{
     }
 
     /**
-     *  My Setters
+     * My Setters
      */
+
     public void setInitParam(String name, String value) {
         contextParams.put(name, value);
     }
@@ -62,51 +66,53 @@ public class ServletContext implements javax.servlet.ServletContext{
 
     @Override
     public void log(Exception e, String s) {
-
+        log.error(s, e);
     }
 
     @Override
     public void log(String s, Throwable throwable) {
-
+        log.error(s, throwable);
     }
 
+    @Override
     public Object getAttribute(String s) {
         return attributes.get(s);
     }
 
+    @Override
     public void removeAttribute(String s) {
         attributes.remove(s);
     }
 
+    @Override
     public void setAttribute(String s, Object o) {
         attributes.put(s, o);
     }
 
+    @Override
     public Enumeration getAttributeNames() {
         Set<String> keys = attributes.keySet();
-        Vector<String> atts = new Vector<>(keys);
-        return atts.elements();
+        return new Vector<>(keys).elements();
     }
 
-
+    @Override //TODO confirm
     public String getRealPath(String s) {
-        return realPath;
+        return realPath + s;
     }
 
-    public void setRealPath(String s) {
-        realPath = s;
-    }
-
-    @Override
+    @Override //TODO
     public ServletContext getContext(String s) {
         return null;
     }
 
     @Override
     public String getServerInfo() {
-        return null;
+        return "ryanvo-server/2.0";
     }
 
+    /**
+     * @return display-name element in web.xml
+     */
     @Override
     public String getServletContextName() {
         return null;
@@ -114,12 +120,12 @@ public class ServletContext implements javax.servlet.ServletContext{
 
     @Override
     public int getMajorVersion() {
-        return 0;
+        return MAJOR_VERSION;
     }
 
     @Override
     public int getMinorVersion() {
-        return 0;
+        return MINOR_VERSION;
     }
 
     @Override
@@ -153,18 +159,29 @@ public class ServletContext implements javax.servlet.ServletContext{
         }
     }
 
-    @Override
-    public Set getResourcePaths(String s) {
-        return null;
-    }
-
-    @Override
-    public URL getResource(String path) throws MalformedURLException {
-        return null;
-    }
 
     @Override
     public InputStream getResourceAsStream(String s) {
+        ClassLoader classLoader = getClass().getClassLoader();
+        return classLoader.getResourceAsStream(s);
+    }
+
+    /**
+     * Not Implemented
+     */
+
+    @Override @Deprecated
+    public Enumeration getServlets() {
+        return null;
+    }
+
+    @Override @Deprecated
+    public Enumeration getServletNames() {
+        return null;
+    }
+
+    @Override @Deprecated
+    public Servlet getServlet(String s) throws ServletException {
         return null;
     }
 
@@ -179,17 +196,12 @@ public class ServletContext implements javax.servlet.ServletContext{
     }
 
     @Override
-    public Servlet getServlet(String s) throws ServletException {
+    public Set getResourcePaths(String s) {
         return null;
     }
 
     @Override
-    public Enumeration getServlets() {
-        return null;
-    }
-
-    @Override
-    public Enumeration getServletNames() {
+    public URL getResource(String path) throws MalformedURLException {
         return null;
     }
 
