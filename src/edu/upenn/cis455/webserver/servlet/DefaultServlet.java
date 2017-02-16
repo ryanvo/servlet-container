@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.ServletException;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -27,9 +26,9 @@ public class DefaultServlet extends HttpServlet {
 
     private static Logger log = LogManager.getLogger(DefaultServlet.class);
 
-    private final static String HTTP_VERSION = "HTTP/1.1";
     private final static DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z");
 
+    private ServletContext context;
     private final String rootDirectory;
     private Map<String, String> initParams = new HashMap<>();
 
@@ -48,14 +47,13 @@ public class DefaultServlet extends HttpServlet {
             initParams.put(key, config.getInitParameter(key));
         }
 
+        this.context =  config.getServletContext();
     }
 
     @Override
     public void doHead(HttpRequest request, HttpResponse response) throws ServletException {
 
         File fileRequested = new File(rootDirectory + request.getRequestURI());
-
-        PrintWriter writer = response.getWriter();
 
         if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
@@ -76,7 +74,7 @@ public class DefaultServlet extends HttpServlet {
             response.addHeader("Last-Modified", FileUtil.getLastModifiedGmt(fileRequested).format(HTTP_DATE_FORMAT));
             response.setStatus(200, "OK");
 
-            response.setContentType(FileUtil.probeContentType(fileRequested.getPath()));
+            response.setContentType(getServletContext().getMimeType(fileRequested.getPath()));
             int contentLength = Long.valueOf(fileRequested.length()).intValue();
             response.setContentLength(contentLength);
 
@@ -89,12 +87,12 @@ public class DefaultServlet extends HttpServlet {
             log.info("Not Found Error Sent to Client: " + request.getRequestURI());
         }
 
-        try {
-            response.flushBuffer();
-        } catch (IOException e) {
-            log.error(e);
-           throw new ServletException(e);
-        }
+//        try {
+//            response.flushBuffer();
+//        } catch (IOException e) {
+//            log.error(e);
+//           throw new ServletException(e);
+//        }
 
 
 
@@ -178,7 +176,7 @@ public class DefaultServlet extends HttpServlet {
         log.info(String.format("DefaultServlet Serving GET Request for %s", file.getName()));
 
 
-        response.setContentType(FileUtil.probeContentType(file.getPath()));
+        response.setContentType(getServletContext().getMimeType(file.getPath()));
         int contentLength = Long.valueOf(file.length()).intValue();
         response.setContentLength(contentLength);
 
@@ -224,7 +222,7 @@ public class DefaultServlet extends HttpServlet {
 
     @Override
     public ServletContext getServletContext() {
-        return null;
+        return context;
     }
 
     @Override

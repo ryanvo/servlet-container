@@ -98,36 +98,36 @@ public class FileUtil {
         return normalizedPath;
     }
 
-    public static String probeContentType(String filePath) {
-
-        filePath = filePath.toLowerCase();
-
-        if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) {
-
-            return "image/jpeg";
-
-        } else if (filePath.endsWith(".gif")) {
-
-            return "image/gif";
-
-        } else if (filePath.endsWith(".png")) {
-
-            return "image/png";
-
-        } else if (filePath.endsWith(".txt")) {
-
-            return "text/plain";
-
-        } else if (filePath.endsWith(".html") || filePath.endsWith(".htm")) {
-
-            return "text/html";
-
-        } else {
-
-            return "application/octet-stream";
-        }
-
-    }
+//    public static String probeContentType(String filePath) {
+//
+//        filePath = filePath.toLowerCase();
+//
+//        if (filePath.endsWith(".jpg") || filePath.endsWith(".jpeg")) {
+//
+//            return "image/jpeg";
+//
+//        } else if (filePath.endsWith(".gif")) {
+//
+//            return "image/gif";
+//
+//        } else if (filePath.endsWith(".png")) {
+//
+//            return "image/png";
+//
+//        } else if (filePath.endsWith(".txt")) {
+//
+//            return "text/plain";
+//
+//        } else if (filePath.endsWith(".html") || filePath.endsWith(".htm")) {
+//
+//            return "text/html";
+//
+//        } else {
+//
+//            return "application/octet-stream";
+//        }
+//
+//    }
 
     public static void copy(InputStream in, OutputStream out) throws IOException {
         byte[] buf = new byte[0x1000];

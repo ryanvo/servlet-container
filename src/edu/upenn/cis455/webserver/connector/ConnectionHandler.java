@@ -1,10 +1,10 @@
 package edu.upenn.cis455.webserver.connector;
 
 import edu.upenn.cis455.webserver.engine.Container;
-import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
-import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
 import edu.upenn.cis455.webserver.servlet.exception.http.BadRequestException;
 import edu.upenn.cis455.webserver.servlet.exception.http.UnsupportedRequestException;
+import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
+import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,8 +16,6 @@ import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Map;
-
-import static java.lang.Thread.sleep;
 
 public class ConnectionHandler implements Runnable {
 
@@ -56,23 +54,23 @@ public class ConnectionHandler implements Runnable {
             HttpResponse response = new HttpResponse();
 
             try {
-
                 response.setOutputStream(connection.getOutputStream());
                 request.setInputStream(connection.getInputStream());
-                response.addHeader("Server", "ryanvo-server/1.00");
+
 
                 requestProcessor.process(request);
-                if (request.getProtocol().endsWith("1.0")) {
-                    response.setHeader("Connection", "close");
-                } else {
-                    response.setHeader("Connection", "keep-alive");
-                }
+                log.debug("Request successfully populated: uri:" + request.getRequestURI());
 
                 manager.update(Thread.currentThread().getId(), request.getRequestURI());
+                log.debug("Connection manager updated: " + "tid:" + Thread.currentThread().getId() + " uri:" + request
+                        .getRequestURI());
+
+                String connectionHeaderValue = request.getProtocol().endsWith("1.0") ? "close" : "keep-alive";
+                response.addHeader("Connection", connectionHeaderValue);
 
                 /* Check that Host header exists for HTTP/1.1 and up */
                 if (!hasValidHostHeader(request.getProtocol(), request.getHeaders())) {
-                    log.debug("Request is missing Host header entry");
+                    log.info("Request is missing Host header entry");
                     throw new BadRequestException();
                 }
 
@@ -83,13 +81,16 @@ public class ConnectionHandler implements Runnable {
                 log.info(String.format("Dispatching requestUri:%s, method:%s", request.getRequestURI(), request.getMethod()));
                 container.dispatch(request, response);
 
+
             } catch (SocketException e) {
-                // For timeout
+                log.error("Broken pipe");
+                return;
             } catch (NullPointerException e) {
-                log.error(e);
+                response.sendError(400, "Bad Request");
+                log.info("400 Bad Request sent because of null pointer", e);
             } catch (SocketTimeoutException e) {
                 log.debug("Socket timeout, disconnecting from client with requestUri:" + request.getRequestURI());
-                break;
+//                break;
             } catch (IOException e) {
                 response.sendError(500, "Server IO Error");
                 log.info("400 Bad Request sent to client for server IO");
@@ -105,7 +106,7 @@ public class ConnectionHandler implements Runnable {
 
                 if (e.getRootCause() instanceof BadRequestException) {
                     response.sendError(400, "Bad Request");
-                    log.info("400 Bad Request sent to client");
+                    log.info("400 Bad Request sent to client from servlet");
                 }
 
                 if (e.getRootCause() instanceof IOException) {
@@ -113,6 +114,15 @@ public class ConnectionHandler implements Runnable {
                     log.info("400 Bad Request sent to client for server IO error");
                 }
             }
+
+        try {
+            if (!response.isCommitted()) {
+                response.flushBuffer();
+            }
+        } catch (IOException e) {
+            log.error(e);
+        }
+
         }
         // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
 
@@ -138,8 +148,8 @@ public class ConnectionHandler implements Runnable {
 
         Map<String, List<String>> headers = request.getHeaders();
         if (headers.containsKey("expect") && headers.get("expect").contains("100-continue")) {
-            out.write("HTTP/1.1 100 Continue\r\n".getBytes());
-            log.debug(String.format("Sent 100 continue uri:%s, method:%s", request.getRequestURI(), request.getMethod()));
+            out.write("HTTP/1.1 100 Continue\n\n".getBytes());
+            log.info(String.format("Sent 100 continue uri:%s, method:%s", request.getRequestURI(), request.getMethod()));
         }
 
     }

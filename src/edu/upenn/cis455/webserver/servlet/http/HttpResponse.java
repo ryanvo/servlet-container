@@ -43,6 +43,10 @@ public class HttpResponse implements HttpServletResponse {
     private ResponseBufferOutputStream msgBodyBuffer;
     private PrintWriter writerBuffer;
 
+    public HttpResponse() {
+        addHeader("Server", "ryanvo-server/1.5");
+    }
+
     public void addHeader(String key, String value) {
         List<String> headerValues = headers.getOrDefault(key, new ArrayList<>());
         headerValues.add(value);
@@ -136,6 +140,7 @@ public class HttpResponse implements HttpServletResponse {
         /* Write status line, headers, and CRLF */
         socketOut.write(generateStatusAndHeaders().getBytes());
         socketOut.write("\n".getBytes());
+        socketOut.flush();
 
         log.error("Just wrote:\n" + generateStatusAndHeaders());
 

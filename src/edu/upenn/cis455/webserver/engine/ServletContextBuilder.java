@@ -9,6 +9,15 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServletContextBuilder {
 
     public String realPath;
+
+    public String getRealPath() {
+        return realPath;
+    }
+
+    public Map<String, String> getContextParams() {
+        return contextParams;
+    }
+
     public Map<String, String> contextParams;
 
 
