@@ -73,7 +73,7 @@ function assert_with_args_resp_body () {
 }
 
 function assert_file_download () {
-	msg "http $1 MD5 hash: $2"
+	msg "http $1 sha256 hash: $2"
 
 	hash="$(http -d --timeout=2 GET $SERVER_PATH$1 | sha256sum)"
 	if [ "$hash" != "$2" ]

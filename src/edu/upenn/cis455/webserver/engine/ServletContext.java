@@ -46,7 +46,7 @@ public class ServletContext implements javax.servlet.ServletContext {
 
 
     /**
-     * javax.servlet API
+     * javax.servlet.ServletContext API
      */
 
     @Override

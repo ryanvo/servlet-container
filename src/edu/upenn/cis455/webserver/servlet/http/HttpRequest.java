@@ -7,11 +7,12 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 import java.security.Principal;
 import java.util.*;
 
-public class HttpRequest {
+public class HttpRequest implements HttpServletRequest {
 
     private static Logger log = LogManager.getLogger(HttpRequest.class);
 
@@ -98,87 +99,91 @@ public class HttpRequest {
         this.headers = headers;
     }
 
-
     public Map<String, List<String>> getHeaders() {
         return headers;
     }
 
-    // @Override
+
+    /**
+     * javax.servlet.http API
+     */
+
+    @Override
     public String getAuthType() {
         return "BASIC";
     }
 
-    // @Override
+     @Override
     public Cookie[] getCookies() {
         return (cookies.size() > 0) ? cookies.toArray(new Cookie[cookies.size()]) : null;
     }
 
-    // @Override
+     @Override
     public long getDateHeader(String s) {
         return (dateHeaders.containsKey(s)) ? dateHeaders.get(s) : -1;
     }
 
-    // @Override
+     @Override
     public String getHeader(String s) {
         return headers.get(s).get(0);
     }
 
-    // @Override
+     @Override
     public Enumeration getHeaders(String s) {
         return Collections.enumeration(headers.get(s));
     }
 
-    // @Override
+     @Override
     public Enumeration getHeaderNames() {
         return Collections.enumeration(headers.keySet());
     }
 
-    // @Override
+     @Override
     public int getIntHeader(String s) {
         return Integer.parseInt(headers.get(s).get(0));
     }
 
-    // @Override
+     @Override
     public String getMethod() {
         return method;
     }
 
-    // @Override
+     @Override
     public String getPathInfo() {
         return pathInfo;
     }
 
-    // @Override
+     @Override
     public String getPathTranslated() {
         return null;
     }
 
-    // @Override
+     @Override
     public String getContextPath() {
         return contextPath;
     }
 
-    // @Override
+     @Override
     public String getQueryString() {
         return queryString;
     }
 
-    // @Override
+     @Override
     public String getRemoteUser() {
         return null;
     }
 
-    // @Override
+     @Override
     public boolean isUserInRole(String s) {
         return false;
     }
 
-    // @Override
+     @Override
     public Principal getUserPrincipal() {
         return null;
     }
 
-    // @Override
+     @Override
     public String getRequestedSessionId() {
         return requestedSessionId;
     }
@@ -190,190 +195,195 @@ public class HttpRequest {
         return uri;
     }
 
-    // @Override
+     @Override
     public StringBuffer getRequestURL() {
         return requestURL;
     }
 
-    // @Override
+     @Override
     public String getServletPath() {
         return servletPath;
     }
 
-    // @Override
-    public HttpSession getSession(boolean flag) {
+    @Override
+    public javax.servlet.http.HttpSession getSession(boolean b) {
 
-//        if (isRequestedSessionIdValid()) {
-//            return session;
-//        }
-//
-//        if (!flag) {
-//            return null;
-//        }
+        if (isRequestedSessionIdValid()) {
+            return session;
+        }
 
-//        session = new MyHttpSession();
-//        requestedSessionId = session.getId();
-//        context.getSessionManager().addSession(session);
-//        return session;
-        return null;
+        if (!flag) {
+            return null;
+        }
+
+        session = new MyHttpSession();
+        requestedSessionId = session.getId();
+        context.getSessionManager().addSession(session);
+        return session;
+
     }
 
-    // @Override
-    public HttpSession getSession() {
+     @Override
+    public javax.servlet.http.HttpSession getSession() {
         return getSession(true);
     }
 
-    // @Override
+     @Override
     public boolean isRequestedSessionIdValid() {
         return requestedSessionId != null;
     }
 
-    // @Override
+     @Override
     public boolean isRequestedSessionIdFromCookie() {
         return requestedSessionIdFromCookie;
     }
 
-    // @Override
+     @Override
     public boolean isRequestedSessionIdFromURL() {
         return requestedSessionIdFromURL;
     }
 
-    // @Override @Deprecated
+     @Override @Deprecated
     public boolean isRequestedSessionIdFromUrl() {
         return false;
     }
 
-    // @Override
+     @Override
     public Object getAttribute(String s) {
         return attributes.get(s);
     }
 
-    // @Override
+     @Override
     public Enumeration getAttributeNames() {
         return Collections.enumeration(attributes.keySet());
     }
 
-    // @Override
+     @Override
     public String getCharacterEncoding() {
         return characterEncoding;
     }
 
-    // @Override
+     @Override
     public void setCharacterEncoding(String s) throws UnsupportedEncodingException {
         characterEncoding = s;
     }
 
-    // @Override
+     @Override
     public int getContentLength() {
         return contentLength;
     }
 
-    // @Override
+     @Override
     public String getContentType() {
         return contentType;
     }
 
-    // @Override /* server only supports getReader */
+     @Override /* server only supports getReader */
     public ServletInputStream getInputStream() throws IOException {
         return null;
     }
 
-    // @Override
+     @Override
     public String getParameter(String s) {
         return parameters.get(s).get(0);
     }
 
-    // @Override
+     @Override
     public Enumeration getParameterNames() {
         return Collections.enumeration(parameters.keySet());
     }
 
-    // @Override
+     @Override
     public String[] getParameterValues(String s) {
         return parameters.get(s).toArray(new String[parameters.get(s).size()]);
     }
 
-    // @Override
+     @Override
     public Map getParameterMap() {
         return parameters;
     }
 
-    // @Override
+     @Override
     public String getProtocol() {
         return protocol;
     }
 
-    // @Override
+     @Override
     public String getScheme() {
         return "http";
     }
 
-    // @Override
+     @Override
     public String getServerName() {
         return serverName;
     }
 
-    // @Override
+     @Override
     public int getServerPort() {
         return serverPort;
     }
 
-    // @Override
+     @Override
     public String getRemoteAddr() {
         return remoteAddr;
     }
 
-    // @Override
+     @Override
     public String getRemoteHost() {
         return remoteHost;
     }
 
-    // @Override
+     @Override
     public void setAttribute(String s, Object o) {
         attributes.put(s, o);
     }
 
-    // @Override
+     @Override
     public void removeAttribute(String s) {
         attributes.remove(s);
     }
 
-    // @Override
+     @Override
     public Locale getLocale() {
         return locale;
     }
 
-    // @Override
+     @Override
     public Enumeration getLocales() {
         return null;
     }
 
-    // @Override /* HTTPS not supported */
+     @Override /* HTTPS not supported */
     public boolean isSecure() {
         return false;
     }
 
-    // @Override
+     @Override
     public RequestDispatcher getRequestDispatcher(String s) {
         return null;
     }
 
-    // @Override
+    @Override
+    public String getRealPath(String s) {
+        return null;
+    }
+
+     @Override
     public int getRemotePort() {
         return remotePort;
     }
 
-    // @Override
+     @Override
     public String getLocalName() {
         return localName;
     }
 
-    // @Override
+     @Override
     public String getLocalAddr() {
         return localAddr;
     }
 
-    // @Override
+     @Override
     public int getLocalPort() {
         return localPort;
     }
@@ -442,10 +452,10 @@ public class HttpRequest {
         this.servletPath = servletPath;
     }
 
-    public void setBody(String body) throws UnsupportedEncodingException {
-        InputStream bodyStream = new ByteArrayInputStream(body.getBytes(getCharacterEncoding()));
-        reader = new BufferedReader(new InputStreamReader(bodyStream));
-    }
+//    public void setBody(String body) throws UnsupportedEncodingException {
+//        InputStream bodyStream = new ByteArrayInputStream(body.getBytes(getCharacterEncoding()));
+//        reader = new BufferedReader(new InputStreamReader(bodyStream));
+//    }
 
     public void setRequestURL(String requestURL) {
         this.requestURL = new StringBuffer(requestURL);
