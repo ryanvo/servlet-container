@@ -1,15 +1,14 @@
 package edu.upenn.cis455.webserver.engine;
 
 import edu.upenn.cis455.webserver.connector.ConnectionManager;
-import edu.upenn.cis455.webserver.servlet.http.HttpServlet;
 import edu.upenn.cis455.webserver.servlet.ControlServlet;
 import edu.upenn.cis455.webserver.servlet.DefaultServlet;
 import edu.upenn.cis455.webserver.servlet.ShutdownServlet;
+import edu.upenn.cis455.webserver.servlet.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -38,7 +37,7 @@ public class WebAppManager implements ServletManager {
         this.context = context;
     }
 
-    public void launchServlets() throws IOException, ServletException {
+    public void launchServlets() throws ServletException, ReflectiveOperationException {
 
         ServletConfigBuilder configBuilder = new ServletConfigBuilder();
 
@@ -47,45 +46,35 @@ public class WebAppManager implements ServletManager {
         shutdownServlet = new ShutdownServlet();
         shutdownServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
 
-
-//        servletByPattern.put(Pattern.compile("/+control/*$"), defaultServlet);
         servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
         servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
 
-        /* Commented block below is for milestone 2 */
         for (String servletName : webXml.getServletNames()) {
+            log.info("Initiating servlet: " + servletName);
 
             ServletConfig config = configBuilder.setName(servletName)
-                                                .setContext(context)
-                                                .setInitParams(webXml.getServletInitParamsByName(servletName))
-                                                .build();
+                    .setContext(context)
+                    .setInitParams(webXml.getServletInitParamsByName(servletName))
+                    .build();
 
-            log.debug("Initiating servlet: " + servletName);
+            HttpServlet servlet = launch(config);
+            servlets.put(servletName, servlet);
+            String pattern = webXml.getNameByPatterns().get(servletName);
+            servletByPattern.put(Pattern.compile(pattern), servlet);
 
-            try {
+            log.info("Started servlet: " + servletName);
 
-                Class servletClass = Class.forName(webXml.getClassByServletName(servletName));
-                HttpServlet servlet = (HttpServlet) servletClass.newInstance();
-
-                servlet.init(config);
-                servlets.put(servletName, servlet);
-                String pattern = webXml.getNameByPatterns().get(servletName);
-                servletByPattern.put(Pattern.compile(pattern), servlet);
-
-                log.info("Started servlet: " + servletName);
-
-
-            } catch (ClassNotFoundException|IllegalAccessException|InstantiationException e) {
-
-                throw new InstantiationException();
-                throw new InstantiationException();
-            }
         }
     }
 
     @Override
-    public HttpServlet launch(ServletConfig config)  {
-        return null;
+    public HttpServlet launch(ServletConfig config) throws ServletException, ReflectiveOperationException {
+
+        Class servletClass = Class.forName(webXml.getClassByServletName(config.getServletName()));
+        HttpServlet servlet = (HttpServlet) servletClass.newInstance();
+        servlet.init(config);
+
+        return servlet;
     }
 
     @Override
@@ -95,7 +84,7 @@ public class WebAppManager implements ServletManager {
             Matcher uriMatcher = pattern.matcher(uri);
             if (uriMatcher.matches()) {
 
-                log.debug(String.format("Uri:%s mapped to servletName:%s with servletPattern:%s", uri,
+                log.info(String.format("Uri:%s mapped to servletName:%s with servletPattern:%s", uri,
                         servletByPattern.get(pattern).getServletName(), pattern));
 
                 return servletByPattern.get(pattern);
@@ -114,7 +103,7 @@ public class WebAppManager implements ServletManager {
     public void shutdown() {
         for (String servletName : servlets.keySet()) {
             servlets.get(servletName).destroy();
-            log.debug("Servlet destroyed servletName:" + servletName);
+            log.info("Servlet destroyed servletName:" + servletName);
         }
     }
 
