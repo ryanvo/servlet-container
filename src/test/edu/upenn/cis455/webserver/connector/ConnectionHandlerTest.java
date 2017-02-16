@@ -1,24 +1,22 @@
- package edu.upenn.cis555.webserver.connector;
+ package edu.upenn.cis455.webserver.connector;
 
-import edu.upenn.cis455.webserver.connector.ConnectionHandler;
-import edu.upenn.cis455.webserver.connector.ConnectionManager;
-import edu.upenn.cis455.webserver.connector.RequestProcessor;
-import edu.upenn.cis455.webserver.engine.Container;
-import edu.upenn.cis455.webserver.engine.ServletContext;
-import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
-import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
-import org.junit.Test;
+ import edu.upenn.cis455.webserver.engine.Container;
+ import edu.upenn.cis455.webserver.engine.ServletContext;
+ import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
+ import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
+ import org.junit.Test;
+ import org.mockito.InOrder;
 
-import java.io.OutputStream;
-import java.net.Socket;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+ import java.io.OutputStream;
+ import java.net.Socket;
+ import java.util.Arrays;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
+ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.hamcrest.Matchers.is;
+ import static org.mockito.Mockito.*;
 
 
 /**
@@ -43,8 +41,10 @@ public class ConnectionHandlerTest {
         doNothing().when(spyConnectionHandler).handle100ContinueRequest(any(), any());
         spyConnectionHandler.run();
 
-//        verify(mockConnectionManager, times(2)).update(any(), any());
-        verify(mockProcessor).process(isA(HttpRequest.class));
+        InOrder inOrder = inOrder(mockProcessor, mockConnectionManager);
+
+        inOrder.verify(mockProcessor).process(isA(HttpRequest.class));
+        inOrder.verify(mockConnectionManager).update(any(), any());
         verify(spyConnectionHandler).handle100ContinueRequest(any(), any());
         verify(spyConnectionHandler).hasValidHostHeader(any(), any());
         verify(mockContainer).dispatch(isA(HttpRequest.class), isA(HttpResponse.class));
@@ -92,7 +92,7 @@ public class ConnectionHandlerTest {
         connectionHandler.handle100ContinueRequest(mockHttpRequest, mockOutputStream);
 
         verify(mockOutputStream).write(httpContinueResponse);
-        verify(mockOutputStream).flush();
+//        verify(mockOutputStream).flush();
 
     }
 
