@@ -1,5 +1,7 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" version="2.5">
 
+    <!--DO NOT MODIFY - FOR USE IN TEST OF WebXmlHandler-->
+
     <display-name>Test Web.xml</display-name>
 
 

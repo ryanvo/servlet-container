@@ -49,22 +49,22 @@ public class WebAppManager implements ServletManager {
         servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
         servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
 
-        for (String servletName : webXml.getServletNames()) {
-            log.info("Initiating servlet: " + servletName);
-
-            ServletConfig config = configBuilder.setName(servletName)
-                    .setContext(context)
-                    .setInitParams(webXml.getServletInitParamsByName(servletName))
-                    .build();
-
-            HttpServlet servlet = launch(config);
-            servlets.put(servletName, servlet);
-            String pattern = webXml.getNameByPatterns().get(servletName);
-            servletByPattern.put(Pattern.compile(pattern), servlet);
-
-            log.info("Started servlet: " + servletName);
-
-        }
+//        for (String servletName : webXml.getServletNames()) {
+//            log.info("Initiating servlet: " + servletName);
+//
+//            ServletConfig config = configBuilder.setName(servletName)
+//                    .setContext(context)
+//                    .setInitParams(webXml.getServletInitParamsByName(servletName))
+//                    .build();
+//
+//            HttpServlet servlet = launch(config);
+//            servlets.put(servletName, servlet);
+//            String pattern = webXml.getNameByPatterns().get(servletName);
+//            servletByPattern.put(Pattern.compile(pattern), servlet);
+//
+//            log.info("Started servlet: " + servletName);
+//
+//        }
     }
 
     @Override

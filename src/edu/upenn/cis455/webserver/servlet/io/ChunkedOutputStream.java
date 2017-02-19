@@ -28,8 +28,6 @@ public class ChunkedOutputStream extends OutputStream {
     }
 
     public void writeTerminalChunk() throws IOException {
-//        byte[] chunkSize = Integer.toHexString(2*CRLF.length + TERMINAL.length).getBytes();
-//        out.write(chunkSize);
         out.write(TERMINAL);
         out.write(CRLF);
         out.write(CRLF);

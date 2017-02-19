@@ -16,7 +16,7 @@
 
  import static org.hamcrest.MatcherAssert.assertThat;
  import static org.hamcrest.Matchers.is;
- import static org.mockito.Mockito.*;
+ import static org.mockito.BDDMockito.*;
 
 
 /**
@@ -24,7 +24,7 @@
  */
 public class ConnectionHandlerTest {
 
-    @Test
+    @Test //TODO complete test
     public void shouldInvokeTheHelperMethods() throws Exception {
 
         Socket mockSocket = mock(Socket.class);
@@ -32,24 +32,34 @@ public class ConnectionHandlerTest {
         RequestProcessor mockProcessor = mock(RequestProcessor.class);
         ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
         ServletContext mockServletContext = mock(ServletContext.class);
-        when(mockContainer.getContext(any())).thenReturn(mockServletContext);
-        when(mockServletContext.getAttribute(any())).thenReturn(mockConnectionManager);
+
+        willReturn(true, false).given(mockSocket).isClosed();
+
+        willReturn(mockServletContext).given(mockContainer).getContext(any());
+        willReturn(mockConnectionManager).given(mockServletContext).getAttribute(any());
 
         ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor);
         ConnectionHandler spyConnectionHandler = spy(connectionHandler);
-        doReturn(true).when(spyConnectionHandler).hasValidHostHeader(any(), any());
-        doNothing().when(spyConnectionHandler).handle100ContinueRequest(any(), any());
+
+        willDoNothing().given(spyConnectionHandler).handle100ContinueRequest(any(HttpRequest.class), any(OutputStream
+                .class));
+        willReturn(true).given(spyConnectionHandler).hasValidHostHeader(any(String.class), any(Map.class));
+
+
         spyConnectionHandler.run();
 
         InOrder inOrder = inOrder(mockProcessor, mockConnectionManager);
 
-        inOrder.verify(mockProcessor).process(isA(HttpRequest.class));
-        inOrder.verify(mockConnectionManager).update(any(), any());
+        then(mockConnectionManager).should(inOrder).update(any(Long.class), eq("waiting"));
+        then(mockProcessor).should(inOrder).process(any(HttpRequest.class));
+
         verify(spyConnectionHandler).handle100ContinueRequest(any(), any());
         verify(spyConnectionHandler).hasValidHostHeader(any(), any());
         verify(mockContainer).dispatch(isA(HttpRequest.class), isA(HttpResponse.class));
         verify(mockSocket).close();
     }
+
+
 
     @Test
     public void shouldRequireHostHeaderForHttpVersionAbove1point0() throws Exception {

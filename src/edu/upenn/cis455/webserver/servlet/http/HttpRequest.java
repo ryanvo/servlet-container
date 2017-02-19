@@ -208,19 +208,21 @@ public class HttpRequest implements HttpServletRequest {
     @Override
     public javax.servlet.http.HttpSession getSession(boolean b) {
 
-        if (isRequestedSessionIdValid()) {
-            return session;
-        }
 
-        if (!flag) {
-            return null;
-        }
 
-        session = new MyHttpSession();
-        requestedSessionId = session.getId();
-        context.getSessionManager().addSession(session);
-        return session;
-
+//        if (isRequestedSessionIdValid()) {
+//            return session;
+//        }
+//
+//        if (!flag) {
+//            return null;
+//        }
+//
+//        session = new MyHttpSession();
+//        requestedSessionId = session.getId();
+//        context.getSessionManager().addSession(session);
+//        return session;
+        return null;
     }
 
      @Override

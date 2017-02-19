@@ -1,7 +1,8 @@
 package edu.upenn.cis455.webserver.engine;
 
-import edu.upenn.cis455.webserver.engine.WebXmlHandler;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Map;
 
@@ -12,11 +13,12 @@ import static org.hamcrest.Matchers.*;
 /**
  * @author rtv
  */
-public class WebXmlHttpRequestListenerTest {
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
+public class WebXmlHandlerTest {
 
     @Test
     public void shouldParseWebAppName() throws Exception {
-        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
+        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/files/testWeb.xml").getPath());
 
         webXml.parse();
 
@@ -25,7 +27,7 @@ public class WebXmlHttpRequestListenerTest {
 
     @Test
     public void shouldParseContextParams() throws Exception {
-        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
+        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/files/testWeb.xml").getPath());
 
         webXml.parse();
 
@@ -39,7 +41,7 @@ public class WebXmlHttpRequestListenerTest {
 
     @Test
     public void shouldParseServletName() throws Exception {
-        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
+        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/files/testWeb.xml").getPath());
 
         webXml.parse();
 
@@ -49,7 +51,7 @@ public class WebXmlHttpRequestListenerTest {
 
     @Test
     public void shouldParseServletClass() throws Exception {
-        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
+        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/files/testWeb.xml").getPath());
 
         webXml.parse();
 
@@ -60,7 +62,7 @@ public class WebXmlHttpRequestListenerTest {
 
     @Test
     public void shouldParseServletParams() throws Exception {
-        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
+        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/files/testWeb.xml").getPath());
 
         webXml.parse();
 
@@ -78,7 +80,7 @@ public class WebXmlHttpRequestListenerTest {
 
     @Test
     public void shouldParseServletPatterns() throws Exception {
-        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/resources/testWeb.xml").getPath());
+        WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/files/testWeb.xml").getPath());
 
         webXml.parse();
 

@@ -55,7 +55,7 @@ public class HttpServer {
         try {
             log.info("WebAppContainer starting up servlets");
             container.start();
-        } catch (ServletException|IOException e) {
+        } catch (ServletException|ReflectiveOperationException e) {
             log.error("Error starting servlets", e);
             System.exit(1);
         }
