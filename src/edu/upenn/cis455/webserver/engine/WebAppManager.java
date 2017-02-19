@@ -1,14 +1,10 @@
 package edu.upenn.cis455.webserver.engine;
 
-import edu.upenn.cis455.webserver.connector.ConnectionManager;
-import edu.upenn.cis455.webserver.servlet.ControlServlet;
-import edu.upenn.cis455.webserver.servlet.DefaultServlet;
-import edu.upenn.cis455.webserver.servlet.ShutdownServlet;
-import edu.upenn.cis455.webserver.servlet.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -41,36 +37,39 @@ public class WebAppManager implements ServletManager {
 
         ServletConfigBuilder configBuilder = new ServletConfigBuilder();
 
-        defaultServlet = new DefaultServlet(context.getRealPath("path"));
-        controlServlet = new ControlServlet((ConnectionManager) context.getAttribute("ConnectionManager"));
-        shutdownServlet = new ShutdownServlet();
-        shutdownServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
+//        defaultServlet = new DefaultServlet(context.getRealPath("path"));
+//        controlServlet = new ControlServlet((ConnectionManager) context.getAttribute("ConnectionManager"));
+//        shutdownServlet = new ShutdownServlet();
+//        shutdownServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
+//
+//        servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
+//        servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
 
-        servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
-        servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
+        String servletName = "demo";
 
 //        for (String servletName : webXml.getServletNames()) {
-//            log.info("Initiating servlet: " + servletName);
-//
-//            ServletConfig config = configBuilder.setName(servletName)
-//                    .setContext(context)
-//                    .setInitParams(webXml.getServletInitParamsByName(servletName))
-//                    .build();
-//
-//            HttpServlet servlet = launch(config);
-//            servlets.put(servletName, servlet);
-//            String pattern = webXml.getNameByPatterns().get(servletName);
-//            servletByPattern.put(Pattern.compile(pattern), servlet);
-//
-//            log.info("Started servlet: " + servletName);
-//
+            log.info("Initiating servlet: " + servletName);
+
+            ServletConfig config = configBuilder.setName(servletName)
+                    .setContext(context)
+                    .setInitParams(webXml.getServletInitParamsByName(servletName))
+                    .build();
+
+            HttpServlet servlet = launch(config);
+            servlets.put(servletName, servlet);
+            String pattern = webXml.getNameByPatterns().get(servletName);
+            servletByPattern.put(Pattern.compile(pattern), servlet);
+
+            log.info("Started servlet: " + servletName);
+
 //        }
     }
 
     @Override
     public HttpServlet launch(ServletConfig config) throws ServletException, ReflectiveOperationException {
 
-        Class servletClass = Class.forName(webXml.getClassByServletName(config.getServletName()));
+//        Class servletClass = Class.forName(webXml.getClassByServletName(config.getServletName()));
+        Class servletClass = Class.forName("DemoServlet");
         HttpServlet servlet = (HttpServlet) servletClass.newInstance();
         servlet.init(config);
 

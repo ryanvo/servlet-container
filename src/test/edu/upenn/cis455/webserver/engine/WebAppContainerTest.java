@@ -1,12 +1,10 @@
 package edu.upenn.cis455.webserver.engine;
 
-import edu.upenn.cis455.webserver.engine.ServletContext;
-import edu.upenn.cis455.webserver.engine.WebAppContainer;
-import edu.upenn.cis455.webserver.engine.WebAppManager;
 import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
 import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
-import edu.upenn.cis455.webserver.servlet.http.HttpServlet;
 import org.junit.Test;
+
+import javax.servlet.http.HttpServlet;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

@@ -1,8 +1,8 @@
 package edu.upenn.cis455.webserver.engine;
 
-import edu.upenn.cis455.webserver.servlet.http.HttpServlet;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 
 /**
  * @author rtv

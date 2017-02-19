@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author rtv
  */
-public class ServletConfig {
+public class ServletConfig implements javax.servlet.ServletConfig {
 
     private String name;
     private ServletContext context;

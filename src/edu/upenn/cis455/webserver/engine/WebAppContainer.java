@@ -2,11 +2,12 @@ package edu.upenn.cis455.webserver.engine;
 
 import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
 import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
-import edu.upenn.cis455.webserver.servlet.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import java.io.IOException;
 
 
 /**
@@ -33,7 +34,7 @@ public class WebAppContainer implements Container {
 
 
     @Override
-    public void dispatch(HttpRequest req, HttpResponse resp) throws ServletException {
+    public void dispatch(HttpRequest req, HttpResponse resp) throws ServletException, IOException {
 
         HttpServlet servlet = webAppManager.match(req.getRequestURI());
 
