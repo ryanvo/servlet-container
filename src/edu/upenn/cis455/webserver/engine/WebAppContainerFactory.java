@@ -12,9 +12,9 @@ public class WebAppContainerFactory {
 
     public static WebAppContainer create(String rootDirectory, WebXmlHandler webXml) {
 
-          /* Create ServletContext from web.xml */
+          /* Create ApplicationContext from web.xml */
         ServletContextBuilder contextBuilder = new ServletContextBuilder();
-        ServletContext context = contextBuilder.setRealPath(rootDirectory)
+        ApplicationContext context = contextBuilder.setRealPath(rootDirectory)
                 .setContextParams(webXml.getContextParams())
                 .setName(webXml.getWebAppName())
                 .build();

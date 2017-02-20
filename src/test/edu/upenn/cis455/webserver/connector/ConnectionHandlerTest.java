@@ -1,7 +1,7 @@
  package edu.upenn.cis455.webserver.connector;
 
+ import edu.upenn.cis455.webserver.engine.ApplicationContext;
  import edu.upenn.cis455.webserver.engine.Container;
- import edu.upenn.cis455.webserver.engine.ServletContext;
  import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
  import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
  import org.junit.Test;
@@ -31,12 +31,12 @@ public class ConnectionHandlerTest {
         Container mockContainer = mock(Container.class);
         RequestProcessor mockProcessor = mock(RequestProcessor.class);
         ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
-        ServletContext mockServletContext = mock(ServletContext.class);
+        ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
 
         willReturn(true, false).given(mockSocket).isClosed();
 
-        willReturn(mockServletContext).given(mockContainer).getContext(any());
-        willReturn(mockConnectionManager).given(mockServletContext).getAttribute(any());
+        willReturn(mockApplicationContext).given(mockContainer).getContext(any());
+        willReturn(mockConnectionManager).given(mockApplicationContext).getAttribute(any());
 
         ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor);
         ConnectionHandler spyConnectionHandler = spy(connectionHandler);

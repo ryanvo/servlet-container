@@ -37,14 +37,14 @@ public class WebAppContainerTest {
     @Test
     public void shouldReturnContextProvidedByServletManager() throws Exception {
 
-        ServletContext mockServletContext = mock(ServletContext.class);
+        ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
         WebAppManager mockWebAppManager = mock(WebAppManager.class);
-        when(mockWebAppManager.getContext()).thenReturn(mockServletContext);
+        when(mockWebAppManager.getContext()).thenReturn(mockApplicationContext);
 
         WebAppContainer webAppContainer = new WebAppContainer(mockWebAppManager);
-        ServletContext contextInContainer = webAppContainer.getContext("webapp");
+        ApplicationContext contextInContainer = webAppContainer.getContext("webapp");
 
-        assertThat(contextInContainer, is(mockServletContext));
+        assertThat(contextInContainer, is(mockApplicationContext));
 
     }
 

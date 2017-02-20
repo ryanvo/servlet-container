@@ -16,14 +16,14 @@ public class WebAppManagerTest {
     @Mock private ServletConfig mockConfig;
 
     private ServletContextBuilder contextBuilder;
-    private ServletContext context;
+    private ApplicationContext context;
     @Before public void setup() {
 
         contextBuilder = new ServletContextBuilder();
         contextBuilder.setName("CalculatorServlet");
         contextBuilder.setRealPath(getClass().getResource("/Servlets/web").getPath());
         contextBuilder.setContextParams(new HashMap<>());
-        context = new ServletContext(contextBuilder);
+        context = new ApplicationContext(contextBuilder);
 
 
     }

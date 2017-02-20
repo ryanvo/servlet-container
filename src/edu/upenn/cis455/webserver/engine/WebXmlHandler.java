@@ -12,9 +12,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author rtv
@@ -26,7 +24,7 @@ public class WebXmlHandler extends DefaultHandler {
     private Map<String, String> servletClassByName = new HashMap<>();
     private Map<String, Map<String, String>> initParams = new HashMap<>();
     private Map<String, String> contextParams = new HashMap<>();
-    private Map<String, String> servletNameByPattern = new HashMap<>();
+    private Map<String, List<String>> patternsByName = new HashMap<>();
 
     private String webAppName;
     private String servletName;
@@ -58,6 +56,7 @@ public class WebXmlHandler extends DefaultHandler {
         } catch (ParserConfigurationException|SAXException e) {
             throw new SAXException();
         }
+
     }
 
     @Override
@@ -105,7 +104,10 @@ public class WebXmlHandler extends DefaultHandler {
                 break;
 
             case "servlet-mapping":
-                servletNameByPattern.put(servletPattern, servletName);
+
+                List<String> patterns = patternsByName.getOrDefault(servletName, new ArrayList<>());
+                patterns.add(servletPattern);
+                patternsByName.putIfAbsent(servletName, patterns);
                 log.info(String.format("WebXmlHandler found servletName:%s servletPattern:%s", servletName,
                         servletPattern));
                 break;
@@ -159,8 +161,8 @@ public class WebXmlHandler extends DefaultHandler {
         return initParams.get(name);
     }
 
-    public Map<String, String> getNameByPatterns() {
-        return servletNameByPattern;
+    public Map<String, List<String>> getPatternsByName() {
+        return patternsByName;
     }
 
 }

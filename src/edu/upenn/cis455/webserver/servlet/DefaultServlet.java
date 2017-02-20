@@ -1,18 +1,18 @@
 package edu.upenn.cis455.webserver.servlet;
 
 
+import edu.upenn.cis455.webserver.engine.ApplicationContext;
 import edu.upenn.cis455.webserver.engine.ServletConfig;
-import edu.upenn.cis455.webserver.engine.ServletContext;
 import edu.upenn.cis455.webserver.servlet.exception.http.BadRequestException;
-import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
-import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
-import edu.upenn.cis455.webserver.servlet.http.HttpServlet;
 import edu.upenn.cis455.webserver.servlet.io.ChunkedWriter;
 import edu.upenn.cis455.webserver.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.time.ZonedDateTime;
@@ -28,7 +28,7 @@ public class DefaultServlet extends HttpServlet {
 
     private final static DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z");
 
-    private ServletContext context;
+    private ApplicationContext context;
     private final String rootDirectory;
     private Map<String, String> initParams = new HashMap<>();
 
@@ -51,8 +51,7 @@ public class DefaultServlet extends HttpServlet {
     }
 
     @Override
-    public void doHead(HttpRequest request, HttpResponse response) throws ServletException {
-
+    protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         File fileRequested = new File(rootDirectory + request.getRequestURI());
 
         if (fileRequested.canRead() && fileRequested.isDirectory()) {
@@ -94,21 +93,19 @@ public class DefaultServlet extends HttpServlet {
 //           throw new ServletException(e);
 //        }
 
-
-
     }
 
-    public void doGet(HttpRequest request, HttpResponse response) throws ServletException {
+
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         File fileRequested = new File(rootDirectory + request.getRequestURI());
 
-        try {
 
-            if (request.containsHeader("if-modified-since")) {
+            if (request.getHeader("if-modified-since") != null) {
 
                 handleIfModifiedSince(fileRequested, request.getHeader("if-modified-since"), response);
 
-            } else if (request.containsHeader("if-unmodified-since")) {
+            } else if (request.getHeader("if-unmodified-since") != null) {
 
                 handleIfUnmodifiedSince(fileRequested, request.getHeader("if-unmodified-since"), response);
 
@@ -132,15 +129,9 @@ public class DefaultServlet extends HttpServlet {
             }
 
 //            response.flushBuffer();
-
-        } catch (IOException e) {
-            log.error(e);
-            throw new ServletException(e);
-        }
-
     }
 
-    private void handleDirectory(File file, HttpResponse response) throws IOException {
+    private void handleDirectory(File file, HttpServletResponse response) throws IOException {
 
         if (file == null) {
             return;
@@ -171,7 +162,7 @@ public class DefaultServlet extends HttpServlet {
 
     }
 
-    private void handleFile(File file, HttpResponse response) throws IOException {
+    private void handleFile(File file, HttpServletResponse response) throws IOException {
 
         log.info(String.format("DefaultServlet Serving GET Request for %s", file.getName()));
 
@@ -186,7 +177,7 @@ public class DefaultServlet extends HttpServlet {
         log.info(String.format("%s Sent to Client", file.getName()));
     }
 
-    private void handleFileNotFound(File file, HttpResponse response) {
+    private void handleFileNotFound(File file, HttpServletResponse response) {
 
         String NOT_FOUND_MESSAGE = "<html><body><h1>404 File Not Found</h1></body></html>";
 
@@ -210,10 +201,6 @@ public class DefaultServlet extends HttpServlet {
     public void destroy() {
     }
 
-    @Override
-    public void doPost(HttpRequest req, HttpResponse resp) {
-
-    }
 
     @Override
     public ServletConfig getServletConfig() {
@@ -221,7 +208,7 @@ public class DefaultServlet extends HttpServlet {
     }
 
     @Override
-    public ServletContext getServletContext() {
+    public ApplicationContext getServletContext() {
         return context;
     }
 
@@ -230,7 +217,8 @@ public class DefaultServlet extends HttpServlet {
         return null;
     }
 
-    public void handleIfUnmodifiedSince(File file, String ifUnmodifiedDateString, HttpResponse response) throws ServletException {
+    public void handleIfUnmodifiedSince(File file, String ifUnmodifiedDateString, HttpServletResponse response) throws
+            ServletException {
 
         ZonedDateTime ifUnmodifiedSinceDate;
         try {
@@ -259,8 +247,8 @@ public class DefaultServlet extends HttpServlet {
         }
     }
 
-    public void handleIfModifiedSince(File file, String ifModifiedDateString, HttpResponse response) throws
-            ServletException {
+    public void handleIfModifiedSince(File file, String ifModifiedDateString, HttpServletResponse response) throws
+            ServletException, IOException {
 
         ZonedDateTime ifModifiedSinceDate;
         try {
@@ -275,11 +263,8 @@ public class DefaultServlet extends HttpServlet {
             response.setStatus(200, "OK");
             response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
 
-            try {
                 handleFile(file, response);
-            } catch (IOException e) {
-                throw new ServletException(new BadRequestException());
-            }
+
 
         } else {
 

@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServletConfigBuilder {
 
     public String name;
-    public ServletContext context;
+    public ApplicationContext context;
     public Map<String, String> initParams;
 
 
@@ -18,7 +18,7 @@ public class ServletConfigBuilder {
         return this;
     }
 
-    public ServletConfigBuilder setContext(ServletContext context) {
+    public ServletConfigBuilder setContext(ApplicationContext context) {
         this.context = context;
         return this;
     }

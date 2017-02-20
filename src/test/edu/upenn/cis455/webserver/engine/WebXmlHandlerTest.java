@@ -87,9 +87,8 @@ public class WebXmlHandlerTest {
 
         webXml.parse();
 
-        assertThat(webXml.getNameByPatterns().keySet(), hasItem("/red/*"));
-        assertThat(webXml.getNameByPatterns().keySet(), hasItem("/foo/bar"));
-        assertThat(webXml.getNameByPatterns().keySet(), hasItem("/blue/*"));
+        assertThat(webXml.getPatternsByName().get("blueteam"), hasItems("/blue/*", "/foo/bar"));
+        assertThat(webXml.getPatternsByName().get("redteam"), hasItems("/red/*"));
     }
 
 }

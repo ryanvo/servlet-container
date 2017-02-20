@@ -17,7 +17,7 @@ public class WebAppContainer implements Container {
 
     private static Logger log = LogManager.getLogger(WebAppContainer.class);
 
-    private ServletContext context;
+    private ApplicationContext context;
     private WebAppManager webAppManager;
 
     public WebAppContainer(WebAppManager webAppManager) {
@@ -42,7 +42,7 @@ public class WebAppContainer implements Container {
 
     }
 
-    public ServletContext getContext(String app) {
+    public ApplicationContext getContext(String app) {
         return context;
     }
 

@@ -2,16 +2,16 @@ package edu.upenn.cis455.webserver.servlet;
 
 
 import edu.upenn.cis455.webserver.connector.ConnectionManager;
-import edu.upenn.cis455.webserver.engine.ServletConfig;
-import edu.upenn.cis455.webserver.engine.ServletContext;
+import edu.upenn.cis455.webserver.engine.ApplicationContext;
 import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
 import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
-import edu.upenn.cis455.webserver.servlet.http.HttpServlet;
 import edu.upenn.cis455.webserver.servlet.io.ChunkedWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Map;
@@ -32,7 +32,7 @@ public class ControlServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
 
         Enumeration paramNames = config.getInitParameterNames();
-        while(paramNames.hasMoreElements()) {
+        while (paramNames.hasMoreElements()) {
             String key = (String) paramNames.nextElement();
             initParams.put(key, config.getInitParameter(key));
         }
@@ -40,8 +40,7 @@ public class ControlServlet extends HttpServlet {
     }
 
     @Override
-    public void destroy()  {
-
+    public void destroy() {
 
 
     }
@@ -81,21 +80,12 @@ public class ControlServlet extends HttpServlet {
     }
 
     @Override
-    public void doHead(HttpRequest req, HttpResponse resp) throws ServletException  {
-
-    }
-
-    @Override
-    public void doPost(HttpRequest req, HttpResponse resp)  throws ServletException  {
-    }
-
-    @Override
     public ServletConfig getServletConfig() {
         return null;
     }
 
     @Override
-    public ServletContext getServletContext() {
+    public ApplicationContext getServletContext() {
         return null;
     }
 

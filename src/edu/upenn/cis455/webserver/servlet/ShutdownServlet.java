@@ -2,20 +2,19 @@ package edu.upenn.cis455.webserver.servlet;
 
 
 import edu.upenn.cis455.webserver.connector.ConnectionManager;
+import edu.upenn.cis455.webserver.engine.ApplicationContext;
 import edu.upenn.cis455.webserver.engine.ServletConfig;
-import edu.upenn.cis455.webserver.engine.ServletContext;
-import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
-import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
-import edu.upenn.cis455.webserver.servlet.http.HttpServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.Map;
-
-import static java.lang.Thread.sleep;
 
 public class ShutdownServlet extends HttpServlet {
 
@@ -29,8 +28,7 @@ public class ShutdownServlet extends HttpServlet {
     private ConnectionManager manager;
 
     @Override
-    public void init(ServletConfig config)  throws ServletException  {
-
+    public void init(javax.servlet.ServletConfig config) throws ServletException {
         Enumeration paramNames = config.getInitParameterNames();
         while(paramNames.hasMoreElements()) {
             String key = (String) paramNames.nextElement();
@@ -42,6 +40,7 @@ public class ShutdownServlet extends HttpServlet {
         this.manager = (ConnectionManager) context.getAttribute("ConnectionManager");
     }
 
+
     @Override
     public void destroy() {
 
@@ -50,7 +49,7 @@ public class ShutdownServlet extends HttpServlet {
     }
 
 
-    public void doGet(HttpRequest request, HttpResponse response)  throws ServletException  {
+    public void doGet(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException  {
 
         String SHUTDOWN_MESSAGE = "<html><body>Shutting down...</body></html>";
 
@@ -66,24 +65,20 @@ public class ShutdownServlet extends HttpServlet {
 
 //        response.getWriter().println(SHUTDOWN_MESSAGE);
 
-        try {
-            response.flushBuffer();
-        } catch (IOException e) {
-            log.error("couldnt flush buffer" + e);
-            e.printStackTrace();
-        }
+        response.flushBuffer();
+
         manager.shutdown();
 
     }
-
-    @Override
-    public void doHead(HttpRequest req, HttpResponse resp)  throws ServletException {
-
-    }
-
-    @Override
-    public void doPost(HttpRequest req, HttpResponse resp)  throws ServletException  {
-    }
+//
+//    @Override
+//    public void doHead(HttpRequest req, HttpResponse resp)  throws ServletException {
+//
+//    }
+//
+//    @Override
+//    public void doPost(HttpRequest req, HttpResponse resp)  throws ServletException  {
+//    }
 
     @Override
     public ServletConfig getServletConfig() {
@@ -91,7 +86,7 @@ public class ShutdownServlet extends HttpServlet {
     }
 
     @Override
-    public ServletContext getServletContext() {
+    public ApplicationContext getServletContext() {
         return null;
     }
 

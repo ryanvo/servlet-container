@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -18,9 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author rtv
  */
-public class ServletContext implements javax.servlet.ServletContext {
+public class ApplicationContext implements ServletContext {
 
-    private static Logger log = LogManager.getLogger(ServletContext.class);
+    private static Logger log = LogManager.getLogger(ApplicationContext.class);
 
     private static int MAJOR_VERSION = 2;
     private static int MINOR_VERSION = 4;
@@ -30,7 +31,7 @@ public class ServletContext implements javax.servlet.ServletContext {
     private String realPath;
     private String name;
 
-    public ServletContext(ServletContextBuilder builder) {
+    public ApplicationContext(ServletContextBuilder builder) {
         name = builder.name;
         contextParams = new ConcurrentHashMap<>(builder.getContextParams());
         realPath = builder.getRealPath();
@@ -46,7 +47,7 @@ public class ServletContext implements javax.servlet.ServletContext {
 
 
     /**
-     * javax.servlet.ServletContext API
+     * javax.servlet.ApplicationContext API
      */
 
     @Override
@@ -103,7 +104,7 @@ public class ServletContext implements javax.servlet.ServletContext {
     }
 
     @Override //TODO
-    public ServletContext getContext(String s) {
+    public ApplicationContext getContext(String s) {
         return null;
     }
 

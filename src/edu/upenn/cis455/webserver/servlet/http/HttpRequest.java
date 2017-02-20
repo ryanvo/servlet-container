@@ -23,7 +23,7 @@ public class HttpRequest implements HttpServletRequest {
 
 //    private URI uri;
 
-    private HttpSession session = null;
+    private ConnectionSession session = null;
     private ServletContext context;
     private String characterEncoding = "ISO-8859-1";
     private Locale locale = null;
@@ -125,7 +125,13 @@ public class HttpRequest implements HttpServletRequest {
 
      @Override
     public String getHeader(String s) {
-        return headers.get(s).get(0);
+        List<String> values = headers.get(s);
+        if (values == null) {
+            return null;
+        } else {
+            return values.get(0);
+        }
+
     }
 
      @Override

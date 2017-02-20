@@ -1,10 +1,15 @@
 package edu.upenn.cis455.webserver.engine;
 
+import edu.upenn.cis455.webserver.connector.ConnectionManager;
+import edu.upenn.cis455.webserver.servlet.ControlServlet;
+import edu.upenn.cis455.webserver.servlet.DefaultServlet;
+import edu.upenn.cis455.webserver.servlet.ShutdownServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -18,9 +23,11 @@ public class WebAppManager implements ServletManager {
     private static Logger log = LogManager.getLogger(WebAppManager.class);
 
     private WebXmlHandler webXml;
-    private ServletContext context;
+    private ApplicationContext context;
 
     private Map<Pattern, HttpServlet> servletByPattern = new ConcurrentHashMap<>();
+    private Map<Pattern, HttpServlet> servletByWildcardPattern = new ConcurrentHashMap<>();
+
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
 
     private HttpServlet defaultServlet;
@@ -28,7 +35,7 @@ public class WebAppManager implements ServletManager {
     private HttpServlet shutdownServlet;
 
 
-    public WebAppManager(WebXmlHandler webXml, ServletContext context) {
+    public WebAppManager(WebXmlHandler webXml, ApplicationContext context) {
         this.webXml = webXml;
         this.context = context;
     }
@@ -37,13 +44,13 @@ public class WebAppManager implements ServletManager {
 
         ServletConfigBuilder configBuilder = new ServletConfigBuilder();
 
-//        defaultServlet = new DefaultServlet(context.getRealPath("path"));
-//        controlServlet = new ControlServlet((ConnectionManager) context.getAttribute("ConnectionManager"));
-//        shutdownServlet = new ShutdownServlet();
-//        shutdownServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
-//
-//        servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
-//        servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
+        defaultServlet = new DefaultServlet(context.getRealPath("path"));
+        controlServlet = new ControlServlet((ConnectionManager) context.getAttribute("ConnectionManager"));
+        shutdownServlet = new ShutdownServlet();
+        shutdownServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
+
+        servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
+        servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
 
         String servletName = "demo";
 
@@ -57,8 +64,28 @@ public class WebAppManager implements ServletManager {
 
             HttpServlet servlet = launch(config);
             servlets.put(servletName, servlet);
-            String pattern = webXml.getNameByPatterns().get(servletName);
-            servletByPattern.put(Pattern.compile(pattern), servlet);
+
+            List<String> patterns = webXml.getPatternsByName().get(servletName);
+            for (String pat : patterns) {
+
+//                if (pat.startsWith("/")) {
+//                    pat = pat.replaceFirst("/", "/+");
+//                }
+
+                if (pat.contains("*")) {
+                    pat = pat.replace("*", ".*");
+                    pat = pat + "/*$";
+
+                    servletByWildcardPattern.put(Pattern.compile(pat), servlet);
+
+                } else {
+                    pat = pat + "/*$";
+
+                    servletByPattern.put(Pattern.compile(pat), servlet);
+
+                }
+
+            }
 
             log.info("Started servlet: " + servletName);
 
@@ -91,10 +118,22 @@ public class WebAppManager implements ServletManager {
 
         }
 
+        for (Pattern pattern : servletByWildcardPattern.keySet()) {
+            Matcher uriMatcher = pattern.matcher(uri);
+            if (uriMatcher.matches()) {
+
+                log.info(String.format("Uri:%s mapped to servletName:%s with servletPattern:%s", uri,
+                        servletByWildcardPattern.get(pattern).getServletName(), pattern));
+
+                return servletByWildcardPattern.get(pattern);
+            }
+
+        }
+
         return defaultServlet;
     }
 
-    public ServletContext getContext() {
+    public ApplicationContext getContext() {
         return context;
     }
 

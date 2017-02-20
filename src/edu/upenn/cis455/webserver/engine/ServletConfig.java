@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ServletConfig implements javax.servlet.ServletConfig {
 
     private String name;
-    private ServletContext context;
+    private ApplicationContext context;
     private Map<String, String> initParams;
 
     public ServletConfig(ServletConfigBuilder builder) {
@@ -25,7 +25,7 @@ public class ServletConfig implements javax.servlet.ServletConfig {
         this.name = name;
     }
 
-    public void setContext(ServletContext context) {
+    public void setContext(ApplicationContext context) {
         this.context = context;
     }
 
@@ -47,7 +47,7 @@ public class ServletConfig implements javax.servlet.ServletConfig {
         return name;
     }
 
-    public ServletContext getServletContext() {
+    public ApplicationContext getServletContext() {
         return context;
     }
 
