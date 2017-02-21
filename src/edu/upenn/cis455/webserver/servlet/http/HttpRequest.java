@@ -131,7 +131,6 @@ public class HttpRequest implements HttpServletRequest {
         } else {
             return values.get(0);
         }
-
     }
 
      @Override

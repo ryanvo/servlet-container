@@ -8,6 +8,7 @@ import edu.upenn.cis455.webserver.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -28,18 +29,12 @@ public class DefaultServlet extends HttpServlet {
 
     private final static DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z");
 
-    private ApplicationContext context;
-    private final String rootDirectory;
+    private ServletContext context;
+    private String rootDirectory;
     private Map<String, String> initParams = new HashMap<>();
 
-    /**
-     * @param rootDirectory path to the www folder
-     */
-    public DefaultServlet(String rootDirectory) {
-        this.rootDirectory = rootDirectory;
-    }
-
-    public void init(ServletConfig config) throws ServletException {
+    @Override
+    public void init(javax.servlet.ServletConfig config) throws ServletException {
 
         Enumeration paramNames = config.getInitParameterNames();
         while (paramNames.hasMoreElements()) {
@@ -48,7 +43,9 @@ public class DefaultServlet extends HttpServlet {
         }
 
         this.context = config.getServletContext();
+        this.rootDirectory = context.getRealPath("/"); //TODO is this right?
     }
+
 
     @Override
     protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -59,7 +56,7 @@ public class DefaultServlet extends HttpServlet {
             log.info(String.format("DefaultServlet Serving HEAD Request for Directory %s",
                     fileRequested.getName()));
 
-            response.setStatus(200, "OK");
+            response.setStatus(200);
             response.setContentType("text/html");
 
             log.info(String.format("Directory Listing of %s Sent to Client", fileRequested
@@ -70,8 +67,8 @@ public class DefaultServlet extends HttpServlet {
             log.info(String.format("DefaultServlet Serving HEAD Request for %s", fileRequested
                     .getName()));
 
+            response.setStatus(200);
             response.addHeader("Last-Modified", FileUtil.getLastModifiedGmt(fileRequested).format(HTTP_DATE_FORMAT));
-            response.setStatus(200, "OK");
 
             response.setContentType(getServletContext().getMimeType(fileRequested.getPath()));
             int contentLength = Long.valueOf(fileRequested.length()).intValue();
@@ -82,16 +79,10 @@ public class DefaultServlet extends HttpServlet {
         } else {
 
             log.info(String.format("%s Not found", fileRequested.getName()));
-            response.setStatus(404, "Not Found");
+            response.sendError(404);
+
             log.info("Not Found Error Sent to Client: " + request.getRequestURI());
         }
-
-//        try {
-//            response.flushBuffer();
-//        } catch (IOException e) {
-//            log.error(e);
-//           throw new ServletException(e);
-//        }
 
     }
 
@@ -99,7 +90,6 @@ public class DefaultServlet extends HttpServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         File fileRequested = new File(rootDirectory + request.getRequestURI());
-
 
         if (request.getHeader("if-modified-since") != null) {
 
@@ -109,63 +99,58 @@ public class DefaultServlet extends HttpServlet {
 
             handleIfUnmodifiedSince(fileRequested, request.getHeader("if-unmodified-since"), response);
 
-        } else if (!fileRequested.exists()) {
-
-            handleFileNotFound(fileRequested, response);
-
         } else if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
-            response.setStatus(200, "OK");
+            response.setStatus(200);
             handleDirectory(fileRequested, response);
 
         } else if (fileRequested.canRead()) {
 
-            response.setStatus(200, "OK");
+            response.setStatus(200);
             response.addHeader("Last-Modified", FileUtil.getLastModifiedGmt(fileRequested).format(HTTP_DATE_FORMAT));
             handleFile(fileRequested, response);
+
+        } else if (!fileRequested.exists()) {
+
+            response.sendError(404);
 
         } else {
             response.sendError(401, "Unauthorized");
         }
 
-//            response.flushBuffer();
     }
 
     private void handleDirectory(File file, HttpServletResponse response) throws IOException {
 
         if (file == null) {
+            log.error("Passed null File");
             return;
         }
 
         log.info(String.format("DefaultServlet Serving GET Request for Directory %s", file.getName()));
-
-
         response.setContentType("text/html");
-//        response.addHeader("Transfer-Encoding", "chunked");
-//
-//        PrintWriter writer = response.getWriter();
-//
-//        File[] directoryListing = file.listFiles();
-//        if (directoryListing == null) {
-//            throw new IOException();
-//        }
-//
-//        writer.write("<html><body>");
-//        for (File f : directoryListing) {
-//            String relativePath = FileUtil.relativizePath(f.getAbsolutePath(), rootDirectory);
-//            writer.write(String.format("<p><a href=\"%s\">%s</a></p>", relativePath, f.getName()));
-//        }
-//        writer.write("</html></body>");
-////        writer.close();
+
+        PrintWriter writer = response.getWriter();
+
+        File[] directoryListing = file.listFiles();
+        if (directoryListing == null) {
+            throw new IOException();
+        }
+
+        writer.write("<html><body>");
+        for (File f : directoryListing) {
+            String relativePath = FileUtil.relativizePath(f.getAbsolutePath(), rootDirectory);
+            writer.write(String.format("<p><a href=\"%s\">%s</a></p>", relativePath, f.getName()));
+        }
+        writer.write("</html></body>");
+        writer.close();
 
         log.info(String.format("Directory Listing of %s Sent to Client", file.getName()));
-
     }
 
     private void handleFile(File file, HttpServletResponse response) throws IOException {
 
         log.info(String.format("DefaultServlet Serving GET Request for %s", file.getName()));
-
 
         response.setContentType(getServletContext().getMimeType(file.getPath()));
         int contentLength = Long.valueOf(file.length()).intValue();
@@ -177,28 +162,12 @@ public class DefaultServlet extends HttpServlet {
         log.info(String.format("%s Sent to Client", file.getName()));
     }
 
-    private void handleFileNotFound(File file, HttpServletResponse response) {
-
-        String NOT_FOUND_MESSAGE = "<html><body><h1>404 File Not Found</h1></body></html>";
-
-        log.info(String.format("%s Not found", file.getName()));
-
-        response.setStatus(404, "Not Found");
-//        response.setContentType("text/html");
-        response.setContentLength(0);
-//        response.getWriter().println(NOT_FOUND_MESSAGE);
-//        try {
-//            response.flushBuffer();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
-        log.info("Not Found Error Sent to Client" + file.getName());
-    }
-
 
     @Override
     public void destroy() {
+
+
+
     }
 
 
@@ -208,7 +177,7 @@ public class DefaultServlet extends HttpServlet {
     }
 
     @Override
-    public ApplicationContext getServletContext() {
+    public ServletContext getServletContext() {
         return context;
     }
 
@@ -231,7 +200,7 @@ public class DefaultServlet extends HttpServlet {
 
         if (ifUnmodifiedSinceDate.isAfter(lastModifiedDate)) {
 
-            response.setStatus(200, "OK");
+            response.setStatus(200);
             response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
 
             try {
@@ -241,7 +210,7 @@ public class DefaultServlet extends HttpServlet {
             }
         } else {
 
-            response.setStatus(412, "Precondition Failed");
+            response.setStatus(412);
             response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
 
         }
@@ -260,7 +229,7 @@ public class DefaultServlet extends HttpServlet {
 
         if (lastModifiedDate.isAfter(ifModifiedSinceDate)) {
 
-            response.setStatus(200, "OK");
+            response.setStatus(200);
             response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
 
             handleFile(file, response);
@@ -268,7 +237,7 @@ public class DefaultServlet extends HttpServlet {
 
         } else {
 
-            response.setStatus(304, "Not Modified");
+            response.setStatus(304);
             response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
         }
     }

@@ -44,8 +44,12 @@ public class WebAppManager implements ServletManager {
 
         ServletConfigBuilder configBuilder = new ServletConfigBuilder();
 
-        defaultServlet = new DefaultServlet(context.getRealPath("path"));
-        controlServlet = new ControlServlet((ConnectionManager) context.getAttribute("ConnectionManager"));
+        defaultServlet = new DefaultServlet();
+        defaultServlet.init(configBuilder.setName("Default").setContext(context).build());
+
+        controlServlet = new ControlServlet();
+        controlServlet.init(configBuilder.setName("Control").setContext(context).build());
+
         shutdownServlet = new ShutdownServlet();
         shutdownServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
 
@@ -76,11 +80,8 @@ public class WebAppManager implements ServletManager {
 
                 } else {
                     pat = pat + "/*$";
-
                     servletByPattern.put(Pattern.compile(pat), servlet);
-
                 }
-
             }
 
             log.info("Started servlet: " + servletName);
@@ -126,6 +127,7 @@ public class WebAppManager implements ServletManager {
 
         }
 
+        log.info(String.format("Uri:%s mapped to default servlet", uri));
         return defaultServlet;
     }
 

@@ -12,6 +12,8 @@ public interface Buffer {
 
     int size();
 
+    void clear();
+
     void writeTo(OutputStream out) throws IOException;
 
     ServletOutputStream toServletOutputStream();

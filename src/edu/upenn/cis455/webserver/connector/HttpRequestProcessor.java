@@ -51,6 +51,12 @@ public class HttpRequestProcessor implements RequestProcessor {
         Map<String, List<String>> headers = parseHeaders(lines);
         request.setHeaders(headers);
 
+             /* Check that Host header exists for HTTP/1.1 and up */
+        if (!hasValidHostHeader(request.getProtocol(), request.getHeaders())) {
+            log.info("Request is missing Host header entry");
+            throw new BadRequestException();
+        }
+
         log.info("Processed HTTP Request: " + line);
     }
 
@@ -150,6 +156,11 @@ public class HttpRequestProcessor implements RequestProcessor {
 
         log.debug("Parsed status line: " + line);
         return statusLine;
+    }
+
+    /* Check that Host header exists for HTTP/1.1 and up */
+    public boolean hasValidHostHeader(String version, Map<String, List<String>> headers) {
+        return !version.endsWith("1") || headers.containsKey("host");
     }
 
 }

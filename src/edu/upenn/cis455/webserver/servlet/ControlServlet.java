@@ -24,10 +24,6 @@ public class ControlServlet extends HttpServlet {
     private ConnectionManager manager;
     private Map<String, String> initParams;
 
-    public ControlServlet(ConnectionManager manager) {
-        this.manager = manager;
-    }
-
     @Override
     public void init(ServletConfig config) throws ServletException {
 
@@ -37,6 +33,7 @@ public class ControlServlet extends HttpServlet {
             initParams.put(key, config.getInitParameter(key));
         }
 
+        manager = (ConnectionManager) config.getServletContext().getAttribute("ConnectionManager");
     }
 
     @Override

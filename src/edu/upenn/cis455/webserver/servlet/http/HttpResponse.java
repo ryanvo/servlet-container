@@ -10,10 +10,8 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.nio.BufferUnderflowException;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 public class HttpResponse implements HttpServletResponse {
@@ -25,17 +23,16 @@ public class HttpResponse implements HttpServletResponse {
     private Locale locale = Locale.getDefault();
 
     private int statusCode = 200;
-    private String errorMessage = "OK";
+    private String statusMessage = "OK";
     private String contentType;
 
     private int contentLength = -1;
     private int bufferSize = 4096;
+    private boolean isError = false;
 
     private boolean isCommitted = false;
     private List<Cookie> cookies = new ArrayList<>();
     private Map<String, List<Long>> dateHeaders = new HashMap<>();
-
-
     private Map<String, List<String>> headers = new HashMap<>();
     private Map<String, List<Integer>> intHeaders = new HashMap<>();
 
@@ -60,13 +57,20 @@ public class HttpResponse implements HttpServletResponse {
         headers.put(key, headerValues);
     }
 
+
+    public boolean isError() {
+        return isError;
+    }
+
+
     public void setHTTP(String HTTP) {
         this.HTTP = HTTP;
     }
 
-    public String getHTTP() {
+    public String getProtocol() {
         return HTTP;
     }
+
     public int getContentLength() {
         return contentLength;
     }
@@ -81,7 +85,7 @@ public class HttpResponse implements HttpServletResponse {
     }
 
     public String getErrorMessage() {
-        return errorMessage;
+        return statusMessage;
     }
 
 
@@ -162,25 +166,14 @@ public class HttpResponse implements HttpServletResponse {
 
         isCommitted = true;
 
-//        /* Close output stream that was used */
-//        if (msgBodyBuffer != null && writerBuffer == null) {
-//            msgBodyBuffer.flush();
-//        } else if (writerBuffer != null)  {
-//            writerBuffer.flush();
-//        }
-
-
         if (writerBuffer != null) {
             writerBuffer.flush();
         }
-
-
     }
 
     @Override
     public void resetBuffer() {
-
-
+        msgBodyBuffer.clear();
     }
 
     @Override
@@ -190,9 +183,20 @@ public class HttpResponse implements HttpServletResponse {
 
     @Override
     public void reset() {
-        resetBuffer();
-        setStatus(-1);
-//        setErrorMessage(null);
+
+        if (isCommitted()) {
+            throw new IllegalStateException();
+        }
+
+        isError = false;
+        msgBodyBuffer = null;
+        setStatus(200);
+        statusMessage = "OK";
+        bufferSize = 4096;
+        HTTP = "HTTP/1.1";
+        contentType = null;
+        contentLength = -1;
+        cookies.clear();
         dateHeaders.clear();
         headers.clear();
         intHeaders.clear();
@@ -222,6 +226,7 @@ public class HttpResponse implements HttpServletResponse {
     public PrintWriter getWriter() {
 
         if (msgBodyBuffer == null) {
+
             writerBuffer = new PrintWriter(getOutputStream());
 
         } else {
@@ -250,21 +255,24 @@ public class HttpResponse implements HttpServletResponse {
 
 
     @Override
-    public void sendError(int code, String msg) {
+    public void sendError(int code, String msg)  {
 
         if (isCommitted()) {
             throw new IllegalStateException();
         }
 
-        isCommitted = true;
         reset();
-        errorMessage = msg;
+        isError = true;
+        isCommitted = true;
+        statusMessage = msg;
         statusCode = code;
-        setContentLength(0);
+
+        getWriter().println(String.format("%d %s", code, msg));
+
     }
 
     @Override
-    public void sendError(int i) throws IOException {
+    public void sendError(int i) {
 
         if (isCommitted()) {
             throw new IllegalStateException();
@@ -363,6 +371,6 @@ public class HttpResponse implements HttpServletResponse {
     @Deprecated
     public void setStatus(int i, String s) {
         this.statusCode = i;
-        this.errorMessage = s;
+        this.statusMessage = s;
     }
 }

@@ -25,6 +25,7 @@ public class ConnectionHandler implements Runnable {
     private Container container;
     private RequestProcessor requestProcessor;
     private ResponseProcessor responseProcessor;
+    private ConnectionManager manager;
 
     public ConnectionHandler(Socket connection,
                              Container container,
@@ -34,6 +35,8 @@ public class ConnectionHandler implements Runnable {
         this.container = container;
         this.requestProcessor = requestProcessor;
         this.responseProcessor = responseProcessor;
+        this.manager = (ConnectionManager)container.getContext("webapp").getAttribute("ConnectionManager");
+
     }
 
     /**
@@ -42,7 +45,6 @@ public class ConnectionHandler implements Runnable {
     @Override
     public void run() {
 
-        ConnectionManager manager = (ConnectionManager) container.getContext("webapp").getAttribute("ConnectionManager");
 
         try {
             connection.setSoTimeout(30000);
@@ -57,25 +59,16 @@ public class ConnectionHandler implements Runnable {
             HttpResponse response = new HttpResponse();
 
             try {
-//                response.setOutputStream(connection.getOutputStream());
                 request.setInputStream(connection.getInputStream());
 
-
                 requestProcessor.process(request);
+                response.setHTTP(request.getProtocol());
+
                 log.debug("Request successfully populated: uri:" + request.getRequestURI());
 
                 manager.update(Thread.currentThread().getId(), request.getRequestURI());
                 log.debug("Connection manager updated: " + "tid:" + Thread.currentThread().getId() + " uri:" + request
                         .getRequestURI());
-
-                String connectionHeaderValue = !request.getProtocol().endsWith("1") ? "close" : "keep-alive";
-                response.addHeader("Connection", connectionHeaderValue);
-
-                /* Check that Host header exists for HTTP/1.1 and up */
-                if (!hasValidHostHeader(request.getProtocol(), request.getHeaders())) {
-                    log.info("Request is missing Host header entry");
-                    throw new BadRequestException();
-                }
 
                 /* Send 100 Continue after receiving headers if request asked for it */
                 handle100ContinueRequest(request, connection.getOutputStream());
@@ -92,21 +85,20 @@ public class ConnectionHandler implements Runnable {
                 log.info("Server IO Error", e);
 
             } catch (NullPointerException e) {
-//                response.sendError(400, "Bad Request");
-                System.exit(1);
+                response.reset();
+
                 log.info("400 Bad Request sent because of null pointer", e);
             } catch (SocketTimeoutException e) {
                 log.debug("Socket timeout, disconnecting from client with requestUri:" + request.getRequestURI());
-//                break;
+                    break;
             } catch (IOException e) {
-                response.sendError(500, "Server IO Error");
+                response.sendError(500);
                 log.error("Server IO Error", e);
 
                 return;
             } catch (BadRequestException e) {
-                System.exit(1);
 
-                response.sendError(400, "Bad Request");
+                response.sendError(400);
 
                 log.info("400 Bad Request sent to client");
 
@@ -114,10 +106,10 @@ public class ConnectionHandler implements Runnable {
 
                 log.info("Servlet threw exception: ", e);
                 if (e.getRootCause() instanceof UnsupportedRequestException) {
-                    response.sendError(501, "Not Implemented");
+                    response.sendError(501);
                     log.info("501 Not Implemented sent to client");
                 } else if (e.getRootCause() instanceof BadRequestException) {
-                    response.sendError(400, "Bad Request");
+                    response.sendError(400);
                     log.info("400 Bad Request sent to client from servlet");
                 } else if (e.getRootCause() instanceof IOException) {
                     log.info("Server IO Error", e);
@@ -127,16 +119,20 @@ public class ConnectionHandler implements Runnable {
                 }
             }
 
+
+            /*
+             * Send
+             */
             try {
-
                 responseProcessor.process(response, connection.getOutputStream());
-
             } catch (IOException e) {
                 log.error(e);
             }
 
+            log.info(String.format("HttpRequest Parsed %s Request with URI %s", request.getMethod(), request.getRequestURI()));
+
         }
-        // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));
+
 
         try {
             connection.close();
@@ -145,11 +141,6 @@ public class ConnectionHandler implements Runnable {
         } catch (IOException e) {
             log.error("Failed to close socket", e);
         }
-    }
-
-
-    public boolean hasValidHostHeader(String version, Map<String, List<String>> headers) {
-        return !version.endsWith("1") || headers.containsKey("host");
     }
 
     public void handle100ContinueRequest(HttpRequest request, OutputStream out) throws IOException {

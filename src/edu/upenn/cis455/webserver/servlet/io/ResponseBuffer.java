@@ -37,6 +37,12 @@ public class ResponseBuffer extends ServletOutputStream implements Buffer{
     }
 
     @Override
+    public void clear() {
+        out.reset();
+    }
+
+
+    @Override
     public void close() throws IOException {
         out.flush();
     }

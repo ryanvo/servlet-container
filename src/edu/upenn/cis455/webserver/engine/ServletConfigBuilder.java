@@ -1,5 +1,6 @@
 package edu.upenn.cis455.webserver.engine;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,15 +11,12 @@ public class ServletConfigBuilder {
 
     public String name;
     public ApplicationContext context;
-    public Map<String, String> initParams;
+    public Map<String, String> initParams = new HashMap<>();
 
 
     public ServletConfigBuilder setName(String name) {
         this.name = name;
         return this;
-
-
-
     }
 
     public ServletConfigBuilder setContext(ApplicationContext context) {
@@ -30,6 +28,14 @@ public class ServletConfigBuilder {
         this.initParams = initParams;
         return this;
     }
+
+//    public String getInitParam(String key) {
+//        return initParams.get(key);
+//    }
+//    public ServletConfigBuilder addInitParam(String key, String val) {
+//        initParams.put(key, val);
+//        return this;
+//    }
 
     public ServletConfig build() {
 

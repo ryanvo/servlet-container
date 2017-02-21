@@ -47,6 +47,11 @@ public class ChunkedResponseBuffer extends ServletOutputStream implements Buffer
     }
 
     @Override
+    public void clear() {
+        out.reset();
+    }
+
+    @Override
     public void close() throws IOException {
         writeTerminalChunk();
         out.flush();

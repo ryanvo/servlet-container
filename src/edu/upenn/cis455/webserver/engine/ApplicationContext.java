@@ -100,7 +100,9 @@ public class ApplicationContext implements ServletContext {
 
     @Override //TODO confirm
     public String getRealPath(String s) {
-        return realPath + s;
+
+        return realPath;
+
     }
 
     @Override //TODO

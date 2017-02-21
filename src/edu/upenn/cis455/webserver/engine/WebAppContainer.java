@@ -22,7 +22,8 @@ public class WebAppContainer implements Container {
 
     public WebAppContainer(WebAppManager webAppManager) {
         this.webAppManager = webAppManager;
-        this.context = webAppManager.getContext();
+        this.context = webAppManager.
+                getContext();
     }
 
 
