@@ -1,5 +1,6 @@
 package edu.upenn.cis455.webserver.engine.io;
 
+import edu.upenn.cis455.webserver.servlet.io.ChunkedResponseBuffer;
 import edu.upenn.cis455.webserver.servlet.io.ResponseBuffer;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -17,46 +18,6 @@ import static org.mockito.Mockito.*;
  */
 public class ChunkedOutputStreamTest {
 
-    //TODO need to fix these tests with new version
-
-//    @Test
-//    public void shouldWriteChunkToOutputStream() throws Exception {
-//
-//        final byte[] data = {'f', 'o', 'o'};
-//        final byte[] CRLF = {'\r', '\n'};
-//        final byte[] chunkSize = Integer.toHexString(data.length).getBytes();
-//
-//
-//        ResponseBuffer responseBuffer = new ResponseBuffer(64);
-//        ResponseBuffer spyResponseBuffer = spy(responseBuffer);
-//
-//
-//        responseBuffer.write(data, 0, data.length);
-//
-//        verify(spyResponseBuffer).write(chunkSize);
-//        verify(spyResponseBuffer, times(2)).write(CRLF);
-//        verify(spyResponseBuffer).write(data, 0,  data.length);
-
-//    }
-
-//    @Test
-//    public void shouldWriteClosingChunkSequenceOnClose() throws Exception {
-//
-//        final byte[] CRLF = new byte[] {'\r', '\n' };
-//        final byte[] TERMINAL = new byte[] { 0 };
-//
-//        ByteArrayOutputStream mockOutputStream = mock(ByteArrayOutputStream.class);
-//        ResponseBuffer responseBuffer = new ResponseBuffer(mockOutputStream);
-//
-//        responseBuffer.close();
-//
-//        InOrder inOrder = inOrder(mockOutputStream);
-//        inOrder.verify(mockOutputStream).write(TERMINAL);
-//        inOrder.verify(mockOutputStream, times(2)).write(CRLF);
-//        inOrder.verify(mockOutputStream).flush();
-//
-//    }
-
     @Test
     public void shouldWorkWithInputStream() throws Exception {
 
@@ -66,19 +27,47 @@ public class ChunkedOutputStreamTest {
 
         PrintWriter writer = new PrintWriter(responseBuffer);
 
-        writer.write("test");
-
+        writer.write("Wiki");
         writer.flush();
 
+        writer.write("pedia");
+        writer.flush();
+
+        writer.write(" in\r\n\r\nchunks.");
+        writer.flush();
 
         ByteArrayOutputStream out = new ByteArrayOutputStream(64);
         responseBuffer.writeTo(out);
 
-        assertThat(out.size(), is(4));
+        byte[] expected = "Wikipedia in\r\n\r\nchunks.".getBytes();
+        assertThat(out.toByteArray(), is(expected));
+    }
+
+    @Test
+    public void shouldWorkWithChunkedInputStream() throws Exception {
+
+
+        ChunkedResponseBuffer responseBuffer = new ChunkedResponseBuffer(1024);
+
+        PrintWriter writer = new PrintWriter(responseBuffer);
+
+        writer.write("Wiki");
+        writer.flush();
+
+        writer.write("pedia");
+        writer.flush();
+
+        writer.write(" in\r\n\r\nchunks.");
+        writer.flush();
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream(64);
+        responseBuffer.writeTo(out);
+
+        byte[] expected = "4\r\nWiki\r\n5\r\npedia\r\ne\r\n in\r\n\r\nchunks.\r\n0\r\n\r\n".getBytes();
+        assertThat(out.toByteArray(), is(expected));
 
 
     }
-
 
 
 }

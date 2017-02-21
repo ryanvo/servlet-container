@@ -21,8 +21,6 @@ import java.util.Map;
  */
 public class HttpRequestProcessor implements RequestProcessor {
 
-    static int i = 0;
-
     private static Logger log = LogManager.getLogger(HttpRequestProcessor.class);
 
     /**

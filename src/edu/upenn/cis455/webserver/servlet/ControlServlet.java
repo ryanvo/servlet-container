@@ -68,15 +68,12 @@ public class ControlServlet extends HttpServlet {
             }
 
             writer.write("<p><a href=\"/shutdown/\">Shutdown</a></p></body></html>");
-            writer.close();
+//            writer.close();
         } catch (IOException e) {
             throw new ServletException(e);//TODO http server error
         }
-//        try {
-//            response.flushBuffer();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+
+
         log.info("Wrote Control Page Response to Socket");
     }
 

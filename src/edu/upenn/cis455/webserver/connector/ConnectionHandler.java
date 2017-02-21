@@ -24,13 +24,16 @@ public class ConnectionHandler implements Runnable {
     private Socket connection;
     private Container container;
     private RequestProcessor requestProcessor;
+    private ResponseProcessor responseProcessor;
 
     public ConnectionHandler(Socket connection,
                              Container container,
-                             RequestProcessor requestProcessor) {
+                             RequestProcessor requestProcessor,
+                             ResponseProcessor responseProcessor) {
         this.connection = connection;
         this.container = container;
         this.requestProcessor = requestProcessor;
+        this.responseProcessor = responseProcessor;
     }
 
     /**
@@ -54,7 +57,7 @@ public class ConnectionHandler implements Runnable {
             HttpResponse response = new HttpResponse();
 
             try {
-                response.setOutputStream(connection.getOutputStream());
+//                response.setOutputStream(connection.getOutputStream());
                 request.setInputStream(connection.getInputStream());
 
 
@@ -89,7 +92,7 @@ public class ConnectionHandler implements Runnable {
                 log.info("Server IO Error", e);
 
             } catch (NullPointerException e) {
-                response.sendError(400, "Bad Request");
+//                response.sendError(400, "Bad Request");
                 System.exit(1);
                 log.info("400 Bad Request sent because of null pointer", e);
             } catch (SocketTimeoutException e) {
@@ -125,9 +128,9 @@ public class ConnectionHandler implements Runnable {
             }
 
             try {
-                if (!response.isCommitted()) {
-                    response.flushBuffer();
-                }
+
+                responseProcessor.process(response, connection.getOutputStream());
+
             } catch (IOException e) {
                 log.error(e);
             }

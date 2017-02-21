@@ -17,13 +17,16 @@ public class HttpRequestListener implements SocketListener {
     final private ConnectionManager connectionManager;
     final private Container container;
     private RequestProcessor requestProcessor;
+    private ResponseProcessor responseProcessor;
 
     public HttpRequestListener(ConnectionManager connectionManager,
                                Container container,
-                               RequestProcessor requestProcessor) {
+                               RequestProcessor requestProcessor,
+                               ResponseProcessor responseProcessor) {
         this.connectionManager = connectionManager;
         this.container = container;
         this.requestProcessor = requestProcessor;
+        this.responseProcessor = responseProcessor;
     }
 
     public void start(int port) throws IOException {
@@ -57,7 +60,7 @@ public class HttpRequestListener implements SocketListener {
 
 
             try {
-                connectionManager.assign(new ConnectionHandler(connection, container, requestProcessor));
+                connectionManager.assign(new ConnectionHandler(connection, container, requestProcessor, responseProcessor));
             } catch (IllegalStateException e) {
                 log.error("ConnectionManager not accepting connections", e);
                 break;

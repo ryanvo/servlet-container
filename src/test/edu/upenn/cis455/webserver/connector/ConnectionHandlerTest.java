@@ -30,6 +30,7 @@ public class ConnectionHandlerTest {
         Socket mockSocket = mock(Socket.class);
         Container mockContainer = mock(Container.class);
         RequestProcessor mockProcessor = mock(RequestProcessor.class);
+        ResponseProcessor mockResponseProcessor = mock(ResponseProcessor.class);
         ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
         ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
 
@@ -38,7 +39,7 @@ public class ConnectionHandlerTest {
         willReturn(mockApplicationContext).given(mockContainer).getContext(any());
         willReturn(mockConnectionManager).given(mockApplicationContext).getAttribute(any());
 
-        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor);
+        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor, mockResponseProcessor);
         ConnectionHandler spyConnectionHandler = spy(connectionHandler);
 
         willDoNothing().given(spyConnectionHandler).handle100ContinueRequest(any(HttpRequest.class), any(OutputStream
@@ -72,8 +73,10 @@ public class ConnectionHandlerTest {
         Socket mockSocket = mock(Socket.class);
         Container mockContainer = mock(Container.class);
         RequestProcessor mockProcessor = mock(RequestProcessor.class);
+        ResponseProcessor mockResponseProcessor = mock(ResponseProcessor.class);
 
-        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor);
+
+        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor, mockResponseProcessor);
 
         assertThat(connectionHandler.hasValidHostHeader("HTTP/1.0", headersWithHost), is(true));
         assertThat(connectionHandler.hasValidHostHeader("HTTP/1.1", headersWithHost), is(true));
@@ -95,10 +98,12 @@ public class ConnectionHandlerTest {
         RequestProcessor mockProcessor = mock(RequestProcessor.class);
         OutputStream mockOutputStream = mock(OutputStream.class);
         HttpRequest mockHttpRequest = mock(HttpRequest.class);
+        ResponseProcessor mockResponseProcessor = mock(ResponseProcessor.class);
+
         when(mockHttpRequest.getProtocol()).thenReturn("HTTP/1.1");
         when(mockHttpRequest.getHeaders()).thenReturn(headers);
 
-        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor);
+        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor, mockResponseProcessor);
         connectionHandler.handle100ContinueRequest(mockHttpRequest, mockOutputStream);
 
         verify(mockOutputStream).write(httpContinueResponse);
@@ -117,12 +122,14 @@ public class ConnectionHandlerTest {
         Socket mockSocket = mock(Socket.class);
         Container mockContainer = mock(Container.class);
         RequestProcessor mockProcessor = mock(RequestProcessor.class);
+        ResponseProcessor mockResponseProcessor = mock(ResponseProcessor.class);
+
         OutputStream mockOutputStream = mock(OutputStream.class);
         HttpRequest mockHttpRequest = mock(HttpRequest.class);
         when(mockHttpRequest.getProtocol()).thenReturn("HTTP/1.0");
         when(mockHttpRequest.getHeaders()).thenReturn(headers);
 
-        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor);
+        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor, mockResponseProcessor);
         connectionHandler.handle100ContinueRequest(mockHttpRequest, mockOutputStream);
 
         verify(mockOutputStream, never()).write(httpContinueResponse);

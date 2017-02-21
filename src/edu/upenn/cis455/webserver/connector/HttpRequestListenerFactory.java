@@ -25,8 +25,9 @@ public class HttpRequestListenerFactory {
         container.getContext("webapp").setAttribute("ConnectionManager", manager);
 
         RequestProcessor requestProcessor = new HttpRequestProcessor();
+        ResponseProcessor responseProcessor = new HttpResponseProcessor();
 
-        return new HttpRequestListener(manager, container, requestProcessor);
+        return new HttpRequestListener(manager, container, requestProcessor, responseProcessor);
     }
 
 }

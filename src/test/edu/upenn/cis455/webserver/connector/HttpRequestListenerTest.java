@@ -25,6 +25,7 @@ public class HttpRequestListenerTest {
         final String host = "localhost";
 
         RequestProcessor mockRequestProcessor = mock(RequestProcessor.class);
+        ResponseProcessor mockResponseProcessor = mock(ResponseProcessor.class);
         Container mockContainer = mock(Container.class);
         ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
 
@@ -35,7 +36,8 @@ public class HttpRequestListenerTest {
             try {
                 HttpRequestListener requestListener = new HttpRequestListener(mockConnectionManager,
                         mockContainer,
-                        mockRequestProcessor);
+                        mockRequestProcessor,
+                        mockResponseProcessor);
                 requestListener.start(port);
             } catch (Exception e) {
                 e.printStackTrace();

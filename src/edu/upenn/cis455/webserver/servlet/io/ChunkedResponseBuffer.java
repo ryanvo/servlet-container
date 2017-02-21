@@ -8,7 +8,7 @@ import java.io.OutputStream;
 /**
  * @author rtv
  */
-public class ChunkedResponseBuffer extends ServletOutputStream implements Buffer {
+public class ChunkedResponseBuffer extends ServletOutputStream implements Buffer{
 
     private static final byte[] CRLF = new byte[] {'\r', '\n' };
     private static final byte[] TERMINAL = new byte[] { (byte) '0' };
@@ -20,7 +20,7 @@ public class ChunkedResponseBuffer extends ServletOutputStream implements Buffer
     }
 
 
-    public void writeTerminalChunk() throws IOException {
+    private void writeTerminalChunk() throws IOException {
         out.write(TERMINAL);
         out.write(CRLF);
         out.write(CRLF);
@@ -28,21 +28,21 @@ public class ChunkedResponseBuffer extends ServletOutputStream implements Buffer
 
     @Override
     public void write(int i) throws IOException {
-        write(new byte[] { (byte) i }, 0, 1);
+        out.write(new byte[] { (byte) i }, 0, 1);
     }
 
 
     @Override
     public void write(byte[] data) throws IOException {
-        write(data, 0, data.length);
+        out.write(data, 0, data.length);
     }
 
     @Override
     public void write(byte[] data, int offset, int length) throws IOException {
-        byte[] chunkSize = Integer.toHexString(data.length).getBytes();
+        byte[] chunkSize = Integer.toHexString(length).getBytes();
         out.write(chunkSize);
         out.write(CRLF);
-        out.write(data, 0, data.length);
+        out.write(data, 0, length);
         out.write(CRLF);
     }
 
@@ -67,6 +67,11 @@ public class ChunkedResponseBuffer extends ServletOutputStream implements Buffer
         this.writeTerminalChunk();
         this.flush();
         this.out.writeTo(out);
+    }
+
+    @Override
+    public ServletOutputStream toServletOutputStream() {
+        return this;
     }
 
 }

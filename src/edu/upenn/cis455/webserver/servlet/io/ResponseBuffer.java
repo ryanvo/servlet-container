@@ -10,7 +10,7 @@ import static java.lang.Thread.sleep;
 /**
  * @author rtv
  */
-public class ResponseBuffer extends ServletOutputStream implements Buffer {
+public class ResponseBuffer extends ServletOutputStream implements Buffer{
 
     private ByteArrayOutputStream out;
 
@@ -21,23 +21,21 @@ public class ResponseBuffer extends ServletOutputStream implements Buffer {
 
     @Override
     public void write(int i) throws IOException {
-        write(new byte[] { (byte) i }, 0, 1);
+        out.write(new byte[] { (byte) i }, 0, 1);
     }
 
 
     @Override
     public void write(byte[] data) throws IOException {
-        write(data, 0, data.length);
+        out.write(data, 0, data.length);
     }
 
+    @Override
     public void writeTo(OutputStream out) throws IOException {
         this.flush();
         this.out.writeTo(out);
     }
 
-    public int size() {
-        return out.size();
-    }
     @Override
     public void close() throws IOException {
         out.flush();
@@ -53,5 +51,9 @@ public class ResponseBuffer extends ServletOutputStream implements Buffer {
         return out.size();
     }
 
+    @Override
+    public ServletOutputStream toServletOutputStream() {
+        return this;
+    }
 
 }

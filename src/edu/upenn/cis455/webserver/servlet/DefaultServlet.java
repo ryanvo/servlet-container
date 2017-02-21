@@ -4,7 +4,6 @@ package edu.upenn.cis455.webserver.servlet;
 import edu.upenn.cis455.webserver.engine.ApplicationContext;
 import edu.upenn.cis455.webserver.engine.ServletConfig;
 import edu.upenn.cis455.webserver.servlet.exception.http.BadRequestException;
-import edu.upenn.cis455.webserver.servlet.io.ChunkedWriter;
 import edu.upenn.cis455.webserver.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -142,21 +142,21 @@ public class DefaultServlet extends HttpServlet {
 
         response.setContentType("text/html");
 //        response.addHeader("Transfer-Encoding", "chunked");
-
-        ChunkedWriter writer = new ChunkedWriter(response.getOutputStream());
-
-        File[] directoryListing = file.listFiles();
-        if (directoryListing == null) {
-            throw new IOException();
-        }
-
-        writer.write("<html><body>");
-        for (File f : directoryListing) {
-            String relativePath = FileUtil.relativizePath(f.getAbsolutePath(), rootDirectory);
-            writer.write(String.format("<p><a href=\"%s\">%s</a></p>", relativePath, f.getName()));
-        }
-        writer.write("</html></body>");
-        writer.close();
+//
+//        PrintWriter writer = response.getWriter();
+//
+//        File[] directoryListing = file.listFiles();
+//        if (directoryListing == null) {
+//            throw new IOException();
+//        }
+//
+//        writer.write("<html><body>");
+//        for (File f : directoryListing) {
+//            String relativePath = FileUtil.relativizePath(f.getAbsolutePath(), rootDirectory);
+//            writer.write(String.format("<p><a href=\"%s\">%s</a></p>", relativePath, f.getName()));
+//        }
+//        writer.write("</html></body>");
+////        writer.close();
 
         log.info(String.format("Directory Listing of %s Sent to Client", file.getName()));
 
