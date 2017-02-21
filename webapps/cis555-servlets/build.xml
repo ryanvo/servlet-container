@@ -30,7 +30,7 @@
      set to the current working directory.
 -->
 
-<project name="cis455-servlets" default="compile" basedir=".">
+<project name="cis455-servlets" default="compile" basedir="">
 
 
 
@@ -118,7 +118,7 @@
   <property name="docs.home"     value="${basedir}/docs"/>
   <property name="manager.url"   value="http://localhost:8080/manager"/>
   <property name="src.home"      value="${basedir}/src"/>
-  <property name="web.home"      value="${basedir}/web"/>
+  <property name="web.home"      value="/webapps/web"/>
 
 
 <!-- ================== Custom Ant Task Definitions ======================= -->
@@ -215,7 +215,7 @@
 <!--
     <pathelement location="${foo.jar}"/>
 -->
-    <fileset dir="${web.home}/WEB-INF/lib">
+    <fileset dir="/webapps/web/WEB-INF/lib">
       <include name="*.jar"/>
     </fileset>
 
@@ -233,12 +233,12 @@
       <include name="*.jar"/>
     </fileset>
 -->
-    <pathelement location="${web.home}/WEB-INF/lib/activation.jar"/>
-    <fileset dir="${web.home}/WEB-INF/lib">
+    <pathelement location="/webapps/web/WEB-INF/lib/activation.jar"/>
+    <fileset dir="/webapps/web/WEB-INF/lib">
        <include name="activation.jar"/>
     </fileset>
-    <pathelement location="${web.home}/WEB-INF/lib/mail.jar"/>
-    <fileset dir="${web.home}/WEB-INF/lib">
+    <pathelement location="/webapps/web/WEB-INF/lib/mail.jar"/>
+    <fileset dir="/webapps/web/WEB-INF/lib">
       <include name="mail.jar"/>
     </fileset>
   </path>
@@ -448,7 +448,7 @@
 
     <!-- Copy static content of this web application -->
     <copy todir="${build.home}">
-      <fileset dir="${web.home}"/>
+      <fileset dir="/webapps/web"/>
     </copy>
 
     <!-- Copy external dependencies as required -->
