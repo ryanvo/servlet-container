@@ -65,7 +65,7 @@ public class ConnectionHandler implements Runnable {
                 log.debug("Connection manager updated: " + "tid:" + Thread.currentThread().getId() + " uri:" + request
                         .getRequestURI());
 
-                String connectionHeaderValue = request.getProtocol().endsWith("1.0") ? "close" : "keep-alive";
+                String connectionHeaderValue = !request.getProtocol().endsWith("1") ? "close" : "keep-alive";
                 response.addHeader("Connection", connectionHeaderValue);
 
                 /* Check that Host header exists for HTTP/1.1 and up */
@@ -85,43 +85,52 @@ public class ConnectionHandler implements Runnable {
             } catch (SocketException e) {
                 log.error("Broken pipe");
                 return;
+            } catch (IllegalStateException e) {
+                log.info("Server IO Error", e);
+
             } catch (NullPointerException e) {
                 response.sendError(400, "Bad Request");
+                System.exit(1);
                 log.info("400 Bad Request sent because of null pointer", e);
             } catch (SocketTimeoutException e) {
                 log.debug("Socket timeout, disconnecting from client with requestUri:" + request.getRequestURI());
 //                break;
             } catch (IOException e) {
                 response.sendError(500, "Server IO Error");
-                log.info("400 Bad Request sent to client for server IO");
+                log.error("Server IO Error", e);
+
+                return;
             } catch (BadRequestException e) {
+                System.exit(1);
+
                 response.sendError(400, "Bad Request");
+
                 log.info("400 Bad Request sent to client");
+
             } catch (ServletException e) {
+
                 log.info("Servlet threw exception: ", e);
                 if (e.getRootCause() instanceof UnsupportedRequestException) {
                     response.sendError(501, "Not Implemented");
                     log.info("501 Not Implemented sent to client");
-                }
-
-                if (e.getRootCause() instanceof BadRequestException) {
+                } else if (e.getRootCause() instanceof BadRequestException) {
                     response.sendError(400, "Bad Request");
                     log.info("400 Bad Request sent to client from servlet");
-                }
-
-                if (e.getRootCause() instanceof IOException) {
-                    response.sendError(500, "Server IO Error");
-                    log.info("400 Bad Request sent to client for server IO error");
+                } else if (e.getRootCause() instanceof IOException) {
+                    log.info("Server IO Error", e);
+                    return;
+                } else {
+                    log.error("unrecognized exception", e);
                 }
             }
 
-        try {
-            if (!response.isCommitted()) {
-                response.flushBuffer();
+            try {
+                if (!response.isCommitted()) {
+                    response.flushBuffer();
+                }
+            } catch (IOException e) {
+                log.error(e);
             }
-        } catch (IOException e) {
-            log.error(e);
-        }
 
         }
         // TODO log.info(String.format("HttpRequest Parsed %s Request with URI %s", method, uri));

@@ -68,10 +68,6 @@ public class WebAppManager implements ServletManager {
             List<String> patterns = webXml.getPatternsByName().get(servletName);
             for (String pat : patterns) {
 
-//                if (pat.startsWith("/")) {
-//                    pat = pat.replaceFirst("/", "/+");
-//                }
-
                 if (pat.contains("*")) {
                     pat = pat.replace("*", ".*");
                     pat = pat + "/*$";
@@ -96,7 +92,7 @@ public class WebAppManager implements ServletManager {
     public HttpServlet launch(ServletConfig config) throws ServletException, ReflectiveOperationException {
 
 //        Class servletClass = Class.forName(webXml.getClassByServletName(config.getServletName()));
-        Class servletClass = Class.forName("DemoServlet");
+        Class servletClass = Class.forName("ryan.DemoServlet");
         HttpServlet servlet = (HttpServlet) servletClass.newInstance();
         servlet.init(config);
 

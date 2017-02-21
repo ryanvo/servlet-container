@@ -1,31 +1,24 @@
 package edu.upenn.cis455.webserver.servlet.io;
 
+import javax.servlet.ServletOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-
-import static java.lang.Thread.sleep;
 
 /**
  * @author rtv
  */
-public class ChunkedOutputStream extends OutputStream {
+public class ChunkedResponseBuffer extends ServletOutputStream implements Buffer {
 
     private static final byte[] CRLF = new byte[] {'\r', '\n' };
     private static final byte[] TERMINAL = new byte[] { (byte) '0' };
 
-    private OutputStream out;
+    private ByteArrayOutputStream out;
 
-    public ChunkedOutputStream(OutputStream out) {
-        this.out = out;
+    public ChunkedResponseBuffer(int size) {
+        this.out = new ByteArrayOutputStream(size);
     }
 
-    public void unchunkedWrite(String s) throws IOException {
-        out.write(s.getBytes());
-    }
-
-    public void unchunkedWrite(byte[] b, int i, int i1) throws IOException {
-        out.write(b, i, i1);
-    }
 
     public void writeTerminalChunk() throws IOException {
         out.write(TERMINAL);
@@ -62,6 +55,18 @@ public class ChunkedOutputStream extends OutputStream {
     @Override
     public void flush() throws IOException {
         out.flush();
+    }
+
+    @Override
+    public int size() {
+        return out.size();
+    }
+
+    @Override
+    public void writeTo(OutputStream out) throws IOException {
+        this.writeTerminalChunk();
+        this.flush();
+        this.out.writeTo(out);
     }
 
 }

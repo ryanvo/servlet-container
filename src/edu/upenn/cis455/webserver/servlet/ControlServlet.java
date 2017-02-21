@@ -3,16 +3,16 @@ package edu.upenn.cis455.webserver.servlet;
 
 import edu.upenn.cis455.webserver.connector.ConnectionManager;
 import edu.upenn.cis455.webserver.engine.ApplicationContext;
-import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
-import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
-import edu.upenn.cis455.webserver.servlet.io.ChunkedWriter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -45,11 +45,12 @@ public class ControlServlet extends HttpServlet {
 
     }
 
-    public void doGet(HttpRequest request, HttpResponse response) throws ServletException {
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.info(getServletName() + " Serving Control Page Request");
 
         try {
-            ChunkedWriter writer = new ChunkedWriter(response.getOutputStream());
+            PrintWriter writer = response.getWriter();
 
             response.setStatus(200, "OK");
             response.setContentType("text/html");

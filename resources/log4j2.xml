@@ -1,4 +1,4 @@
-http<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <configuration status="WARN">
     <appenders>
         <Console name="Stdout" target="SYSTEM_OUT">

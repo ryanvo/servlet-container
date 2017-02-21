@@ -1,16 +1,15 @@
 package edu.upenn.cis455.webserver.servlet.http;
 
 
-import edu.upenn.cis455.webserver.servlet.io.ResponseBufferOutputStream;
+import edu.upenn.cis455.webserver.servlet.io.ChunkedResponseBuffer;
+import edu.upenn.cis455.webserver.servlet.io.ResponseBuffer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -19,19 +18,19 @@ public class HttpResponse implements HttpServletResponse {
 
     private static Logger log = LogManager.getLogger(HttpResponse.class);
 
-    private final static String HTTP_1_1 = "HTTP/1.1";
+    private String HTTP = "HTTP/1.1";
     private String characterEncoding = "ISO-8859-1";
     private final static DateTimeFormatter HTTP_DATE_FORMAT = DateTimeFormatter.ofPattern("EEE, dd MMM yyyy HH:mm:ss z");
     private Locale locale = Locale.getDefault();
 
     private String url;
 
-    private int statusCode;
-    private String errorMessage;
+    private int statusCode = 200;
+    private String errorMessage = "OK";
     private String date;
     private String contentType;
     private int contentLength = -1;
-    private int bufferSize;
+    private int bufferSize = 1024;
 
     private boolean isCommitted = false;
     private List<Cookie> cookies = new ArrayList<>();
@@ -40,7 +39,10 @@ public class HttpResponse implements HttpServletResponse {
     private Map<String, List<Integer>> intHeaders = new HashMap<>();
 
     private OutputStream socketOut;
-    private ResponseBufferOutputStream msgBodyBuffer;
+
+    private ResponseBuffer chunkedMsgBodyBuffer;
+    private ResponseBuffer msgBodyBuffer;
+
     private PrintWriter writerBuffer;
 
     public HttpResponse() {
@@ -55,6 +57,10 @@ public class HttpResponse implements HttpServletResponse {
 
     public void setOutputStream(OutputStream out) {
         socketOut = out;
+    }
+
+    public void setHTTP(String HTTP) {
+        this.HTTP = HTTP;
     }
 
     @Override
@@ -137,12 +143,25 @@ public class HttpResponse implements HttpServletResponse {
 //            writerBuffer.flush();
 //        }
 
+
+        if (writerBuffer != null) {
+
+            writerBuffer.flush();
+        } else {
+            msgBodyBuffer.flush();
+        }
+
+        //        if (!HTTP.endsWith("1")) {
+        setContentLength(msgBodyBuffer.size());
+//        }
+
+
         /* Write status line, headers, and CRLF */
         socketOut.write(generateStatusAndHeaders().getBytes());
         socketOut.write("\n".getBytes());
         socketOut.flush();
 
-        log.error("Just wrote:\n" + generateStatusAndHeaders());
+        log.info("Just wrote:\n" + generateStatusAndHeaders());
 
         /* Write msg body to socket */
         if (msgBodyBuffer != null) {
@@ -193,20 +212,37 @@ public class HttpResponse implements HttpServletResponse {
 
     @Override
     public PrintWriter getWriter() {
-        if (writerBuffer == null && msgBodyBuffer == null) {
-            msgBodyBuffer = new ResponseBufferOutputStream(bufferSize);
+
+        if (msgBodyBuffer == null) {
+
+//            if (!HTTP.endsWith("1")) {
+//                msgBodyBuffer = new ChunkedResponseBuffer(bufferSize);
+//            } else {
+//                msgBodyBuffer = new ResponseBuffer(bufferSize);
+//            }
+
+            getOutputStream();
             writerBuffer = new PrintWriter(msgBodyBuffer);
-        } else if (writerBuffer == null) {
+
+        } else {
+
             throw new IllegalStateException();
         }
+
         return writerBuffer;
     }
 
     @Override
     public ServletOutputStream getOutputStream() {
-        if (msgBodyBuffer == null && writerBuffer == null) {
-            msgBodyBuffer = new ResponseBufferOutputStream(bufferSize);
-        } else if (msgBodyBuffer == null) {
+        if (msgBodyBuffer == null) {
+
+            if (!HTTP.endsWith("1")) {
+                msgBodyBuffer = new ResponseBuffer(bufferSize);
+            } else {
+                msgBodyBuffer = new ResponseBuffer(bufferSize);
+            }
+
+        } else {
             throw new IllegalStateException();
         }
         return msgBodyBuffer;
@@ -215,7 +251,7 @@ public class HttpResponse implements HttpServletResponse {
     private String generateStatusAndHeaders() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(HTTP_1_1).append(" ").append(statusCode).append(" ").append(errorMessage).append('\n');
+        sb.append(HTTP).append(" ").append(statusCode).append(" ").append(errorMessage).append('\n');
 
         sb.append("Date: ").append(ZonedDateTime.now().format(HTTP_DATE_FORMAT)).append('\n');
 
@@ -253,6 +289,7 @@ public class HttpResponse implements HttpServletResponse {
         errorMessage = msg;
         statusCode = code;
         setContentLength(0);
+
         try {
             socketOut.write(generateStatusAndHeaders().getBytes());
             socketOut.write("\n".getBytes());

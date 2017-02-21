@@ -35,8 +35,10 @@ public class HttpRequestListener implements SocketListener {
 
             Socket connection = null;
             try {
+
                 connection = socket.accept();
                 log.debug("Connection received");
+
             } catch (SocketTimeoutException e) {
 
                 if (connectionManager.isRunning()) {

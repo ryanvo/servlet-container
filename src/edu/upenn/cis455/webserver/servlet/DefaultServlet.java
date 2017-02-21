@@ -47,7 +47,7 @@ public class DefaultServlet extends HttpServlet {
             initParams.put(key, config.getInitParameter(key));
         }
 
-        this.context =  config.getServletContext();
+        this.context = config.getServletContext();
     }
 
     @Override
@@ -101,32 +101,32 @@ public class DefaultServlet extends HttpServlet {
         File fileRequested = new File(rootDirectory + request.getRequestURI());
 
 
-            if (request.getHeader("if-modified-since") != null) {
+        if (request.getHeader("if-modified-since") != null) {
 
-                handleIfModifiedSince(fileRequested, request.getHeader("if-modified-since"), response);
+            handleIfModifiedSince(fileRequested, request.getHeader("if-modified-since"), response);
 
-            } else if (request.getHeader("if-unmodified-since") != null) {
+        } else if (request.getHeader("if-unmodified-since") != null) {
 
-                handleIfUnmodifiedSince(fileRequested, request.getHeader("if-unmodified-since"), response);
+            handleIfUnmodifiedSince(fileRequested, request.getHeader("if-unmodified-since"), response);
 
-            } else if (!fileRequested.exists()) {
+        } else if (!fileRequested.exists()) {
 
-                handleFileNotFound(fileRequested, response);
+            handleFileNotFound(fileRequested, response);
 
-            } else if (fileRequested.canRead() && fileRequested.isDirectory()) {
+        } else if (fileRequested.canRead() && fileRequested.isDirectory()) {
 
-                response.setStatus(200, "OK");
-                handleDirectory(fileRequested, response);
+            response.setStatus(200, "OK");
+            handleDirectory(fileRequested, response);
 
-            } else if (fileRequested.canRead()) {
+        } else if (fileRequested.canRead()) {
 
-                response.setStatus(200, "OK");
-                response.addHeader("Last-Modified", FileUtil.getLastModifiedGmt(fileRequested).format(HTTP_DATE_FORMAT));
-                handleFile(fileRequested, response);
+            response.setStatus(200, "OK");
+            response.addHeader("Last-Modified", FileUtil.getLastModifiedGmt(fileRequested).format(HTTP_DATE_FORMAT));
+            handleFile(fileRequested, response);
 
-            } else {
-                response.sendError(401, "Unauthorized");
-            }
+        } else {
+            response.sendError(401, "Unauthorized");
+        }
 
 //            response.flushBuffer();
     }
@@ -263,7 +263,7 @@ public class DefaultServlet extends HttpServlet {
             response.setStatus(200, "OK");
             response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
 
-                handleFile(file, response);
+            handleFile(file, response);
 
 
         } else {

@@ -45,6 +45,7 @@ public class ConnectionSession implements HttpSession {
 
     }
 
+
     public int getMaxInactiveInterval() {
         return 0;
     }
