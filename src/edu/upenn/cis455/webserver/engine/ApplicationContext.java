@@ -158,6 +158,9 @@ public class ApplicationContext implements ServletContext {
 
             return "text/html";
 
+        } else if (filePath.endsWith(".jsp")) {
+
+            return "type=magnus-internal/jsp";
         } else {
 
             return "application/octet-stream";

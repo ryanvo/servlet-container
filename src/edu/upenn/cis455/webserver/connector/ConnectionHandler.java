@@ -62,6 +62,10 @@ public class ConnectionHandler implements Runnable {
                 request.setInputStream(connection.getInputStream());
 
                 requestProcessor.process(request);
+                if (request.getRequestURI() == null) {
+                    continue;
+                }
+
                 response.setHTTP(request.getProtocol());
 
                 log.debug("Request successfully populated: uri:" + request.getRequestURI());
@@ -84,10 +88,6 @@ public class ConnectionHandler implements Runnable {
             } catch (IllegalStateException e) {
                 log.info("Server IO Error", e);
 
-            } catch (NullPointerException e) {
-                response.reset();
-
-                log.info("400 Bad Request sent because of null pointer", e);
             } catch (SocketTimeoutException e) {
                 log.debug("Socket timeout, disconnecting from client with requestUri:" + request.getRequestURI());
                     break;
@@ -127,6 +127,7 @@ public class ConnectionHandler implements Runnable {
                 responseProcessor.process(response, connection.getOutputStream());
             } catch (IOException e) {
                 log.error(e);
+                break;
             }
 
             log.info(String.format("HttpRequest Parsed %s Request with URI %s", request.getMethod(), request.getRequestURI()));

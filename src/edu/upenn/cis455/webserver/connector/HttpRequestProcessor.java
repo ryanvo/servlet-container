@@ -1,15 +1,14 @@
 package edu.upenn.cis455.webserver.connector;
 
-import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
 import edu.upenn.cis455.webserver.servlet.exception.file.IllegalFilePathException;
 import edu.upenn.cis455.webserver.servlet.exception.http.BadRequestException;
+import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
 import edu.upenn.cis455.webserver.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +32,10 @@ public class HttpRequestProcessor implements RequestProcessor {
     public void process(HttpRequest request) throws IOException, BadRequestException {
         BufferedReader in = request.getReader();
         String line = in.readLine();
+
+        if (line == null) {
+            return;
+        }
 
         /* Process status line */
         String[] statusLine = parseStatusLine(line);
@@ -122,10 +125,6 @@ public class HttpRequestProcessor implements RequestProcessor {
      *                             - invalid HTTP version
      */
     public String[] parseStatusLine(String line) throws BadRequestException {
-
-        if (line == null) {
-            throw new BadRequestException();
-        }
 
         String[] statusLine = line.split("\\s+");
         if (statusLine.length != 3) {

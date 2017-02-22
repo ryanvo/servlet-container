@@ -1,6 +1,5 @@
 package edu.upenn.cis455.webserver.engine;
 
-import edu.upenn.cis455.webserver.connector.ConnectionManager;
 import edu.upenn.cis455.webserver.servlet.ControlServlet;
 import edu.upenn.cis455.webserver.servlet.DefaultServlet;
 import edu.upenn.cis455.webserver.servlet.ShutdownServlet;
@@ -56,9 +55,8 @@ public class WebAppManager implements ServletManager {
         servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
         servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
 
-        String servletName = "demo";
 
-//        for (String servletName : webXml.getServletNames()) {
+        for (String servletName : webXml.getServletNames()) {
             log.info("Initiating servlet: " + servletName);
 
             ServletConfig config = configBuilder.setName(servletName)
@@ -86,14 +84,13 @@ public class WebAppManager implements ServletManager {
 
             log.info("Started servlet: " + servletName);
 
-//        }
+        }
     }
 
     @Override
     public HttpServlet launch(ServletConfig config) throws ServletException, ReflectiveOperationException {
 
-//        Class servletClass = Class.forName(webXml.getClassByServletName(config.getServletName()));
-        Class servletClass = Class.forName("ryan.DemoServlet");
+        Class servletClass = Class.forName(webXml.getClassByServletName(config.getServletName()));
         HttpServlet servlet = (HttpServlet) servletClass.newInstance();
         servlet.init(config);
 

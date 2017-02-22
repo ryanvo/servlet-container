@@ -8,7 +8,7 @@ import java.io.OutputStream;
 /**
  * @author rtv
  */
-public class ChunkedResponseBuffer extends ServletOutputStream implements Buffer{
+public class ChunkedResponseBuffer extends ServletOutputStream implements Buffer {
 
     private static final byte[] CRLF = new byte[] {'\r', '\n' };
     private static final byte[] TERMINAL = new byte[] { (byte) '0' };

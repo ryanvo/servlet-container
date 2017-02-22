@@ -1,7 +1,6 @@
 package edu.upenn.cis455.webserver.servlet;
 
 
-import edu.upenn.cis455.webserver.engine.ApplicationContext;
 import edu.upenn.cis455.webserver.engine.ServletConfig;
 import edu.upenn.cis455.webserver.servlet.exception.http.BadRequestException;
 import edu.upenn.cis455.webserver.util.FileUtil;
@@ -143,7 +142,7 @@ public class DefaultServlet extends HttpServlet {
             writer.write(String.format("<p><a href=\"%s\">%s</a></p>", relativePath, f.getName()));
         }
         writer.write("</html></body>");
-        writer.close();
+//        writer.close();
 
         log.info(String.format("Directory Listing of %s Sent to Client", file.getName()));
     }
@@ -153,8 +152,6 @@ public class DefaultServlet extends HttpServlet {
         log.info(String.format("DefaultServlet Serving GET Request for %s", file.getName()));
 
         response.setContentType(getServletContext().getMimeType(file.getPath()));
-        int contentLength = Long.valueOf(file.length()).intValue();
-        response.setContentLength(contentLength);
 
         /* Send file as binary to output stream */
         FileUtil.copy(file, response.getOutputStream());
