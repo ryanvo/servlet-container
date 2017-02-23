@@ -21,7 +21,7 @@ public class WebAppContainerTest {
     public void shouldCallServiceWithRequest() throws Exception {
 
         HttpServlet mockServlet = mock(HttpServlet.class);
-        WebAppManager mockWebAppManager = mock(WebAppManager.class);
+        WebApp mockWebAppManager = mock(WebApp.class);
         HttpResponse mockResponse = mock(HttpResponse.class);
         HttpRequest mockRequest = mock(HttpRequest.class);
         SessionManager mockSessionManager = mock(SessionManager.class);
@@ -40,16 +40,16 @@ public class WebAppContainerTest {
     @Test
     public void shouldReturnContextProvidedByServletManager() throws Exception {
 
-        ApplicationContext mockApplicationContext = mock(ApplicationContext.class);
-        WebAppManager mockWebAppManager = mock(WebAppManager.class);
+        AppContext mockAppContext = mock(AppContext.class);
+        WebApp mockWebAppManager = mock(WebApp.class);
         SessionManager mockSessionManager = mock(SessionManager.class);
 
-        when(mockWebAppManager.getContext()).thenReturn(mockApplicationContext);
+        when(mockWebAppManager.getContext()).thenReturn(mockAppContext);
 
         WebAppContainer webAppContainer = new WebAppContainer(mockWebAppManager, mockSessionManager);
-        ApplicationContext contextInContainer = webAppContainer.getContext("webapp");
+        AppContext contextInContainer = webAppContainer.getContext("webapp");
 
-        assertThat(contextInContainer, is(mockApplicationContext));
+        assertThat(contextInContainer, is(mockAppContext));
 
     }
 

@@ -4,6 +4,7 @@ import edu.upenn.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis455.webserver.engine.http.HttpResponse;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import java.io.IOException;
 
 /**
@@ -12,5 +13,6 @@ import java.io.IOException;
 public interface Container {
 
     void dispatch(HttpRequest req, HttpResponse resp) throws ServletException, IOException;
-    ApplicationContext getContext(String app);
+    HttpServlet match(String uri);
+    AppContext getContext(String app);
 }

@@ -1,8 +1,5 @@
 package edu.upenn.cis455.webserver.engine;
 
-import edu.upenn.cis455.webserver.engine.http.ControlServlet;
-import edu.upenn.cis455.webserver.engine.http.DefaultServlet;
-import edu.upenn.cis455.webserver.engine.http.ShutdownServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -11,43 +8,29 @@ import javax.servlet.http.HttpServlet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * @author rtv
  */
-public class WebAppManager implements ServletManager {
+public class WebApp implements ServletManager {
 
-    private static Logger log = LogManager.getLogger(WebAppManager.class);
+    private static Logger log = LogManager.getLogger(WebApp.class);
 
-    private ApplicationContext context;
+    private AppContext context;
 
-    private Map<Pattern, HttpServlet> servletByPattern = new ConcurrentHashMap<>();
-    private Map<Pattern, HttpServlet> servletByWildcardPattern = new ConcurrentHashMap<>();
+
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
 
     private ServletConfigBuilder configBuilder = new ServletConfigBuilder();
 
-    private HttpServlet defaultServlet;
 
-    public WebAppManager(ApplicationContext context) {
+
+    public WebApp(AppContext context) {
         this.context = context;
     }
 
     public void launchServlets(WebXmlHandler webXmlHandler) throws ServletException, ReflectiveOperationException {
-
-        defaultServlet = new DefaultServlet();
-        defaultServlet.init(configBuilder.setName("Default").setContext(context).build());
-
-        HttpServlet controlServlet = new ControlServlet();
-        controlServlet.init(configBuilder.setName("Control").setContext(context).build());
-
-        HttpServlet shutdownServlet = new ShutdownServlet();
-        shutdownServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
-
-        servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
-        servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
 
 
         for (String servletName : webXmlHandler.getServletNames()) {
@@ -91,38 +74,14 @@ public class WebAppManager implements ServletManager {
         return servlet;
     }
 
+
     @Override
-    public HttpServlet match(String uri) {
-
-        for (Pattern pattern : servletByPattern.keySet()) {
-            Matcher uriMatcher = pattern.matcher(uri);
-            if (uriMatcher.matches()) {
-
-                log.info(String.format("uri:%s | servletName:%s | pattern:%s", uri,
-                        servletByPattern.get(pattern).getServletName(), pattern));
-
-                return servletByPattern.get(pattern);
-            }
-
-        }
-
-        for (Pattern pattern : servletByWildcardPattern.keySet()) {
-            Matcher uriMatcher = pattern.matcher(uri);
-            if (uriMatcher.matches()) {
-
-                log.info(String.format("Uri:%s mapped to servletName:%s with servletPattern:%s", uri,
-                        servletByWildcardPattern.get(pattern).getServletName(), pattern));
-
-                return servletByWildcardPattern.get(pattern);
-            }
-
-        }
-
-        log.info(String.format("Uri:%s mapped to default http", uri));
-        return defaultServlet;
+    public Map<String, HttpServlet> getServlets() {
+        return servlets;
     }
 
-    public ApplicationContext getContext() {
+
+    public AppContext getContext() {
         return context;
     }
 

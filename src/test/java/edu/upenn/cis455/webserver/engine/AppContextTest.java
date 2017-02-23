@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
  * @author rtv
  */
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
-public class ApplicationContextTest {
+public class AppContextTest {
 
     @Mock private ServletContextBuilder mockBuilder;
     @Mock private Map<String, String> contextParams;
@@ -26,7 +26,7 @@ public class ApplicationContextTest {
         when(mockBuilder.getContextParams()).thenReturn(contextParams);
         when(mockBuilder.getRealPath()).thenReturn("mockPath");
 
-        ApplicationContext context = new ApplicationContext(mockBuilder);
+        AppContext context = new AppContext(mockBuilder);
 
         String path = "/path/to/util.jpg";
         assertThat(context.getMimeType(path), is("image/jpeg"));
@@ -55,7 +55,7 @@ public class ApplicationContextTest {
         when(mockBuilder.getContextParams()).thenReturn(contextParams);
         when(mockBuilder.getRealPath()).thenReturn("mockPath");
 
-        ApplicationContext context = new ApplicationContext(mockBuilder);
+        AppContext context = new AppContext(mockBuilder);
 
         String path = "/path/to/util.JPG";
         assertThat(context.getMimeType(path), is("image/jpeg"));
@@ -86,7 +86,7 @@ public class ApplicationContextTest {
         when(mockBuilder.getContextParams()).thenReturn(contextParams);
         when(mockBuilder.getRealPath()).thenReturn("mockPath");
 
-        ApplicationContext context = new ApplicationContext(mockBuilder);
+        AppContext context = new AppContext(mockBuilder);
 
         String path = "/path/to/util.bin";
         assertThat(context.getMimeType(path), is("application/octet-stream"));

@@ -16,13 +16,8 @@ public class SessionManager {
 
 
     private Map<String, ConnectionSession> sessions = new ConcurrentHashMap<>();
-    private ServletContext context;
 
-    public SessionManager(ServletContext context) {
-        this.context = context;
-    }
-
-    public ConnectionSession createSession() {
+    public ConnectionSession createSession(ServletContext context) {
 
         String id = UUID.randomUUID().toString();
 

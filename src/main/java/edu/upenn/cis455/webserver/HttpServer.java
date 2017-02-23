@@ -57,7 +57,7 @@ public class HttpServer {
         /* Power up the servlets specified in web.xml */
         try {
             log.info("WebAppContainer starting up servlets");
-            container.start();
+            container.startApp(rootDirectory, webXml);
         } catch (ServletException|ReflectiveOperationException e) {
             log.error("Error starting servlets", e);
             System.exit(1);

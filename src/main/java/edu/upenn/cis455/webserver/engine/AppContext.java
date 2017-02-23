@@ -20,9 +20,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author rtv
  */
-public class ApplicationContext implements ServletContext {
+public class AppContext implements ServletContext {
 
-    private static Logger log = LogManager.getLogger(ApplicationContext.class);
+    private static Logger log = LogManager.getLogger(AppContext.class);
 
     private static int MAJOR_VERSION = 2;
     private static int MINOR_VERSION = 4;
@@ -32,7 +32,7 @@ public class ApplicationContext implements ServletContext {
     private String realPath;
     private String name;
 
-    public ApplicationContext(ServletContextBuilder builder) {
+    public AppContext(ServletContextBuilder builder) {
         name = builder.name;
         contextParams = new ConcurrentHashMap<>(builder.getContextParams());
         realPath = builder.getRealPath();
@@ -48,7 +48,7 @@ public class ApplicationContext implements ServletContext {
 
 
     /**
-     * javax.http.ApplicationContext API
+     * javax.http.AppContext API
      */
 
     @Override
@@ -107,7 +107,7 @@ public class ApplicationContext implements ServletContext {
     }
 
     @Override //TODO
-    public ApplicationContext getContext(String s) {
+    public AppContext getContext(String s) {
         return null;
     }
 

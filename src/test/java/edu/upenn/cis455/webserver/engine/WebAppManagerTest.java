@@ -16,14 +16,14 @@ public class WebAppManagerTest {
     @Mock private ServletConfig mockConfig;
 
     private ServletContextBuilder contextBuilder;
-    private ApplicationContext context;
+    private AppContext context;
     @Before public void setup() {
 
         contextBuilder = new ServletContextBuilder();
         contextBuilder.setName("CalculatorServlet");
         contextBuilder.setRealPath(getClass().getResource("/Servlets/web").getPath());
         contextBuilder.setContextParams(new HashMap<>());
-        context = new ApplicationContext(contextBuilder);
+        context = new AppContext(contextBuilder);
 
 
     }
@@ -37,7 +37,7 @@ public class WebAppManagerTest {
 //        given(mockConfig.getInitParameterNames()).willReturn(new Vector<>().elements());
 
         WebXmlHandler webXml = new WebXmlHandler(getClass().getResource("/Servlets/web/WEB-INF/web.xml").getPath());
-        WebAppManager webAppManager = new WebAppManager(webXml, context);
+        WebApp webAppManager = new WebApp(webXml, context);
 
         webXml.parse();
         webAppManager.launch(mockConfig);

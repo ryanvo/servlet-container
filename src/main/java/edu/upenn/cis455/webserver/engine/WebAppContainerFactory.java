@@ -13,17 +13,9 @@ public class WebAppContainerFactory {
 
     public static WebAppContainer create(String rootDirectory, WebXmlHandler webXml) {
 
-          /* Create ApplicationContext from web.xml */
-        ServletContextBuilder contextBuilder = new ServletContextBuilder();
-        ApplicationContext context = contextBuilder.setRealPath(rootDirectory)
-                .setContextParams(webXml.getContextParams())
-                .setName(webXml.getWebAppName())
-                .build();
-
-        /* Create WebAppContainer and composite WebAppManager */
-        WebAppManager webAppManager = new WebAppManager(webXml, context);
-        SessionManager sessionManager = new SessionManager(context);
-        return new WebAppContainer(webAppManager, sessionManager);
+        /* Create WebAppContainer and composite WebApp */
+        SessionManager sessionManager = new SessionManager();
+        return new WebAppContainer(sessionManager);
 
     }
 

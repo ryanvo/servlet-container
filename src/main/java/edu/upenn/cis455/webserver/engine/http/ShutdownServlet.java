@@ -2,7 +2,7 @@ package edu.upenn.cis455.webserver.engine.http;
 
 
 import edu.upenn.cis455.webserver.connector.ConnectionManager;
-import edu.upenn.cis455.webserver.engine.ApplicationContext;
+import edu.upenn.cis455.webserver.engine.AppContext;
 import edu.upenn.cis455.webserver.engine.ServletConfig;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -86,7 +86,7 @@ public class ShutdownServlet extends HttpServlet {
     }
 
     @Override
-    public ApplicationContext getServletContext() {
+    public AppContext getServletContext() {
         return null;
     }
 

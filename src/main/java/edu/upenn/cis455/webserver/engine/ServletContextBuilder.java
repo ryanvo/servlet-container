@@ -38,12 +38,12 @@ public class ServletContextBuilder {
     }
 
 
-    public ApplicationContext build() {
+    public AppContext build() {
 
         if (contextParams == null) {
             contextParams = new ConcurrentHashMap<>();
         }
-        return new ApplicationContext(this);
+        return new AppContext(this);
     }
 
 }
