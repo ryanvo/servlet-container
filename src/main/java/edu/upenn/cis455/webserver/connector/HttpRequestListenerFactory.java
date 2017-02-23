@@ -20,9 +20,7 @@ public class HttpRequestListenerFactory {
 
         WorkQueue requestQueue = new WorkQueue(workQueueSize);
         WorkerPool workerPool = new WorkerPool(poolSize, requestQueue);
-
         ConnectionManager manager = new ConnectionManager(workerPool);
-        container.getContext("webapp").setAttribute("ConnectionManager", manager);
 
         RequestProcessor requestProcessor = new HttpRequestProcessor();
         ResponseProcessor responseProcessor = new HttpResponseProcessor();

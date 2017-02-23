@@ -75,4 +75,8 @@ public class HttpRequestListener implements SocketListener {
 
     }
 
+    public ProcessManager getManager() {
+        return connectionManager;
+    }
+
 }

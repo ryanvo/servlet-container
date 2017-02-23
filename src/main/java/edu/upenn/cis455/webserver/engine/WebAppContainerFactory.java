@@ -11,7 +11,7 @@ public class WebAppContainerFactory {
 
     private static Logger log = LogManager.getLogger(WebAppContainerFactory.class);
 
-    public static WebAppContainer create(String rootDirectory, WebXmlHandler webXml) {
+    public static WebAppContainer create() {
 
         /* Create WebAppContainer and composite WebApp */
         SessionManager sessionManager = new SessionManager();

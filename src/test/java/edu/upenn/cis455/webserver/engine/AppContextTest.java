@@ -17,7 +17,7 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class AppContextTest {
 
-    @Mock private ServletContextBuilder mockBuilder;
+    @Mock private AppContextBuilder mockBuilder;
     @Mock private Map<String, String> contextParams;
 
     @Test

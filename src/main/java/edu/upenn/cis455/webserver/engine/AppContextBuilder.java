@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * @author rtv
  */
-public class ServletContextBuilder {
+public class AppContextBuilder {
 
     public String realPath;
 
@@ -20,19 +20,23 @@ public class ServletContextBuilder {
 
     public Map<String, String> contextParams;
 
+    public String getName() {
+        return name;
+    }
+
     public String name;
 
-    public ServletContextBuilder setName(String name) {
+    public AppContextBuilder setName(String name) {
         this.name = name;
         return this;
     }
 
-    public ServletContextBuilder setRealPath(String realPath) {
+    public AppContextBuilder setRealPath(String realPath) {
         this.realPath = realPath;
         return this;
     }
 
-    public ServletContextBuilder setContextParams(Map<String, String> contextParams) {
+    public AppContextBuilder setContextParams(Map<String, String> contextParams) {
         this.contextParams = contextParams;
         return this;
     }

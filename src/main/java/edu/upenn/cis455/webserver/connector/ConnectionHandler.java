@@ -51,8 +51,9 @@ public class ConnectionHandler implements Runnable {
         this.container = container;
         this.requestProcessor = requestProcessor;
         this.responseProcessor = responseProcessor;
-        this.connectionManager = (ConnectionManager) container.getContext("webapp").getAttribute("ConnectionManager");
-        this.sessionManager = (SessionManager) container.getContext("webapp").getAttribute("SessionManager");
+        this.connectionManager = (ConnectionManager) container.getContext("Default").getAttribute
+                ("ConnectionManager");
+        this.sessionManager = (SessionManager) container.getContext("Default").getAttribute("SessionManager");
 
     }
 
@@ -66,6 +67,9 @@ public class ConnectionHandler implements Runnable {
      *
      * There is a 30 second timeout on the persistent connection.
      */
+
+    public String webappName = "TestServlets";
+
     @Override
     public void run() {
 
@@ -84,6 +88,10 @@ public class ConnectionHandler implements Runnable {
 
                 request.setInputStream(connection.getInputStream());
                 request.setSessionManager(sessionManager);
+                request.setContext(container.getContext(webappName));
+
+
+
                 try {
                     requestProcessor.process(request);
                 } catch (NullPointerException e) {
@@ -94,27 +102,35 @@ public class ConnectionHandler implements Runnable {
                 /* Update response with the protocol version */
                 response.setHTTP(request.getProtocol());
 
+
                 /* Update the status of the thread */
                 connectionManager.update(Thread.currentThread().getId(), request.getRequestURI());
                 log.debug("Connection connectionManager updated: " + "tid:" + Thread.currentThread().getId() + " uri:" + request
                         .getRequestURI());
 
+
                 /* Send 100 Continue after receiving headers if request asked for it */
                 handle100ContinueRequest(request, connection.getOutputStream());
+
 
                 /* Exceptions throw by http are caught under ServletException */
                 log.info(String.format("Dispatched method:%s : uri:%s", request.getMethod(), request.getRequestURI()));
                 container.dispatch(request, response);
 
+
                 /* If the servlet requested a session, attach the JSESSIONID cookie to response */
-                String sessionId = request.getRequestedSessionId();
-                if (sessionId != null && sessionManager.isValid(sessionId)) {
+                if (request.hasAccessedSession()) {
 
-                    Cookie sessionCookie = new Cookie("JSESSIONID", sessionId);
-                    sessionCookie.setMaxAge(3600); // Default to 24 hrs
-                    response.addCookie(sessionCookie);
-                    log.info("JESSIONID cookie added to response: id:" + sessionId);
+                    String sessionId = request.getRequestedSessionId();
 
+                    if (sessionManager.findSession(sessionId) != null) {
+
+                        Cookie sessionCookie = new Cookie("JSESSIONID", sessionId);
+                        sessionCookie.setMaxAge(3600); // Default to 24 hrs
+                        response.addCookie(sessionCookie);
+
+                        log.info("JESSIONID cookie added to response: id:" + sessionId);
+                    }
                 }
 
             } catch (SocketException e) {

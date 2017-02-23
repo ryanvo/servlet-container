@@ -13,6 +13,7 @@ import java.io.IOException;
 public interface Container {
 
     void dispatch(HttpRequest req, HttpResponse resp) throws ServletException, IOException;
+    WebApp startApp(String contextPath, WebXmlHandler webXml) throws ServletException, ReflectiveOperationException;
     HttpServlet match(String uri);
     AppContext getContext(String app);
 }

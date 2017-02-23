@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * Used by the control page to monitor thread statuses.
  */
-public class ConnectionManager implements ThreadManager {
+public class ConnectionManager implements ProcessManager {
 
     private static Logger log = LogManager.getLogger(ConnectionManager.class);
 
@@ -33,6 +33,7 @@ public class ConnectionManager implements ThreadManager {
         }
     }
 
+    @Override
     public void assign(Runnable request) throws IllegalStateException {
         if (!isRunning) {
             throw new IllegalStateException();
@@ -45,6 +46,7 @@ public class ConnectionManager implements ThreadManager {
      * @param threadId
      * @param uri currently serving
      */
+    @Override
     public void update(long threadId, String uri) {
         idToUri.put(threadId, uri);
         log.debug(String.format("ConnectionManager received update threadId:%d, uri:%s", threadId, uri));
@@ -53,11 +55,13 @@ public class ConnectionManager implements ThreadManager {
     /**
      * Tells executor service to stop all threads
      */
+    @Override
     public void shutdown() {
         isRunning = false;
         workerPool.kill();
     }
 
+    @Override
     public Map<Long, String> getStatus() {
         Map<Long, String> status = new HashMap<>();
 
@@ -68,6 +72,7 @@ public class ConnectionManager implements ThreadManager {
         return status;
     }
 
+    @Override
     public boolean isRunning() {
         return isRunning;
     }

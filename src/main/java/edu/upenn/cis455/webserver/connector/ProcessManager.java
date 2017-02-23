@@ -5,13 +5,12 @@ import java.util.Map;
 /**
  * @author rtv
  */
-public interface ThreadManager {
+public interface ProcessManager {
 
     void assign(Runnable runnable) throws IllegalStateException;
     void update(long threadId, String status);
     void shutdown();
     Map<Long, String> getStatus();
     boolean isRunning();
-
 
 }

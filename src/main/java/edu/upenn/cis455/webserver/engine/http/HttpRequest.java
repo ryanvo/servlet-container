@@ -52,6 +52,8 @@ public class HttpRequest implements HttpServletRequest {
     private String localName;
     private String localAddr;
     private SessionManager sessionManager;
+    private boolean hasAccessedSession = false;
+
 
     public void setContext(ServletContext context) {
         this.context = context;
@@ -97,6 +99,10 @@ public class HttpRequest implements HttpServletRequest {
         this.cookies = cookies;
     }
 
+    public boolean hasAccessedSession() {
+        return hasAccessedSession;
+    }
+
     /**
      * javax.http.http API
      */
@@ -125,7 +131,79 @@ public class HttpRequest implements HttpServletRequest {
         }
     }
 
-     @Override
+    @Override
+    public HttpSession getSession(boolean b) {
+
+        /* Check for session cookie */
+        Cookie sessionCookie = null;
+        for (Cookie c : cookies) {
+            if (c.getName().equals("JSESSIONID")) {
+                sessionCookie = c;
+                break;
+            }
+        }
+
+        /* If session cookie found, make sure the session is still valid */
+        if (!b && sessionCookie != null && !sessionManager.isValid(sessionCookie.getValue())) {
+            hasAccessedSession = true;
+
+            sessionManager.invalidateSession(sessionCookie.getValue());
+            log.info("Invalidated session: id:" + sessionCookie.getValue());
+
+            return null;
+        }
+
+        /* If there was not session cookie, but a new session not to be created */
+        if (sessionCookie == null && !b) {
+            return null;
+        }
+
+        /* Retrieve the existing session or create a new one */
+        ConnectionSession session = null;
+        if (sessionCookie == null) {
+            session = sessionManager.createSession(context);
+        } else {
+
+            session = sessionManager.findSession(sessionCookie.getValue());
+
+            if (session == null) {
+
+                session = sessionManager.createSession(context);
+
+            } else if (!sessionManager.isValid(session)) {
+
+                sessionManager.invalidateSession(session.getId());
+                log.info("Invalidated session: id:" + session.getId());
+
+                session = sessionManager.createSession(context);
+
+            }
+        }
+
+        log.info("Created new session: id:" + session.getId());
+
+        hasAccessedSession = true;
+        session.markAccessed();
+        requestedSessionId = session.getId();
+
+        return session;
+    }
+
+    @Override
+    public HttpSession getSession() {
+        return getSession(true);
+    }
+
+    @Override
+    public BufferedReader getReader() {
+        if (reader == null) {
+            reader = new BufferedReader(new InputStreamReader(in));
+        }
+
+        return reader;
+    }
+
+    @Override
     public Enumeration getHeaders(String s) {
         return Collections.enumeration(headers.get(s));
     }
@@ -166,97 +244,24 @@ public class HttpRequest implements HttpServletRequest {
     }
 
      @Override
-    public String getRemoteUser() {
-        return null;
-    }
-
-     @Override
-    public boolean isUserInRole(String s) {
-        return false;
-    }
-
-     @Override
-    public Principal getUserPrincipal() {
-        return null;
-    }
-
-     @Override
     public String getRequestedSessionId() {
         return requestedSessionId;
     }
 
-    /**
-     * @return uri requested in status line
-     */
+    @Override
     public String getRequestURI() {
         return uri;
-    }
+    } //TODO
 
      @Override
     public StringBuffer getRequestURL() {
         return requestURL;
-    }
+    } //TODO
 
      @Override
     public String getServletPath() {
         return servletPath;
-    }
-
-    @Override
-    public HttpSession getSession(boolean b) {
-
-        /* Check for session cookie */
-        Cookie sessionCookie = null;
-        for (Cookie c : cookies) {
-            if (c.getName().equals("JSESSIONID")) {
-                sessionCookie = c;
-                break;
-            }
-        }
-
-        /* If session cookie found, make sure the session is still valid */
-        if (!b && sessionCookie != null && !sessionManager.isValid(sessionCookie.getValue())) {
-            sessionManager.invalidateSession(sessionCookie.getValue());
-            return null;
-        }
-
-        /* If there was not session cookie, but a new session not to be created */
-        if (sessionCookie == null && !b) {
-            return null;
-        }
-
-        /* Retrieve the existing session or create a new one */
-        ConnectionSession session = null;
-        if (sessionCookie == null) {
-            session = sessionManager.createSession();
-        } else {
-
-            session = sessionManager.getSession(sessionCookie.getValue());
-
-            if (session == null) {
-                session = sessionManager.createSession();
-            } else {
-                session.markAccessed();
-            }
-        }
-
-        requestedSessionId = session.getId();
-        return session;
-    }
-
-     @Override
-    public HttpSession getSession() {
-        return getSession(true);
-    }
-
-    @Override
-    public BufferedReader getReader() {
-        if (reader == null) {
-            reader = new BufferedReader(new InputStreamReader(in));
-        }
-
-        return reader;
-    }
+    } //TODO
 
      @Override
     public boolean isRequestedSessionIdValid() {
@@ -271,11 +276,6 @@ public class HttpRequest implements HttpServletRequest {
      @Override
     public boolean isRequestedSessionIdFromURL() {
         return requestedSessionIdFromURL;
-    }
-
-     @Override @Deprecated
-    public boolean isRequestedSessionIdFromUrl() {
-        return false;
     }
 
      @Override
@@ -306,11 +306,6 @@ public class HttpRequest implements HttpServletRequest {
      @Override
     public String getContentType() {
         return contentType;
-    }
-
-     @Override /* server only supports getReader */
-    public ServletInputStream getInputStream() throws IOException {
-        return null;
     }
 
      @Override
@@ -378,21 +373,6 @@ public class HttpRequest implements HttpServletRequest {
         return locale;
     }
 
-     @Override
-    public Enumeration getLocales() {
-        return null;
-    }
-
-     @Override /* HTTPS not supported */
-    public boolean isSecure() {
-        return false;
-    }
-
-     @Override
-    public RequestDispatcher getRequestDispatcher(String s) {
-        return null;
-    }
-
     @Override
     public String getRealPath(String s) {
         return null;
@@ -431,7 +411,6 @@ public class HttpRequest implements HttpServletRequest {
     public void setQueryString(String queryString) {
         this.queryString = queryString;
     }
-
 
 
     public void setRequestedSessionIdFromURL(boolean flag) {
@@ -479,13 +458,54 @@ public class HttpRequest implements HttpServletRequest {
         this.servletPath = servletPath;
     }
 
-//    public void setBody(String body) throws UnsupportedEncodingException {
-//        InputStream bodyStream = new ByteArrayInputStream(body.getBytes(getCharacterEncoding()));
-//        reader = new BufferedReader(new InputStreamReader(bodyStream));
-//    }
-
     public void setRequestURL(String requestURL) {
         this.requestURL = new StringBuffer(requestURL);
+    }
+
+    /**
+     * Not implemented
+     */
+
+
+    @Override /* server only supports getReader */
+    public ServletInputStream getInputStream() throws IOException {
+        return null;
+    }
+
+
+    @Override @Deprecated
+    public boolean isRequestedSessionIdFromUrl() {
+        return false;
+    }
+
+    @Override
+    public String getRemoteUser() {
+        return null;
+    }
+
+    @Override
+    public boolean isUserInRole(String s) {
+        return false;
+    }
+
+    @Override
+    public Principal getUserPrincipal() {
+        return null;
+    }
+
+    @Override
+    public Enumeration getLocales() {
+        return null;
+    }
+
+    @Override /* HTTPS not supported */
+    public boolean isSecure() {
+        return false;
+    }
+
+    @Override
+    public RequestDispatcher getRequestDispatcher(String s) {
+        return null;
     }
 
 }

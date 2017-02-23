@@ -28,10 +28,7 @@ public class HttpResponse implements HttpServletResponse {
 
     private int contentLength = -1;
     private int bufferSize = 4096;
-    private boolean isError = false;
-
     private boolean isCommitted = false;
-
 
     private List<Cookie> cookies = new ArrayList<>();
     private Map<String, List<Long>> dateHeaders = new HashMap<>();
@@ -61,11 +58,6 @@ public class HttpResponse implements HttpServletResponse {
         headerValues.add(value);
         headers.put(key, headerValues);
     }
-
-    public boolean isError() {
-        return isError;
-    }
-
 
     public void setHTTP(String HTTP) {
         this.HTTP = HTTP;
@@ -100,10 +92,6 @@ public class HttpResponse implements HttpServletResponse {
 
         return msgBodyBuffer;
     }
-
-
-
-
 
     @Override
     public void setIntHeader(String s, int i) {
@@ -209,7 +197,6 @@ public class HttpResponse implements HttpServletResponse {
     }
 
     public void clear() {
-        isError = false;
         msgBodyBuffer = null;
         setStatus(200);
         statusMessage = "OK";
@@ -282,7 +269,6 @@ public class HttpResponse implements HttpServletResponse {
         }
 
         clear();
-        isError = true;
         isCommitted = true;
         statusMessage = msg;
         statusCode = code;

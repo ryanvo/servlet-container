@@ -32,10 +32,11 @@ public class AppContext implements ServletContext {
     private String realPath;
     private String name;
 
-    public AppContext(ServletContextBuilder builder) {
+    public AppContext(AppContextBuilder builder) {
         name = builder.name;
         contextParams = new ConcurrentHashMap<>(builder.getContextParams());
         realPath = builder.getRealPath();
+        name = builder.getName();
     }
 
     /**
@@ -121,7 +122,7 @@ public class AppContext implements ServletContext {
      */
     @Override
     public String getServletContextName() {
-        return null;
+        return name;
     }
 
     @Override

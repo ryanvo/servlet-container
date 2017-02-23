@@ -7,7 +7,7 @@
 <web-app>
     <!-- General description of your web application -->
 
-    <display-name>Servlets to test</display-name>
+    <display-name>TestServlets</display-name>
     <description>
         Some servlets you can use to test your application server
     </description>

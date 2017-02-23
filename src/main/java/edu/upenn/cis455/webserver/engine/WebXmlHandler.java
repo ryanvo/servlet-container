@@ -142,6 +142,10 @@ public class WebXmlHandler extends DefaultHandler {
         log.error(e);
     }
 
+    public String getWebXmlPath() {
+        return webXmlPath;
+    }
+
     public Map<String, String> getContextParams() {
         return contextParams;
     }

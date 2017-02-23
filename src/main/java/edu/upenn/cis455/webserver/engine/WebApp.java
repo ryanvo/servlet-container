@@ -21,6 +21,10 @@ public class WebApp implements ServletManager {
 
 
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
+    private Map<Pattern, HttpServlet> servletByPattern = new ConcurrentHashMap<>();
+
+
+    private Map<Pattern, HttpServlet> servletByWildcardPattern = new ConcurrentHashMap<>();
 
     private ServletConfigBuilder configBuilder = new ServletConfigBuilder();
 
@@ -72,6 +76,14 @@ public class WebApp implements ServletManager {
         }
 
         return servlet;
+    }
+
+    public Map<Pattern, HttpServlet> getServletByPattern() {
+        return servletByPattern;
+    }
+
+    public Map<Pattern, HttpServlet> getServletByWildcardPattern() {
+        return servletByWildcardPattern;
     }
 
 

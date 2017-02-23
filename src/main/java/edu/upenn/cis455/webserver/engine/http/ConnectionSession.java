@@ -1,6 +1,8 @@
 package edu.upenn.cis455.webserver.engine.http;
 
 import edu.upenn.cis455.webserver.engine.SessionManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -18,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ConnectionSession implements HttpSession {
 
+    private static Logger log = LogManager.getLogger(HttpSession.class);
+
     private ServletContext context;
     private Map<String, Object> attributes;
 
@@ -27,8 +31,10 @@ public class ConnectionSession implements HttpSession {
     private boolean isInvalidated = false;
     private final String id;
     private boolean isNew = true;
+    private SessionManager manager;
 
-    public ConnectionSession(String id, ServletContext context) {
+    public ConnectionSession(String id, ServletContext context, SessionManager manager) {
+        this.manager = manager;
         this.id = id;
         this.context = context;
         this.attributes = new ConcurrentHashMap<>();
@@ -110,15 +116,15 @@ public class ConnectionSession implements HttpSession {
             throw new IllegalStateException();
         }
 
-        SessionManager sessionManager = (SessionManager) context.getAttribute("SessionManager");
-        sessionManager.invalidateSession(getId());
-        markAccessed();
+        manager.invalidateSession(id);
         isInvalidated = true;
+
+        log.info("Invalidated Session: id:" + id);
     }
 
     @Override
     public boolean isNew() {
-        return false;
+        return isNew;
     }
 
 
