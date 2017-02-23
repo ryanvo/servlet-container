@@ -1,6 +1,6 @@
 package edu.upenn.cis455.webserver.util;
 
-import edu.upenn.cis455.webserver.http.exception.file.IllegalFilePathException;
+import edu.upenn.cis455.webserver.engine.http.exception.file.IllegalFilePathException;
 
 import java.io.*;
 import java.time.Instant;

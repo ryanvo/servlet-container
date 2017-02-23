@@ -74,11 +74,11 @@ public class WebXmlHandler extends DefaultHandler {
                 webAppName = buffer.toString().trim();
                 break;
 
-            case "http-name":
+            case "servlet-name":
                 servletName = buffer.toString().trim();
                 break;
 
-            case "http-class":
+            case "servlet-class":
                 servletClass = buffer.toString().trim();
                 break;
 
@@ -104,7 +104,7 @@ public class WebXmlHandler extends DefaultHandler {
                 servletInitParams.put(paramName, paramValue);
                 break;
 
-            case "http-mapping":
+            case "servlet-mapping":
 
                 List<String> patterns = patternsByName.getOrDefault(servletName, new ArrayList<>());
                 patterns.add(servletPattern);
@@ -113,7 +113,7 @@ public class WebXmlHandler extends DefaultHandler {
                         servletPattern));
                 break;
 
-            case "http":
+            case "servlet":
                 servletClassByName.put(servletName, servletClass);
                 break;
 

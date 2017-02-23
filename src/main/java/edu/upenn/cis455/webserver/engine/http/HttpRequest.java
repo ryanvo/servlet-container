@@ -1,6 +1,7 @@
-package edu.upenn.cis455.webserver.http;
+package edu.upenn.cis455.webserver.engine.http;
 
 
+import edu.upenn.cis455.webserver.engine.SessionManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,11 +23,6 @@ public class HttpRequest implements HttpServletRequest {
     private String method;
     private InputStream in;
 
-
-//    private URI uri;
-
-    private ConnectionSession session = null;
-    private ServletContext context;
     private String characterEncoding = "ISO-8859-1";
     private Locale locale = null;
     private String contentType = null;
@@ -34,7 +30,6 @@ public class HttpRequest implements HttpServletRequest {
     private boolean requestedSessionIdFromURL = false;
 
     private String pathInfo;
-    private String contextPath;
     private String servletPath;
     private String queryString;
 
@@ -56,16 +51,16 @@ public class HttpRequest implements HttpServletRequest {
     private int remotePort;
     private String localName;
     private String localAddr;
+    private SessionManager sessionManager;
+
+    public void setContext(ServletContext context) {
+        this.context = context;
+    }
+
+    private ServletContext context;
 
     private int localPort;
 
-    public boolean containsHeader(String key) {
-        return headers.containsKey(key);
-    }
-
-    public List<String> getHeaderValues(String key) {
-        return headers.get(key);
-    }
 
     public void setUri(String uri) {
         this.uri = uri;
@@ -75,7 +70,9 @@ public class HttpRequest implements HttpServletRequest {
         this.method = method;
     }
 
-
+    public void setSessionManager(SessionManager manager) {
+        this.sessionManager = manager;
+    }
 
     public void setInputStream(InputStream in) {
         this.in = in;
@@ -157,7 +154,7 @@ public class HttpRequest implements HttpServletRequest {
 
      @Override
     public String getContextPath() {
-        return contextPath;
+        return context.getRealPath("/");
     }
 
      @Override
@@ -205,7 +202,40 @@ public class HttpRequest implements HttpServletRequest {
     @Override
     public HttpSession getSession(boolean b) {
 
-        context.getSession
+        /* Check for session cookie */
+        Cookie sessionCookie = null;
+        for (Cookie c : cookies) {
+            if (c.getName().equals("JSESSIONID")) {
+                sessionCookie = c;
+                break;
+            }
+        }
+
+        /* If session cookie found, make sure the session is still valid */
+        if (!b && sessionCookie != null && !sessionManager.isValid(sessionCookie.getValue())) {
+            sessionManager.invalidateSession(sessionCookie.getValue());
+            return null;
+        }
+
+        /* If there was not session cookie, but a new session not to be created */
+        if (sessionCookie == null && !b) {
+            return null;
+        }
+
+        /* Retrieve the existing session or create a new one */
+        ConnectionSession session = null;
+        if (sessionCookie == null) {
+            session = sessionManager.createSession();
+        } else {
+
+            session = sessionManager.getSession(sessionCookie.getValue());
+
+            if (session == null) {
+                session = sessionManager.createSession();
+            } else {
+                session.markAccessed();
+            }
+        }
 
         requestedSessionId = session.getId();
         return session;
@@ -399,9 +429,6 @@ public class HttpRequest implements HttpServletRequest {
         this.queryString = queryString;
     }
 
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
 
 
     public void setRequestedSessionIdFromURL(boolean flag) {

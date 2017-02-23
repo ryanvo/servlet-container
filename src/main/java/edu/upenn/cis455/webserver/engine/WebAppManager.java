@@ -1,8 +1,8 @@
 package edu.upenn.cis455.webserver.engine;
 
-import edu.upenn.cis455.webserver.http.ControlServlet;
-import edu.upenn.cis455.webserver.http.DefaultServlet;
-import edu.upenn.cis455.webserver.http.ShutdownServlet;
+import edu.upenn.cis455.webserver.engine.http.ControlServlet;
+import edu.upenn.cis455.webserver.engine.http.DefaultServlet;
+import edu.upenn.cis455.webserver.engine.http.ShutdownServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -80,7 +80,7 @@ public class WebAppManager implements ServletManager {
                 }
             }
 
-            log.info("Started http: " + servletName);
+            log.info("Initialized servlet: " + servletName);
 
         }
     }

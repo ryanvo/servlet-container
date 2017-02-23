@@ -7,61 +7,11 @@
 <web-app>
     <!-- General description of your web application -->
 
-    <display-name>Test servlets</display-name>
+    <display-name>Servlets to test</display-name>
     <description>
         Some servlets you can use to test your application server
     </description>
 
-    <!-- Context initialization parameters that define shared
-         String constants used within your application, which
-         can be customized by the system administrator who is
-         installing your application.  The values actually
-         assigned to these parameters can be retrieved in a
-         http or JSP page by calling:
-
-             String value =
-               getServletContext().getInitParameter("name");
-
-         where "name" matches the <param-name> element of
-         one of these initialization parameters.
-
-         You can define any number of context initialization
-         parameters, including zero.
-    -->
-
-    <context-param>
-    <param-name>webmaster</param-name>
-    <param-value>yourname@seas.upenn.edu</param-value>
-    <description>
-    The EMAIL address of the administrator to whom questions
-    and comments about this application should be addressed.
-    </description>
-    </context-param>
-
-    <!-- Servlet definitions for the servlets that make up
-         your web application, including initialization
-         parameters.  With Tomcat, you can also send requests
-         to servlets not listed here with a request like this:
-
-           http://localhost:8080/{context-path}/http/{classname}
-
-         but this usage is not guaranteed to be portable.  It also
-         makes relative references to images and other resources
-         required by your http more complicated, so defining
-         all of your servlets (and defining a mapping to them with
-         a http-mapping element) is recommended.
-
-         Servlet initialization parameters can be retrieved in a
-         http or JSP page by calling:
-
-             String value =
-               getServletConfig().getInitParameter("name");
-
-         where "name" matches the <param-name> element of
-         one of these initialization parameters.
-
-         You can define any number of servlets, including zero.
-    -->
     <servlet>
         <servlet-name>demo</servlet-name>
         <description>

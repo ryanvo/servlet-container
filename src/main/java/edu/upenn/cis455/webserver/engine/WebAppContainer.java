@@ -1,7 +1,7 @@
 package edu.upenn.cis455.webserver.engine;
 
-import edu.upenn.cis455.webserver.http.HttpRequest;
-import edu.upenn.cis455.webserver.http.HttpResponse;
+import edu.upenn.cis455.webserver.engine.http.HttpRequest;
+import edu.upenn.cis455.webserver.engine.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,18 +19,18 @@ public class WebAppContainer implements Container {
 
     private ApplicationContext context;
     private WebAppManager webAppManager;
+    private SessionManager sessionManager;
 
-    public WebAppContainer(WebAppManager webAppManager) {
+    public WebAppContainer(WebAppManager webAppManager, SessionManager sessionManager) {
         this.webAppManager = webAppManager;
-        this.context = webAppManager.
-                getContext();
+        this.sessionManager = sessionManager;
+        this.context = webAppManager.getContext();
     }
 
 
     public void start() throws ServletException, ReflectiveOperationException {
-
+        context.setAttribute("SessionManager", sessionManager);
         webAppManager.launchServlets();
-
     }
 
 

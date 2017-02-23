@@ -1,8 +1,8 @@
 package edu.upenn.cis455.webserver.connector;
 
-import edu.upenn.cis455.webserver.http.exception.file.IllegalFilePathException;
-import edu.upenn.cis455.webserver.http.exception.http.BadRequestException;
-import edu.upenn.cis455.webserver.http.HttpRequest;
+import edu.upenn.cis455.webserver.engine.http.exception.file.IllegalFilePathException;
+import edu.upenn.cis455.webserver.engine.http.exception.http.BadRequestException;
+import edu.upenn.cis455.webserver.engine.http.HttpRequest;
 import edu.upenn.cis455.webserver.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

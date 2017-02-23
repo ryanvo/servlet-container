@@ -1,9 +1,9 @@
-package edu.upenn.cis455.webserver.http;
+package edu.upenn.cis455.webserver.engine.http;
 
 
-import edu.upenn.cis455.webserver.http.io.Buffer;
-import edu.upenn.cis455.webserver.http.io.ChunkedResponseBuffer;
-import edu.upenn.cis455.webserver.http.io.ResponseBuffer;
+import edu.upenn.cis455.webserver.engine.http.io.Buffer;
+import edu.upenn.cis455.webserver.engine.http.io.ChunkedResponseBuffer;
+import edu.upenn.cis455.webserver.engine.http.io.ResponseBuffer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -101,6 +101,10 @@ public class HttpResponse implements HttpServletResponse {
         return msgBodyBuffer;
     }
 
+
+
+
+
     @Override
     public void setIntHeader(String s, int i) {
         if (isCommitted()) {
@@ -130,8 +134,6 @@ public class HttpResponse implements HttpServletResponse {
     @Override
     public void addCookie(Cookie cookie) {
         cookies.add(cookie);
-//        addHeader("Set-Cookie", cookie.getName() + "=" + cookie.getValue());
-//        cookie.getMaxAge();
     }
 
     @Override

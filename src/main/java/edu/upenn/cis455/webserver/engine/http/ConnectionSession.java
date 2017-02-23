@@ -1,12 +1,16 @@
-package edu.upenn.cis455.webserver.http;
+package edu.upenn.cis455.webserver.engine.http;
 
-import edu.upenn.cis455.webserver.engine.ApplicationContext;
+import edu.upenn.cis455.webserver.engine.SessionManager;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Set;
+import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -14,29 +18,26 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ConnectionSession implements HttpSession {
 
-    private ApplicationContext context;
+    private ServletContext context;
     private Map<String, Object> attributes;
 
     private ZonedDateTime creationTime;
     private ZonedDateTime lastAccessedTime;
     private int timeoutInterval = -1;
     private boolean isInvalidated = false;
-    private final int id;
+    private final String id;
+    private boolean isNew = true;
 
-    public ConnectionSession(int id, ApplicationContext context) {
+    public ConnectionSession(String id, ServletContext context) {
         this.id = id;
         this.context = context;
         this.attributes = new ConcurrentHashMap<>();
         this.creationTime = ZonedDateTime.now(ZoneId.of("GMT"));
-        this.lastAccessedTime = creationTime;
     }
 
-
-
     public void markAccessed() {
-
+        isNew = false;
         lastAccessedTime = ZonedDateTime.now(ZoneId.of("GMT"));
-
     }
 
     /**
@@ -51,7 +52,7 @@ public class ConnectionSession implements HttpSession {
 
     @Override
     public String getId() {
-        return null;
+        return id;
     }
 
 
@@ -62,7 +63,7 @@ public class ConnectionSession implements HttpSession {
 
 
     @Override
-    public ApplicationContext getServletContext() {
+    public ServletContext getServletContext() {
         return context;
     }
 
@@ -109,6 +110,9 @@ public class ConnectionSession implements HttpSession {
             throw new IllegalStateException();
         }
 
+        SessionManager sessionManager = (SessionManager) context.getAttribute("SessionManager");
+        sessionManager.invalidateSession(getId());
+        markAccessed();
         isInvalidated = true;
     }
 

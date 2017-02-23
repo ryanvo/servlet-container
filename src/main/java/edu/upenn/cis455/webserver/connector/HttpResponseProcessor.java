@@ -1,7 +1,7 @@
 package edu.upenn.cis455.webserver.connector;
 
-import edu.upenn.cis455.webserver.http.HttpResponse;
-import edu.upenn.cis455.webserver.http.io.Buffer;
+import edu.upenn.cis455.webserver.engine.http.HttpResponse;
+import edu.upenn.cis455.webserver.engine.http.io.Buffer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -110,8 +110,6 @@ public class HttpResponseProcessor implements ResponseProcessor {
                 String cookieExpiryStr = cookieExpiry.format(HTTP_DATE_FORMAT);
                 sb.append(cookieExpiryStr);
 
-                log.info(String.format("Cookie set: name:%s val:%s expire:%s", cookie.getName(), cookie.getValue(),
-                        cookieExpiryStr));
             }
 
             log.info(String.format("Cookie set: name:%s val:%s", cookie.getName(), cookie.getValue()));

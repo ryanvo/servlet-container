@@ -1,13 +1,15 @@
 package edu.upenn.cis455.webserver.connector;
 
 import edu.upenn.cis455.webserver.engine.Container;
-import edu.upenn.cis455.webserver.http.exception.http.BadRequestException;
-import edu.upenn.cis455.webserver.http.HttpRequest;
-import edu.upenn.cis455.webserver.http.HttpResponse;
+import edu.upenn.cis455.webserver.engine.SessionManager;
+import edu.upenn.cis455.webserver.engine.http.exception.http.BadRequestException;
+import edu.upenn.cis455.webserver.engine.http.HttpRequest;
+import edu.upenn.cis455.webserver.engine.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,7 +37,8 @@ public class ConnectionHandler implements Runnable {
     private Container container;
     private RequestProcessor requestProcessor;
     private ResponseProcessor responseProcessor;
-    private ConnectionManager manager;
+    private ConnectionManager connectionManager;
+    private SessionManager sessionManager;
 
     private HttpRequest request = new HttpRequest();
     private HttpResponse response = new HttpResponse();
@@ -48,7 +51,8 @@ public class ConnectionHandler implements Runnable {
         this.container = container;
         this.requestProcessor = requestProcessor;
         this.responseProcessor = responseProcessor;
-        this.manager = (ConnectionManager) container.getContext("webapp").getAttribute("ConnectionManager");
+        this.connectionManager = (ConnectionManager) container.getContext("webapp").getAttribute("ConnectionManager");
+        this.sessionManager = (SessionManager) container.getContext("webapp").getAttribute("SessionManager");
 
     }
 
@@ -56,10 +60,10 @@ public class ConnectionHandler implements Runnable {
      * Origin for all http requests. All error handling occurs here.
      * If the issue is in the connection, this method returns. IO
      * exceptions places the thread back into the working queue.
-     * <p>
+     *
      * The HttpResponse and HttpRequest objects are reused between each
      * request during persistent connection.
-     * <p>
+     *
      * There is a 30 second timeout on the persistent connection.
      */
     @Override
@@ -73,24 +77,26 @@ public class ConnectionHandler implements Runnable {
             return;
         }
 
-        int count = 1;
 
         while (!connection.isClosed()) {
 
             try {
 
                 request.setInputStream(connection.getInputStream());
-
+                request.setSessionManager(sessionManager);
                 try {
                     requestProcessor.process(request);
                 } catch (NullPointerException e) {
                     log.info("Client disconnected");
                     break;
                 }
+
+                /* Update response with the protocol version */
                 response.setHTTP(request.getProtocol());
 
-                manager.update(Thread.currentThread().getId(), request.getRequestURI());
-                log.debug("Connection manager updated: " + "tid:" + Thread.currentThread().getId() + " uri:" + request
+                /* Update the status of the thread */
+                connectionManager.update(Thread.currentThread().getId(), request.getRequestURI());
+                log.debug("Connection connectionManager updated: " + "tid:" + Thread.currentThread().getId() + " uri:" + request
                         .getRequestURI());
 
                 /* Send 100 Continue after receiving headers if request asked for it */
@@ -100,6 +106,16 @@ public class ConnectionHandler implements Runnable {
                 log.info(String.format("Dispatched method:%s : uri:%s", request.getMethod(), request.getRequestURI()));
                 container.dispatch(request, response);
 
+                /* If the servlet requested a session, attach the JSESSIONID cookie to response */
+                String sessionId = request.getRequestedSessionId();
+                if (sessionId != null && sessionManager.isValid(sessionId)) {
+
+                    Cookie sessionCookie = new Cookie("JSESSIONID", sessionId);
+                    sessionCookie.setMaxAge(3600); // Default to 24 hrs
+                    response.addCookie(sessionCookie);
+                    log.info("JESSIONID cookie added to response: id:" + sessionId);
+
+                }
 
             } catch (SocketException e) {
                 log.error("Broken pipe");
@@ -129,15 +145,16 @@ public class ConnectionHandler implements Runnable {
             }
 
 
-            log.info(String.format("Succesfully handled method:%s : uri:%s", request.getMethod(), request.getRequestURI()));
+            log.info(String.format("Successfully handled method:%s : uri:%s", request.getMethod(), request.getRequestURI()));
             response = new HttpResponse();
             request = new HttpRequest();
+
         }
 
 
         try {
             connection.close();
-            manager.update(Thread.currentThread().getId(), "waiting");
+            connectionManager.update(Thread.currentThread().getId(), "waiting");
             log.debug("Socket closed");
         } catch (IOException e) {
             log.error("Failed to close socket", e);

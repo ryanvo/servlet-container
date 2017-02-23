@@ -22,7 +22,8 @@ public class WebAppContainerFactory {
 
         /* Create WebAppContainer and composite WebAppManager */
         WebAppManager webAppManager = new WebAppManager(webXml, context);
-        return new WebAppContainer(webAppManager);
+        SessionManager sessionManager = new SessionManager(context);
+        return new WebAppContainer(webAppManager, sessionManager);
 
     }
 
