@@ -202,7 +202,7 @@
   Rather than relying on the CLASSPATH environment variable, Ant includes
   features that makes it easy to dynamically construct the classpath you
   need for each compilation.  The example below constructs the compile
-  classpath to include the servlet.jar file, as well as the other components
+  classpath to include the http.jar file, as well as the other components
   that Tomcat makes available to web applications automatically, plus anything
   that you explicitly added.
 

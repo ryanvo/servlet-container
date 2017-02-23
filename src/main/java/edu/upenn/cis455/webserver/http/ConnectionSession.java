@@ -1,4 +1,4 @@
-package edu.upenn.cis455.webserver.servlet.http;
+package edu.upenn.cis455.webserver.http;
 
 import edu.upenn.cis455.webserver.engine.ApplicationContext;
 
@@ -40,7 +40,7 @@ public class ConnectionSession implements HttpSession {
     }
 
     /**
-     * javax.servlet.http.ConnectionSession API
+     * javax.http.http.ConnectionSession API
      */
 
 

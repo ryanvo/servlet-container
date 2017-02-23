@@ -1,8 +1,8 @@
 package edu.upenn.cis455.webserver.engine;
 
-import edu.upenn.cis455.webserver.servlet.ControlServlet;
-import edu.upenn.cis455.webserver.servlet.DefaultServlet;
-import edu.upenn.cis455.webserver.servlet.ShutdownServlet;
+import edu.upenn.cis455.webserver.http.ControlServlet;
+import edu.upenn.cis455.webserver.http.DefaultServlet;
+import edu.upenn.cis455.webserver.http.ShutdownServlet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -55,7 +55,7 @@ public class WebAppManager implements ServletManager {
 
 
         for (String servletName : webXml.getServletNames()) {
-            log.info("Initiating servlet: " + servletName);
+            log.info("Initiating http: " + servletName);
 
             ServletConfig config = configBuilder.setName(servletName)
                     .setContext(context)
@@ -80,7 +80,7 @@ public class WebAppManager implements ServletManager {
                 }
             }
 
-            log.info("Started servlet: " + servletName);
+            log.info("Started http: " + servletName);
 
         }
     }
@@ -122,7 +122,7 @@ public class WebAppManager implements ServletManager {
 
         }
 
-        log.info(String.format("Uri:%s mapped to default servlet", uri));
+        log.info(String.format("Uri:%s mapped to default http", uri));
         return defaultServlet;
     }
 

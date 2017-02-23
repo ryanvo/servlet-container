@@ -1,7 +1,7 @@
 package edu.upenn.cis455.webserver.engine.io;
 
-import edu.upenn.cis455.webserver.servlet.io.ChunkedResponseBuffer;
-import edu.upenn.cis455.webserver.servlet.io.ResponseBuffer;
+import edu.upenn.cis455.webserver.http.io.ChunkedResponseBuffer;
+import edu.upenn.cis455.webserver.http.io.ResponseBuffer;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;

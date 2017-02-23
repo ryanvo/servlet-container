@@ -1,9 +1,9 @@
-package edu.upenn.cis455.webserver.servlet.http;
+package edu.upenn.cis455.webserver.http;
 
 
-import edu.upenn.cis455.webserver.servlet.io.Buffer;
-import edu.upenn.cis455.webserver.servlet.io.ChunkedResponseBuffer;
-import edu.upenn.cis455.webserver.servlet.io.ResponseBuffer;
+import edu.upenn.cis455.webserver.http.io.Buffer;
+import edu.upenn.cis455.webserver.http.io.ChunkedResponseBuffer;
+import edu.upenn.cis455.webserver.http.io.ResponseBuffer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

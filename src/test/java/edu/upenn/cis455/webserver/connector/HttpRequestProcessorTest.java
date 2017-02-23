@@ -1,6 +1,6 @@
 package edu.upenn.cis455.webserver.connector;
 
-import edu.upenn.cis455.webserver.servlet.exception.http.BadRequestException;
+import edu.upenn.cis455.webserver.http.exception.http.BadRequestException;
 import org.junit.Test;
 
 import java.util.*;

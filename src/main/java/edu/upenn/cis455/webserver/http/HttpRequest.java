@@ -1,4 +1,4 @@
-package edu.upenn.cis455.webserver.servlet.http;
+package edu.upenn.cis455.webserver.http;
 
 
 import org.apache.logging.log4j.LogManager;
@@ -9,6 +9,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.security.Principal;
 import java.util.*;
@@ -74,14 +75,7 @@ public class HttpRequest implements HttpServletRequest {
         this.method = method;
     }
 
-    @Override
-    public BufferedReader getReader() {
-        if (reader == null) {
-            reader = new BufferedReader(new InputStreamReader(in));
-        }
 
-        return reader;
-    }
 
     public void setInputStream(InputStream in) {
         this.in = in;
@@ -104,7 +98,7 @@ public class HttpRequest implements HttpServletRequest {
     }
 
     /**
-     * javax.servlet.http API
+     * javax.http.http API
      */
 
     @Override
@@ -209,29 +203,26 @@ public class HttpRequest implements HttpServletRequest {
     }
 
     @Override
-    public javax.servlet.http.HttpSession getSession(boolean b) {
+    public HttpSession getSession(boolean b) {
 
+        context.getSession
 
-
-
-//        if (isRequestedSessionIdValid()) {
-//            return session;
-//        }
-//
-//        if (!flag) {
-//            return null;
-//        }
-//
-//        session = new MyHttpSession();
-//        requestedSessionId = session.getId();
-//        context.getSessionManager().addSession(session);
-//        return session;
-        return null;
+        requestedSessionId = session.getId();
+        return session;
     }
 
      @Override
-    public javax.servlet.http.HttpSession getSession() {
+    public HttpSession getSession() {
         return getSession(true);
+    }
+
+    @Override
+    public BufferedReader getReader() {
+        if (reader == null) {
+            reader = new BufferedReader(new InputStreamReader(in));
+        }
+
+        return reader;
     }
 
      @Override

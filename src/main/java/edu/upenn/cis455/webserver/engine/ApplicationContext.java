@@ -48,7 +48,7 @@ public class ApplicationContext implements ServletContext {
 
 
     /**
-     * javax.servlet.ApplicationContext API
+     * javax.http.ApplicationContext API
      */
 
     @Override

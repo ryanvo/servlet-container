@@ -1,9 +1,9 @@
 package edu.upenn.cis455.webserver.connector;
 
 import edu.upenn.cis455.webserver.engine.Container;
-import edu.upenn.cis455.webserver.servlet.exception.http.BadRequestException;
-import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
-import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
+import edu.upenn.cis455.webserver.http.exception.http.BadRequestException;
+import edu.upenn.cis455.webserver.http.HttpRequest;
+import edu.upenn.cis455.webserver.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Serves as the handle for incoming/connections to/from the Http Request Listener.
  * Client requests arrive here first for processing. Valid requests are then dispatched
- * to the appropriate servlet by the WebApoManager. Once the response is finished,
+ * to the appropriate http by the WebApoManager. Once the response is finished,
  * ConnectionHandler writes the headers and message body to to the socket. If the is
  * no activity for 30s, the handler will disconnect. Otherwise, there are persistent
  * connections.
@@ -53,7 +53,7 @@ public class ConnectionHandler implements Runnable {
     }
 
     /**
-     * Origin for all servlet requests. All error handling occurs here.
+     * Origin for all http requests. All error handling occurs here.
      * If the issue is in the connection, this method returns. IO
      * exceptions places the thread back into the working queue.
      * <p>
@@ -96,7 +96,7 @@ public class ConnectionHandler implements Runnable {
                 /* Send 100 Continue after receiving headers if request asked for it */
                 handle100ContinueRequest(request, connection.getOutputStream());
 
-                /* Exceptions throw by servlet are caught under ServletException */
+                /* Exceptions throw by http are caught under ServletException */
                 log.info(String.format("Dispatched method:%s : uri:%s", request.getMethod(), request.getRequestURI()));
                 container.dispatch(request, response);
 

@@ -1,4 +1,4 @@
-package edu.upenn.cis455.webserver.servlet.exception.file;
+package edu.upenn.cis455.webserver.http.exception.file;
 
 /**
  * @author rtv

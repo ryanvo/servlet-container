@@ -1,7 +1,7 @@
 package edu.upenn.cis455.webserver.engine;
 
-import edu.upenn.cis455.webserver.servlet.http.HttpRequest;
-import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
+import edu.upenn.cis455.webserver.http.HttpRequest;
+import edu.upenn.cis455.webserver.http.HttpResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

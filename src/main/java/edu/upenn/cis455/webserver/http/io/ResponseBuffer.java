@@ -1,4 +1,4 @@
-package edu.upenn.cis455.webserver.servlet.io;
+package edu.upenn.cis455.webserver.http.io;
 
 import javax.servlet.ServletOutputStream;
 import java.io.ByteArrayOutputStream;

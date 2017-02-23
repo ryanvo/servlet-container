@@ -1,6 +1,6 @@
 package edu.upenn.cis455.webserver.connector;
 
-import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
+import edu.upenn.cis455.webserver.http.HttpResponse;
 
 import java.io.IOException;
 import java.io.OutputStream;
