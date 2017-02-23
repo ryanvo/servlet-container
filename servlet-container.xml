@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="servlet-container" default="all">
+  
+  
+  <property file="servlet-container.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.ane"/>
+    <include name="*.zip"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/charsets.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/cldrdata.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/dnsns.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/icedtea-sound.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/jaccess.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/localedata.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/nashorn.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/sunec.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/sunjce_provider.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/sunpkcs11.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/zipfs.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/jce.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/jsse.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/management-agent.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/resources.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.ant.classpath">
+    <pathelement location="${basedir}/lib/ant.jar"/>
+  </path>
+  
+  <path id="library.junit:junit:4.12.classpath">
+    <pathelement location="${path.variable.maven_repository}/junit/junit/4.12/junit-4.12.jar"/>
+    <pathelement location="${path.variable.maven_repository}/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar"/>
+  </path>
+  
+  <path id="library.maven:_net.bytebuddy:byte-buddy-agent:1.6.5.classpath">
+    <pathelement location="${path.variable.maven_repository}/net/bytebuddy/byte-buddy-agent/1.6.5/byte-buddy-agent-1.6.5.jar"/>
+  </path>
+  
+  <path id="library.maven:_net.bytebuddy:byte-buddy:1.6.5.classpath">
+    <pathelement location="${path.variable.maven_repository}/net/bytebuddy/byte-buddy/1.6.5/byte-buddy-1.6.5.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.logging.log4j:log4j-api:2.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/logging/log4j/log4j-api/2.1/log4j-api-2.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.apache.logging.log4j:log4j-core:2.1.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/apache/logging/log4j/log4j-core/2.1/log4j-core-2.1.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.hamcrest:hamcrest-all:1.3.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/hamcrest/hamcrest-all/1.3/hamcrest-all-1.3.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.mockito:mockito-core:2.7.0.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/mockito/mockito-core/2.7.0/mockito-core-2.7.0.jar"/>
+  </path>
+  
+  <path id="library.maven:_org.objenesis:objenesis:2.5.classpath">
+    <pathelement location="${path.variable.maven_repository}/org/objenesis/objenesis/2.5/objenesis-2.5.jar"/>
+  </path>
+  
+  <path id="library.servlet-api.classpath">
+    <pathelement location="${basedir}/lib/servlet-api.jar"/>
+  </path>
+  
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module servlet-container1 -->
+  
+  <dirname property="module.servlet-container1.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.servlet-container1" value="${jdk.home.1.8}"/>
+  <property name="module.jdk.bin.servlet-container1" value="${jdk.bin.1.8}"/>
+  <property name="module.jdk.classpath.servlet-container1" value="jdk.classpath.1.8"/>
+  
+  <property name="compiler.args.servlet-container1" value="-encoding UTF-8 -source 8 -target 1.8 ${compiler.args}"/>
+  
+  <property name="servlet-container1.output.dir" value="${module.servlet-container1.basedir}/target/classes"/>
+  <property name="servlet-container1.testoutput.dir" value="${module.servlet-container1.basedir}/target/test-classes"/>
+  
+  <path id="servlet-container1.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="servlet-container1.module.production.classpath">
+    <path refid="${module.jdk.classpath.servlet-container1}"/>
+    <path refid="library.ant.classpath"/>
+    <path refid="library.servlet-api.classpath"/>
+    <path refid="library.junit:junit:4.12.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-api:2.1.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-core:2.1.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-all:1.3.classpath"/>
+  </path>
+  
+  <path id="servlet-container1.runtime.production.module.classpath">
+    <pathelement location="${servlet-container1.output.dir}"/>
+    <path refid="library.ant.classpath"/>
+    <path refid="library.servlet-api.classpath"/>
+    <path refid="library.junit:junit:4.12.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-api:2.1.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-core:2.1.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-all:1.3.classpath"/>
+  </path>
+  
+  <path id="servlet-container1.module.classpath">
+    <path refid="${module.jdk.classpath.servlet-container1}"/>
+    <pathelement location="${servlet-container1.output.dir}"/>
+    <path refid="library.ant.classpath"/>
+    <path refid="library.servlet-api.classpath"/>
+    <path refid="library.junit:junit:4.12.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-api:2.1.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-core:2.1.classpath"/>
+    <path refid="library.maven:_org.mockito:mockito-core:2.7.0.classpath"/>
+    <path refid="library.maven:_net.bytebuddy:byte-buddy:1.6.5.classpath"/>
+    <path refid="library.maven:_net.bytebuddy:byte-buddy-agent:1.6.5.classpath"/>
+    <path refid="library.maven:_org.objenesis:objenesis:2.5.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-all:1.3.classpath"/>
+  </path>
+  
+  <path id="servlet-container1.runtime.module.classpath">
+    <pathelement location="${servlet-container1.testoutput.dir}"/>
+    <pathelement location="${servlet-container1.output.dir}"/>
+    <path refid="library.ant.classpath"/>
+    <path refid="library.servlet-api.classpath"/>
+    <path refid="library.junit:junit:4.12.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-api:2.1.classpath"/>
+    <path refid="library.maven:_org.apache.logging.log4j:log4j-core:2.1.classpath"/>
+    <path refid="library.maven:_org.mockito:mockito-core:2.7.0.classpath"/>
+    <path refid="library.maven:_net.bytebuddy:byte-buddy:1.6.5.classpath"/>
+    <path refid="library.maven:_net.bytebuddy:byte-buddy-agent:1.6.5.classpath"/>
+    <path refid="library.maven:_org.objenesis:objenesis:2.5.classpath"/>
+    <path refid="library.maven:_org.hamcrest:hamcrest-all:1.3.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.servlet-container1">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.servlet-container1">
+    <patternset refid="excluded.from.module.servlet-container1"/>
+  </patternset>
+  
+  <path id="servlet-container1.module.sourcepath">
+    <dirset dir="${module.servlet-container1.basedir}">
+      <include name="src/main/java"/>
+      <include name="src/main/resources"/>
+    </dirset>
+  </path>
+  
+  <path id="servlet-container1.module.test.sourcepath">
+    <dirset dir="${module.servlet-container1.basedir}">
+      <include name="src/test/java"/>
+      <include name="src/test/resources"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.servlet-container1" depends="compile.module.servlet-container1.production,compile.module.servlet-container1.tests" description="Compile module servlet-container1"/>
+  
+  <target name="compile.module.servlet-container1.production" depends="register.custom.compilers" description="Compile module servlet-container1; production classes">
+    <mkdir dir="${servlet-container1.output.dir}"/>
+    <javac2 destdir="${servlet-container1.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.servlet-container1}/javac">
+      <compilerarg line="${compiler.args.servlet-container1}"/>
+      <bootclasspath refid="servlet-container1.module.bootclasspath"/>
+      <classpath refid="servlet-container1.module.production.classpath"/>
+      <src refid="servlet-container1.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.servlet-container1"/>
+    </javac2>
+    
+    <copy todir="${servlet-container1.output.dir}">
+      <fileset dir="${module.servlet-container1.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.servlet-container1.basedir}/src/main/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.servlet-container1.tests" depends="register.custom.compilers,compile.module.servlet-container1.production" description="compile module servlet-container1; test classes" unless="skip.tests">
+    <mkdir dir="${servlet-container1.testoutput.dir}"/>
+    <javac destdir="${servlet-container1.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.servlet-container1}/javac">
+      <compilerarg line="${compiler.args.servlet-container1}"/>
+      <bootclasspath refid="servlet-container1.module.bootclasspath"/>
+      <classpath refid="servlet-container1.module.classpath"/>
+      <src refid="servlet-container1.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.servlet-container1"/>
+    </javac>
+    
+    <copy todir="${servlet-container1.testoutput.dir}">
+      <fileset dir="${module.servlet-container1.basedir}/src/test/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.servlet-container1.basedir}/src/test/resources">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="clean.module.servlet-container1" description="cleanup module">
+    <delete dir="${servlet-container1.output.dir}"/>
+    <delete dir="${servlet-container1.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.servlet-container1, clean.artifact.cis555-servlets:war_exploded" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.servlet-container1" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.cis555-servlets:war_exploded" value="${basedir}/out/artifacts/cis555_servlets_war_exploded"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="clean.artifact.cis555-servlets:war_exploded" description="clean cis555-servlets:war exploded artifact output">
+    <delete dir="${artifact.output.cis555-servlets:war_exploded}"/>
+  </target>
+  
+  <target name="artifact.cis555-servlets:war_exploded" depends="init.artifacts" description="Build &#39;cis555-servlets:war exploded&#39; artifact">
+    <mkdir dir="${artifact.output.cis555-servlets:war_exploded}"/>
+    <ant antfile="" target="null" dir="">
+      <property name="artifact.output.path" value="${artifact.output.cis555-servlets:war_exploded}"/>
+    </ant>
+    <mkdir dir="${artifact.output.cis555-servlets:war_exploded}/WEB-INF"/>
+    <mkdir dir="${artifact.output.cis555-servlets:war_exploded}/WEB-INF/classes"/>
+    <copy todir="${artifact.output.cis555-servlets:war_exploded}/WEB-INF/classes">
+      <fileset dir="${cis555-servlets.output.dir}"/>
+    </copy>
+    <copy todir="${artifact.output.cis555-servlets:war_exploded}">
+      <fileset dir="${basedir}/src/main/java/cis555-servlets/web"/>
+    </copy>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.cis555-servlets:war_exploded" description="Build all artifacts">
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>

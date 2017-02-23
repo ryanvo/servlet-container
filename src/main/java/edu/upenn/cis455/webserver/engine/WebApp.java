@@ -21,25 +21,21 @@ public class WebAppManager implements ServletManager {
 
     private static Logger log = LogManager.getLogger(WebAppManager.class);
 
-    private WebXmlHandler webXml;
     private ApplicationContext context;
 
     private Map<Pattern, HttpServlet> servletByPattern = new ConcurrentHashMap<>();
     private Map<Pattern, HttpServlet> servletByWildcardPattern = new ConcurrentHashMap<>();
-
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
+
+    private ServletConfigBuilder configBuilder = new ServletConfigBuilder();
 
     private HttpServlet defaultServlet;
 
-
-    public WebAppManager(WebXmlHandler webXml, ApplicationContext context) {
-        this.webXml = webXml;
+    public WebAppManager(ApplicationContext context) {
         this.context = context;
     }
 
-    public void launchServlets() throws ServletException, ReflectiveOperationException {
-
-        ServletConfigBuilder configBuilder = new ServletConfigBuilder();
+    public void launchServlets(WebXmlHandler webXmlHandler) throws ServletException, ReflectiveOperationException {
 
         defaultServlet = new DefaultServlet();
         defaultServlet.init(configBuilder.setName("Default").setContext(context).build());
@@ -54,31 +50,10 @@ public class WebAppManager implements ServletManager {
         servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
 
 
-        for (String servletName : webXml.getServletNames()) {
+        for (String servletName : webXmlHandler.getServletNames()) {
             log.info("Initiating http: " + servletName);
 
-            ServletConfig config = configBuilder.setName(servletName)
-                    .setContext(context)
-                    .setInitParams(webXml.getServletInitParamsByName(servletName))
-                    .build();
-
-            HttpServlet servlet = launch(config);
-            servlets.put(servletName, servlet);
-
-            List<String> patterns = webXml.getPatternsByName().get(servletName);
-            for (String pat : patterns) {
-
-                if (pat.contains("*")) {
-                    pat = pat.replace("*", ".*");
-                    pat = pat + "/*$";
-
-                    servletByWildcardPattern.put(Pattern.compile(pat), servlet);
-
-                } else {
-                    pat = pat + "/*$";
-                    servletByPattern.put(Pattern.compile(pat), servlet);
-                }
-            }
+                launch(servletName, webXmlHandler);
 
             log.info("Initialized servlet: " + servletName);
 
@@ -86,11 +61,32 @@ public class WebAppManager implements ServletManager {
     }
 
     @Override
-    public HttpServlet launch(ServletConfig config) throws ServletException, ReflectiveOperationException {
+    public HttpServlet launch(String servletName, WebXmlHandler webXml) throws ServletException, ReflectiveOperationException {
+
+        ServletConfig config = configBuilder.setName(servletName)
+                .setContext(context)
+                .setInitParams(webXml.getServletInitParamsByName(servletName))
+                .build();
+
 
         Class servletClass = Class.forName(webXml.getClassByServletName(config.getServletName()));
         HttpServlet servlet = (HttpServlet) servletClass.newInstance();
         servlet.init(config);
+        servlets.put(servletName, servlet);
+        List<String> patterns = webXml.getPatternsByName().get(servletName);
+        for (String pat : patterns) {
+
+            if (pat.contains("*")) {
+                pat = pat.replace("*", ".*");
+                pat = pat + "/*$";
+
+                servletByWildcardPattern.put(Pattern.compile(pat), servlet);
+
+            } else {
+                pat = pat + "/*$";
+                servletByPattern.put(Pattern.compile(pat), servlet);
+            }
+        }
 
         return servlet;
     }
