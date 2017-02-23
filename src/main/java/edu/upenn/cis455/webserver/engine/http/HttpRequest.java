@@ -61,6 +61,9 @@ public class HttpRequest implements HttpServletRequest {
 
     private int localPort;
 
+    public void setParameters(Map<String, List<String>> params) {
+        parameters = params;
+    }
 
     public void setUri(String uri) {
         this.uri = uri;

@@ -18,7 +18,10 @@ public class HttpServer {
 
     public static void main(String args[]) {
 
-        if (args.length != 5) {
+        int POOL_SIZE = 64;
+        int QUEUE_SIZE = 1024;
+
+        if (args.length < 3) {
             System.out.println("Name: Ryan Vo");
             System.out.println("SEAS Login: ryanvo");
             System.exit(1);
@@ -27,8 +30,9 @@ public class HttpServer {
         int port = Integer.valueOf(args[0]);
         String rootDirectory = args[1];
         String webXmlPath = args[2];
-        int POOL_SIZE = Integer.parseInt(args[3]);
-        int WORK_QUEUE_SIZE = Integer.parseInt(args[4]);
+
+        int poolSize = (args.length < 4) ? POOL_SIZE : Integer.parseInt(args[3]);
+        int workQueueSize = (args.length < 5) ? QUEUE_SIZE : Integer.parseInt(args[4]);
 
 
         /* Parse web.xml file */
@@ -45,10 +49,10 @@ public class HttpServer {
         log.info("WebAppContainer created with webXmlPath:" + webXmlPath + ", rootDirectory:" + rootDirectory);
 
         /* Create HttpRequestListener to listening for requests */
-        HttpRequestListener requestListener = HttpRequestListenerFactory.create(container, POOL_SIZE, WORK_QUEUE_SIZE);
+        HttpRequestListener requestListener = HttpRequestListenerFactory.create(container, poolSize, workQueueSize);
         log.info(String.format("Factory Created ConnectionHandler with %d threads, request queue limit of %d",
-                POOL_SIZE,
-                WORK_QUEUE_SIZE));
+                poolSize,
+                workQueueSize));
 
         /* Power up the servlets specified in web.xml */
         try {

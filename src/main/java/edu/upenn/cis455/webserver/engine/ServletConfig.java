@@ -33,10 +33,6 @@ public class ServletConfig implements javax.servlet.ServletConfig {
         return initParams.get(name);
     }
 
-    public void setInitParam(String name, String value) {
-        initParams.put(name, value);
-    }
-
     public Enumeration getInitParameterNames() {
         Set<String> keys = initParams.keySet();
         Vector<String> atts = new Vector<>(keys);

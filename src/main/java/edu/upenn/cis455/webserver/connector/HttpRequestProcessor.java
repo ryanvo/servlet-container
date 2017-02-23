@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Proceses a request before handling it to the container
+ * Processes a request before handling it to the container
  * @author rtv
  */
 public class HttpRequestProcessor implements RequestProcessor {
@@ -53,7 +53,6 @@ public class HttpRequestProcessor implements RequestProcessor {
         Map<String, List<String>> headers = parseHeaders(lines);
         request.setHeaders(headers);
 
-
         /* Check that Host header exists for HTTP/1.1 and up */
         if (!hasValidHostHeader(request.getProtocol(), request.getHeaders())) {
             log.info("Request is missing Host header entry");
@@ -61,10 +60,35 @@ public class HttpRequestProcessor implements RequestProcessor {
         }
 
 
+        /* Parse cookies if there are any in the header */
         String cookiesField = request.getHeader("cookie");
         if (cookiesField != null) {
             request.setCookies(parseCookies(cookiesField));
         }
+
+        /* If POST request, then parse parameters in body */
+        if (request.getMethod().equals("POST")) {
+            String query;
+            if (request.getHeader("content-length") != null) {
+                int len = Integer.valueOf(request.getHeader("content-length"));
+                char[] chars = new char[len];
+                in.read(chars, 0, len);
+                query = new String(chars);
+
+            } else {
+
+
+                StringBuilder sb = new StringBuilder();
+                for (line = in.readLine(); line != null && !line.isEmpty(); line = in.readLine()) {
+                    sb.append(line);
+                    log.debug("Body line: " + line);
+                }
+                query = sb.toString();
+            }
+            request.setQueryString(query);
+            request.setParameters(parseQueryString(query));
+        }
+
 
         log.info("Processed HTTP Request: status:" + line);
     }
@@ -86,6 +110,38 @@ public class HttpRequestProcessor implements RequestProcessor {
 
         return cookies;
     }
+
+    public Map<String, List<String>> parseQueryString(String query) throws BadRequestException {
+
+        Map<String, List<String>> queryEntries = new HashMap<>();
+
+        int eqIndex = query.indexOf('=');
+
+        while (eqIndex >= 0) {
+
+
+            int ampersandIndex = query.substring(eqIndex).indexOf('&');
+            ampersandIndex = (ampersandIndex < 0) ? query.length() : ampersandIndex;
+
+            String parameter = query.substring(0, eqIndex);
+            String value = query.substring(eqIndex + 1, ampersandIndex);
+
+            List<String> queryParameters = queryEntries.getOrDefault(parameter, new ArrayList<>());
+            queryParameters.add(value);
+            queryEntries.put(parameter, queryParameters);
+
+            try {
+                query = query.substring(ampersandIndex + 1);
+            } catch (IndexOutOfBoundsException  e) {
+                break;
+            }
+
+            log.debug(String.format("Parsed request parameter: param:%s val:%s", parameter, value));
+        }
+
+        return queryEntries;
+    }
+
 
     /**
      * Creates a map of the headers given in a response method. Handles multiline headers.

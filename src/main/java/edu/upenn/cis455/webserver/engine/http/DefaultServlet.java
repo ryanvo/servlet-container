@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DefaultServlet extends HttpServlet {
@@ -50,6 +51,26 @@ public class DefaultServlet extends HttpServlet {
         this.rootDirectory = context.getRealPath("/");
     }
 
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        Map<String, List<String>> map = req.getParameterMap();
+
+        PrintWriter writer = resp.getWriter();
+
+        for (Map.Entry<String, List<String>> entry : map.entrySet()) {
+
+            writer.print(entry.getKey() + ": ");
+
+            for (String val : entry.getValue()) {
+
+                writer.print(val + ", ");
+
+            }
+
+        }
+
+    }
 
     @Override
     protected void doHead(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
