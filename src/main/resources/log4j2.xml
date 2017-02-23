@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <configuration status="WARN">
     <appenders>
         <Console name="Stdout" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+            <PatternLayout pattern="%m%n"/>
         </Console>
 
-        <File name="File" fileName="log/log.txt">
-            <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+
+        <File name="File" fileName="${log4j:configParentLocation}/logs/container.log">
+            <PatternLayout>
+                <pattern>%d %p %c{1.} [%t] %m %ex%n</pattern>
+            </PatternLayout>
         </File>
+
+        <File name="Error" fileName="${log4j:configParentLocation}/logs/error.log">
+            <PatternLayout>
+                <pattern>%d %p %c{1.} [%t] %m %ex%n</pattern>
+            </PatternLayout>
+        </File>
+
     </appenders>
 
     <loggers>
         <root level="debug">
             <appender-ref ref="Stdout" level="info"/>
             <appender-ref ref="File" level="debug"/>
+            <appender-ref ref="Error" level="error"/>
         </root>
     </loggers>
+
 </configuration>

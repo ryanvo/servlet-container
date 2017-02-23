@@ -12,9 +12,17 @@ import org.xml.sax.SAXException;
 import javax.servlet.ServletException;
 import java.io.IOException;
 
+
+
 public class HttpServer {
 
     private static Logger log = LogManager.getLogger(HttpServer.class);
+//    private static Logger log;
+//
+//    static {
+//        System.setProperty("logFile",);
+//        log = LogManager.getLogger();
+//    }
 
     public static void main(String args[]) {
 

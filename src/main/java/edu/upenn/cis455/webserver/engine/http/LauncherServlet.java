@@ -25,9 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ManageServlet extends HttpServlet {
+public class LauncherServlet extends HttpServlet {
 
-    private static Logger log = LogManager.getLogger(ManageServlet.class);
+    private static Logger log = LogManager.getLogger(LauncherServlet.class);
 
     private String name;
     private Map<String, String> initParams = new HashMap<>();
@@ -86,7 +86,7 @@ public class ManageServlet extends HttpServlet {
 
             writer.print(String.format("<tr style=\"font-size:18px\"><td>%s</td><td>%s</td></tr>", app.getName(), app
                     .getContext().getRealPath
-                            ("/")));
+                    ("/")));
             writer.print("<table style=\"width:100%\" border=\"1\"><tr><th>Path</th><th>Servlet " +
                     "Display Name</th><th>Commands</th></tr>");
 

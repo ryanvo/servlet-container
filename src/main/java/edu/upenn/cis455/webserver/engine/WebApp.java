@@ -32,11 +32,10 @@ public class WebApp implements ServletManager {
     public void launchServlets(WebXmlHandler webXmlHandler) throws ServletException, ReflectiveOperationException {
 
         for (String servletName : webXmlHandler.getServletNames()) {
-            log.info("Initiating http: " + servletName);
 
                 launch(servletName, webXmlHandler);
 
-            log.info("Initialized servlet: " + servletName);
+            log.info("Initialized servlet=" + servletName);
 
         }
     }

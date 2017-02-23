@@ -54,7 +54,7 @@ public class HttpResponseProcessor implements ResponseProcessor {
         /* Write message body buffer to socket */
         buffer.writeTo(socket);
         socket.flush();
-        log.info("Wrote to socket: size:" + size);
+        log.debug("Wrote to socket: size:" + size);
     }
 
     public void writeStatusAndHeaders(HttpResponse resp, OutputStream out) throws IOException {
@@ -63,7 +63,7 @@ public class HttpResponseProcessor implements ResponseProcessor {
         out.write(statusAndHeaders.getBytes());
         out.write("\r\n".getBytes());
         out.flush();
-        log.info("Sending to socket:\n" + statusAndHeaders);
+        log.debug("Sending to socket:\n" + statusAndHeaders);
 
     }
 

@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
@@ -30,6 +31,7 @@ public class WebAppContainer implements Container {
     private Map<String, AppContext> contextByServletName = new ConcurrentHashMap<>();
     private Map<Pattern, HttpServlet> servletByPattern = new ConcurrentHashMap<>();
     private Map<Pattern, HttpServlet> servletByWildcardPattern = new ConcurrentHashMap<>();
+    private Map<String, List<String>> patternByServletName = new ConcurrentHashMap<>();
     private SessionManager sessionManager;
     private ProcessManager connectionManager;
     private HttpServlet defaultServlet;
@@ -57,7 +59,6 @@ public class WebAppContainer implements Container {
         HttpServlet controlServlet = new ControlServlet();
         controlServlet.init(configBuilder.setName("Control").setContext(context).build());
         contextByServletName.put(controlServlet.getServletName(), context);
-
 
         HttpServlet shutdownServlet = new ShutdownServlet();
         shutdownServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
@@ -91,10 +92,10 @@ public class WebAppContainer implements Container {
         context.setAttribute("SessionManager", sessionManager);
         webApp.launchServlets(webXml);
 
-
         /* Update container with servlet mappings for web app */
         servletByPattern.putAll(webApp.getServletByPattern());
-        servletByPattern.putAll(webApp.getServletByWildcardPattern());
+        servletByWildcardPattern.putAll(webApp.getServletByWildcardPattern());
+        patternByServletName.putAll(webXml.getPatternsByName());
 
         /* Update index for web app and context by display-name and context by servlet name*/
         webAppByName.put(webXml.getWebAppName(), webApp); //TODO make sure these are removed on deletion
@@ -130,7 +131,7 @@ public class WebAppContainer implements Container {
             Matcher uriMatcher = pattern.matcher(uri);
             if (uriMatcher.matches()) {
 
-                log.info(String.format("uri:%s | servletName:%s | pattern:%s", uri,
+                log.info(String.format("uri=%s servletName-%s pattern=%s", uri,
                         servletByPattern.get(pattern).getServletName(), pattern));
                 return servletByPattern.get(pattern);
             }
@@ -150,7 +151,6 @@ public class WebAppContainer implements Container {
         }
 
         log.info(String.format("Uri:%s mapped to default http", uri));
-
         return defaultServlet;
     }
 
@@ -173,11 +173,14 @@ public class WebAppContainer implements Container {
         }
 
         connectionManager.shutdown();
-
     }
 
     public AppContext getContextByRequestUri(String uri) {
         return contextByServletName.get(match(uri).getServletName());
+    }
+
+    public Map<String, List<String>> getPatternByServletName() {
+        return patternByServletName;
     }
 
     public void setManager(ProcessManager manager) {

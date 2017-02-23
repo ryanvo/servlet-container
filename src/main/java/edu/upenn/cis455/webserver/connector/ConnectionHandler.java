@@ -97,6 +97,9 @@ public class ConnectionHandler implements Runnable {
                     log.info("Client disconnected");
                     break;
                 }
+                log.info(String.format("Request processed: url=%s method=%s protocol=%s conn=%s", request
+                                .getRequestURI(), request.getMethod(),
+                        request.getProtocol(), request.getHeader("connection")));
 
                 /* Update response with the protocol version and context */
                 response.setHTTP(request.getProtocol());
