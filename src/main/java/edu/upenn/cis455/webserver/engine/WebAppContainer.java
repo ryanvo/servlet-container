@@ -25,10 +25,9 @@ public class WebAppContainer implements Container {
 
     private static Logger log = LogManager.getLogger(WebAppContainer.class);
 
-
-
     private Map<String, WebApp> webAppByName = new ConcurrentHashMap<>();
-    private Map<String, AppContext> contextByName = new ConcurrentHashMap<>();
+    private Map<String, AppContext> contextByAppName = new ConcurrentHashMap<>();
+    private Map<String, AppContext> contextByServletName = new ConcurrentHashMap<>();
     private Map<Pattern, HttpServlet> servletByPattern = new ConcurrentHashMap<>();
     private Map<Pattern, HttpServlet> servletByWildcardPattern = new ConcurrentHashMap<>();
     private SessionManager sessionManager;
@@ -49,22 +48,31 @@ public class WebAppContainer implements Container {
         ServletConfigBuilder configBuilder = new ServletConfigBuilder();
         context.setAttribute("ConnectionManager", connectionManager);
         context.setAttribute("SessionManager", sessionManager);
+        context.setAttribute("Container", this);
 
         defaultServlet = new DefaultServlet();
         defaultServlet.init(configBuilder.setName("Default").setContext(context).build());
+        contextByServletName.put(defaultServlet.getServletName(), context);
 
         HttpServlet controlServlet = new ControlServlet();
         controlServlet.init(configBuilder.setName("Control").setContext(context).build());
+        contextByServletName.put(controlServlet.getServletName(), context);
 
 
         HttpServlet shutdownServlet = new ShutdownServlet();
         shutdownServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
+        contextByServletName.put(shutdownServlet.getServletName(), context);
 
+        HttpServlet manageServlet = new ManageServlet();
+        manageServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
+        contextByServletName.put(manageServlet.getServletName(), context);
+
+        contextByAppName.put("Default", context);
 //        webAppByName.put("Default Servlets", webApp); //TODO make sure these are removed on deletion
-        contextByName.put("Default", context);
 
         servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
         servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
+        servletByPattern.put(Pattern.compile("/+manage/*$"), manageServlet);
 
     }
 
@@ -88,9 +96,12 @@ public class WebAppContainer implements Container {
         servletByPattern.putAll(webApp.getServletByPattern());
         servletByPattern.putAll(webApp.getServletByWildcardPattern());
 
-        /* Update index for web app and context by display-name */
+        /* Update index for web app and context by display-name and context by servlet name*/
         webAppByName.put(webXml.getWebAppName(), webApp); //TODO make sure these are removed on deletion
-        contextByName.put(webXml.getWebAppName(), context);
+        contextByAppName.put(webXml.getWebAppName(), context);
+        for (Map.Entry<String, HttpServlet> servlet : webApp.getServlets().entrySet()) {
+            contextByServletName.put(servlet.getKey(), context);
+        }
 
         log.info(String.format("Started app: name=%s, count=%d, xml=%s", webXml.getWebAppName(), webApp.getServlets()
                 .size(), webXml.getWebXmlPath()));
@@ -149,8 +160,13 @@ public class WebAppContainer implements Container {
      * @param appName
      * @return ServletContext for app
      */
+    @Override
     public AppContext getContext(String appName) {
-        return contextByName.get(appName);
+        return contextByAppName.get(appName);
+    }
+
+    public AppContext getContextByRequestUri(String uri) {
+        return contextByServletName.get(match(uri).getServletName());
     }
 
     public void setManager(ProcessManager manager) {

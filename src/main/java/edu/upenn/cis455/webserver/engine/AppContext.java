@@ -33,7 +33,6 @@ public class AppContext implements ServletContext {
     private String name;
 
     public AppContext(AppContextBuilder builder) {
-        name = builder.name;
         contextParams = new ConcurrentHashMap<>(builder.getContextParams());
         realPath = builder.getRealPath();
         name = builder.getName();

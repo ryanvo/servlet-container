@@ -2,6 +2,9 @@ package edu.upenn.cis455.webserver.engine.http;
 
 
 import edu.upenn.cis455.webserver.connector.ConnectionManager;
+import edu.upenn.cis455.webserver.engine.SessionManager;
+import edu.upenn.cis455.webserver.engine.WebApp;
+import edu.upenn.cis455.webserver.engine.WebAppContainer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,15 +20,19 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ControlServlet extends HttpServlet {
+public class ManageServlet extends HttpServlet {
 
-    private static Logger log = LogManager.getLogger(ControlServlet.class);
+    private static Logger log = LogManager.getLogger(ManageServlet.class);
 
-    private ConnectionManager manager;
     private String name;
     private Map<String, String> initParams = new HashMap<>();
     private ServletConfig config;
     private ServletContext context;
+
+    private WebAppContainer webAppContainer;
+    private ConnectionManager connectionManager;
+    private SessionManager sessionManager;
+
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -39,7 +46,10 @@ public class ControlServlet extends HttpServlet {
             initParams.put(key, config.getInitParameter(key));
         }
 
-        manager = (ConnectionManager) config.getServletContext().getAttribute("ConnectionManager");
+
+        webAppContainer = (WebAppContainer) config.getServletContext().getAttribute("Container");
+        connectionManager = (ConnectionManager) config.getServletContext().getAttribute("ConnectionManager");
+        sessionManager = (SessionManager) config.getServletContext().getAttribute("SessionManager");
     }
 
     @Override
@@ -50,25 +60,25 @@ public class ControlServlet extends HttpServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        log.info(getServletName() + " Serving Control Page Request");
         response.setStatus(200);
         response.setContentType("text/html");
 
 
         PrintWriter writer = response.getWriter();
-        writer.print("<html><body><h1>Control Panel</h1>");
+        writer.print("<html><body><h1>Web Apps</h1>");
         writer.print("<p><h2>Thread &nbsp; &nbsp; &nbsp; &nbsp;Running</h2></p>");
 
-        for (Map.Entry<Long, String> status : manager.getStatus().entrySet()) {
-            long threadId = status.getKey();
-            writer.print("<p>");
-            writer.print(String.valueOf(threadId));
-            writer.print("&nbsp; &nbsp; &nbsp; &nbsp &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;" +
-                    " &nbsp; &nbsp;");
-            writer.print(status.getValue());
+        for (WebApp app : webAppContainer.getWebAppByName().values()) {
+            writer.print("<p>" + app.getName() + "</p>");
+            for (String servlet : app.getServlets().keySet()) {
+
+                writer.print("<p>&nbsp; &nbsp; &nbsp;" + servlet + "</p>");
+
+            }
+
         }
 
-        writer.print("<p><a href=\"/shutdown/\">Shutdown</a></p></body></html>");
+
 
         log.info("Wrote Control Page Response to Socket");
     }

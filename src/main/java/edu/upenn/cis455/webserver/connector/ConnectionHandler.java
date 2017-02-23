@@ -68,8 +68,6 @@ public class ConnectionHandler implements Runnable {
      * There is a 30 second timeout on the persistent connection.
      */
 
-    public String webappName = "TestServlets";
-
     @Override
     public void run() {
 
@@ -88,8 +86,6 @@ public class ConnectionHandler implements Runnable {
 
                 request.setInputStream(connection.getInputStream());
                 request.setSessionManager(sessionManager);
-                request.setContext(container.getContext(webappName));
-
 
 
                 try {
@@ -99,9 +95,9 @@ public class ConnectionHandler implements Runnable {
                     break;
                 }
 
-                /* Update response with the protocol version */
+                /* Update response with the protocol version and context */
                 response.setHTTP(request.getProtocol());
-
+                request.setContext(container.getContextByRequestUri(request.getRequestURI()));
 
                 /* Update the status of the thread */
                 connectionManager.update(Thread.currentThread().getId(), request.getRequestURI());

@@ -17,25 +17,19 @@ public class WebApp implements ServletManager {
 
     private static Logger log = LogManager.getLogger(WebApp.class);
 
-    private AppContext context;
-
-
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
     private Map<Pattern, HttpServlet> servletByPattern = new ConcurrentHashMap<>();
-
-
     private Map<Pattern, HttpServlet> servletByWildcardPattern = new ConcurrentHashMap<>();
 
-    private ServletConfigBuilder configBuilder = new ServletConfigBuilder();
-
-
+    private AppContext context;
+    private String name;
 
     public WebApp(AppContext context) {
         this.context = context;
+        this.name = context.getServletContextName();
     }
 
     public void launchServlets(WebXmlHandler webXmlHandler) throws ServletException, ReflectiveOperationException {
-
 
         for (String servletName : webXmlHandler.getServletNames()) {
             log.info("Initiating http: " + servletName);
@@ -50,6 +44,7 @@ public class WebApp implements ServletManager {
     @Override
     public HttpServlet launch(String servletName, WebXmlHandler webXml) throws ServletException, ReflectiveOperationException {
 
+        ServletConfigBuilder configBuilder = new ServletConfigBuilder();
         ServletConfig config = configBuilder.setName(servletName)
                 .setContext(context)
                 .setInitParams(webXml.getServletInitParamsByName(servletName))
@@ -58,6 +53,7 @@ public class WebApp implements ServletManager {
 
         Class servletClass = Class.forName(webXml.getClassByServletName(config.getServletName()));
         HttpServlet servlet = (HttpServlet) servletClass.newInstance();
+
         servlet.init(config);
         servlets.put(servletName, servlet);
         List<String> patterns = webXml.getPatternsByName().get(servletName);
@@ -95,6 +91,11 @@ public class WebApp implements ServletManager {
 
     public AppContext getContext() {
         return context;
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override

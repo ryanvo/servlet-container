@@ -10,6 +10,7 @@ import java.util.Map;
  */
 public interface ServletManager {
 
+    String getName();
     HttpServlet launch(String servletName, WebXmlHandler webXml) throws ServletException, ReflectiveOperationException;
     Map<String, HttpServlet> getServlets();
     void shutdown();

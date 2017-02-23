@@ -195,16 +195,6 @@ public class DefaultServlet extends HttpServlet {
     }
 
 
-
-
-
-
-
-
-
-
-
-
     public void handleIfUnmodifiedSince(File file, String ifUnmodifiedDateString, HttpServletResponse response) throws
             ServletException {
 

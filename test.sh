@@ -103,7 +103,7 @@ echo
 
 echo "test GET body"
 # $'<STRING>' will automatically escape chars
-	assert_resp_body "GET" "/" $'<html><body><p><a href="index.html">index.html</a></p><p><a href="folder">folder</a></p><p><a href="img.JPG">img.JPG</a></p></html></body>'
+	assert_resp_body "GET" "/" $'<html><body><p><a href="engineering.jpg">engineering.jpg</a></p><p><a href="WEB-INF">WEB-INF</a></p><p><a href="index.jsp">index.jsp</a></p></html></body>'
 echo
 
 echo "test HEAD status line"

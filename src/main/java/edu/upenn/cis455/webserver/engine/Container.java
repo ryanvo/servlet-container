@@ -16,4 +16,5 @@ public interface Container {
     WebApp startApp(String contextPath, WebXmlHandler webXml) throws ServletException, ReflectiveOperationException;
     HttpServlet match(String uri);
     AppContext getContext(String app);
+    AppContext getContextByRequestUri(String uri);
 }
