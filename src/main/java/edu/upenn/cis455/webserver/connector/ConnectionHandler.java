@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Serves as the handle for incoming/connections to/from the Http Request Listener.
  * Client requests arrive here first for processing. Valid requests are then dispatched
- * to the appropriate http by the WebApoManager. Once the response is finished,
+ * to the appropriate http by the WebAppManager. Once the response is finished,
  * ConnectionHandler writes the headers and message body to to the socket. If the is
  * no activity for 30s, the handler will disconnect. Otherwise, there are persistent
  * connections.
@@ -32,6 +32,8 @@ import java.util.Map;
 public class ConnectionHandler implements Runnable {
 
     private static Logger log = LogManager.getLogger(ConnectionHandler.class);
+
+    private static final int TIMEOUT = 5000;
 
     private Socket connection;
     private Container container;
@@ -47,13 +49,15 @@ public class ConnectionHandler implements Runnable {
                              Container container,
                              RequestProcessor requestProcessor,
                              ResponseProcessor responseProcessor) {
+
         this.connection = connection;
         this.container = container;
         this.requestProcessor = requestProcessor;
         this.responseProcessor = responseProcessor;
-        this.connectionManager = (ConnectionManager) container.getContext("Default").getAttribute
-                ("ConnectionManager");
-        this.sessionManager = (SessionManager) container.getContext("Default").getAttribute("SessionManager");
+        this.connectionManager = (ConnectionManager)container.getContext("Default").
+                getAttribute("ConnectionManager");
+        this.sessionManager = (SessionManager)container.getContext("Default")
+                .getAttribute("SessionManager");
 
     }
 
@@ -73,7 +77,7 @@ public class ConnectionHandler implements Runnable {
 
 
         try {
-            connection.setSoTimeout(30000);
+            connection.setSoTimeout(TIMEOUT);
         } catch (SocketException e) {
             log.error("Failed to set socket timeout", e);
             return;
@@ -86,7 +90,6 @@ public class ConnectionHandler implements Runnable {
 
                 request.setInputStream(connection.getInputStream());
                 request.setSessionManager(sessionManager);
-
 
                 try {
                     requestProcessor.process(request);
@@ -101,8 +104,8 @@ public class ConnectionHandler implements Runnable {
 
                 /* Update the status of the thread */
                 connectionManager.update(Thread.currentThread().getId(), request.getRequestURI());
-                log.debug("Connection connectionManager updated: " + "tid:" + Thread.currentThread().getId() + " uri:" + request
-                        .getRequestURI());
+                log.debug("Connection connectionManager updated: " + "tid:" +
+                        Thread.currentThread().getId() + " uri:" + request.getRequestURI());
 
 
                 /* Send 100 Continue after receiving headers if request asked for it */
@@ -110,9 +113,9 @@ public class ConnectionHandler implements Runnable {
 
 
                 /* Exceptions throw by http are caught under ServletException */
-                log.info(String.format("Dispatched method:%s : uri:%s", request.getMethod(), request.getRequestURI()));
                 container.dispatch(request, response);
-
+                log.info(String.format("Dispatched method:%s : uri:%s",
+                        request.getMethod(), request.getRequestURI()));
 
                 /* If the servlet requested a session, attach the JSESSIONID cookie to response */
                 if (request.hasAccessedSession()) {
@@ -160,7 +163,6 @@ public class ConnectionHandler implements Runnable {
             log.info(String.format("Successfully handled method:%s : uri:%s", request.getMethod(), request.getRequestURI()));
             response = new HttpResponse();
             request = new HttpRequest();
-
         }
 
 
@@ -182,7 +184,10 @@ public class ConnectionHandler implements Runnable {
         Map<String, List<String>> headers = request.getHeaders();
         if (headers.containsKey("expect") && headers.get("expect").contains("100-continue")) {
             out.write("HTTP/1.1 100 Continue\n\n".getBytes());
-            log.info(String.format("Sent 100 continue uri:%s, method:%s", request.getRequestURI(), request.getMethod()));
+
+            log.info(String.format("Sent 100 continue uri:%s, method:%s",
+                    request.getRequestURI(), request.getMethod()));
+
         }
 
     }

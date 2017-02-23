@@ -17,4 +17,5 @@ public interface Container {
     HttpServlet match(String uri);
     AppContext getContext(String app);
     AppContext getContextByRequestUri(String uri);
+    void shutdown();
 }

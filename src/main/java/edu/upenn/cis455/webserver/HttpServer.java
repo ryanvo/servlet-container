@@ -77,7 +77,6 @@ public class HttpServer {
         }
 
 
-
         /*
          *  Start listening for incoming requests on the specified port and
          *  dispatch them to WebAppContainer for servicing
@@ -90,8 +89,7 @@ public class HttpServer {
             System.exit(1);
         }
 
-        log.info("Exiting Main");
-
+        log.info("Exiting Main...Waiting for open connections to finish...");
 
     }
 

@@ -100,9 +100,9 @@ public class WebApp implements ServletManager {
 
     @Override
     public void shutdown() {
-        for (String servletName : servlets.keySet()) {
-            servlets.get(servletName).destroy();
-            log.info("Servlet destroyed servletName:" + servletName);
+        for (HttpServlet servlet : servlets.values()) {
+            log.info(String.format("Destroyed servlet: name=%s webapp=%s", servlet.getServletName(), getName()));
+            servlet.destroy();
         }
     }
 

@@ -2,6 +2,7 @@ package edu.upenn.cis455.webserver.engine.http;
 
 
 import edu.upenn.cis455.webserver.connector.ConnectionManager;
+import edu.upenn.cis455.webserver.engine.Container;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,13 +21,12 @@ public class ShutdownServlet extends HttpServlet {
 
     private static Logger log = LogManager.getLogger(ShutdownServlet.class);
 
-    private final String HTTP_VERSION = "HTTP/1.1";
     private Map<String, String> initParams = new HashMap<>();
     private ServletContext context;
     public String name;
     public ServletConfig config;
 
-    private ConnectionManager manager;
+    private Container container;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -38,7 +38,7 @@ public class ShutdownServlet extends HttpServlet {
 
         this.context = config.getServletContext();
         this.name = config.getServletName();
-        this.manager = (ConnectionManager) context.getAttribute("ConnectionManager");
+        this.container = (Container) context.getAttribute("Container");
     }
 
 
@@ -47,7 +47,7 @@ public class ShutdownServlet extends HttpServlet {
 
         log.info(getServletName() + " Serving Shutdown Request");
 
-        manager.shutdown();
+        container.shutdown();
 
     }
 

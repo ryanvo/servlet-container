@@ -165,6 +165,17 @@ public class WebAppContainer implements Container {
         return contextByAppName.get(appName);
     }
 
+    @Override
+    public void shutdown() {
+
+        for (WebApp app : webAppByName.values()) {
+            app.shutdown();
+        }
+
+        connectionManager.shutdown();
+
+    }
+
     public AppContext getContextByRequestUri(String uri) {
         return contextByServletName.get(match(uri).getServletName());
     }
