@@ -8,14 +8,14 @@ import org.apache.logging.log4j.Logger;
 import javax.servlet.http.Cookie;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.Duration;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
 /**
- * Proceses a request before handling it to the container
+ * Processes a request before handling it to the container
  *
  * @author rtv
  */
@@ -29,6 +29,14 @@ public class HttpResponseProcessor implements ResponseProcessor {
 
         boolean isHttp1dot1 = resp.getProtocol().endsWith("1");
 
+        if (resp.getBuffer() == null) {
+
+            resp.setContentLength(0);
+            writeStatusAndHeaders(resp, socket);
+            socket.flush();
+            return;
+        }
+
         /* Set Content-length for HTTP/1.0 */
         Buffer buffer = resp.getMsgBodyBuffer();
         int size = buffer.size();
@@ -41,21 +49,21 @@ public class HttpResponseProcessor implements ResponseProcessor {
         resp.addHeader("Connection", connectionHeaderValue);
 
         /* Write status line, headers, and CRLF to socket */
-        sendStatusAndHeaders(resp, socket);
+        writeStatusAndHeaders(resp, socket);
 
         /* Write message body buffer to socket */
         buffer.writeTo(socket);
         socket.flush();
-        log.info("Wrote buffer to socket: size:" + size);
+        log.info("Wrote to socket: size:" + size);
     }
 
-    public void sendStatusAndHeaders(HttpResponse resp, OutputStream out) throws IOException {
+    public void writeStatusAndHeaders(HttpResponse resp, OutputStream out) throws IOException {
 
         String statusAndHeaders = generateStatusAndHeaders(resp);
         out.write(statusAndHeaders.getBytes());
         out.write("\r\n".getBytes());
         out.flush();
-        log.info("Wrote buffer to socket:\n" + statusAndHeaders);
+        log.info("Sending to socket:\n" + statusAndHeaders);
 
     }
 
@@ -97,11 +105,17 @@ public class HttpResponseProcessor implements ResponseProcessor {
 
             if (cookie.getMaxAge() > -1) {
                 sb.append("Expires=");
-                long cookieDuration = cookie.getMaxAge();
-                ZonedDateTime now = ZonedDateTime.now();
-                ZonedDateTime cookieExpiry = now.plus(Duration.ofSeconds(cookieDuration));
-                sb.append(now.plusSeconds((long) cookie.getMaxAge()).format(HTTP_DATE_FORMAT));
+                ZonedDateTime now = ZonedDateTime.now(ZoneId.of("GMT"));
+                ZonedDateTime cookieExpiry = now.plusSeconds(cookie.getMaxAge());
+                String cookieExpiryStr = cookieExpiry.format(HTTP_DATE_FORMAT);
+                sb.append(cookieExpiryStr);
+
+                log.info(String.format("Cookie set: name:%s val:%s expire:%s", cookie.getName(), cookie.getValue(),
+                        cookieExpiryStr));
             }
+
+            log.info(String.format("Cookie set: name:%s val:%s", cookie.getName(), cookie.getValue()));
+
             sb.append("\n");
         }
 

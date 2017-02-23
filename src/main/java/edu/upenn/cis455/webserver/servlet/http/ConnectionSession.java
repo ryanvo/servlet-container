@@ -4,6 +4,8 @@ import edu.upenn.cis455.webserver.engine.ApplicationContext;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,52 +17,72 @@ public class ConnectionSession implements HttpSession {
     private ApplicationContext context;
     private Map<String, Object> attributes;
 
-    private Date creationTime;
+    private ZonedDateTime creationTime;
+    private ZonedDateTime lastAccessedTime;
+    private int timeoutInterval = -1;
+    private boolean isInvalidated = false;
+    private final int id;
 
-    public ConnectionSession(ApplicationContext context) {
+    public ConnectionSession(int id, ApplicationContext context) {
+        this.id = id;
         this.context = context;
         this.attributes = new ConcurrentHashMap<>();
-        this.creationTime = new Date();
-
-    }
-
-    public long getCreationTime() {
-        return creationTime.getTime();
-    }
-
-    public String getId() {
-        return null;
-    }
-
-    public long getLastAccessedTime() {
-        return 0;
-    }
-
-    public ApplicationContext getServletContext() {
-        return context;
+        this.creationTime = ZonedDateTime.now(ZoneId.of("GMT"));
+        this.lastAccessedTime = creationTime;
     }
 
 
-    public void setMaxInactiveInterval(int i) {
+
+    public void markAccessed() {
+
+        lastAccessedTime = ZonedDateTime.now(ZoneId.of("GMT"));
 
     }
-
-
-    public int getMaxInactiveInterval() {
-        return 0;
-    }
-
-
 
     /**
      * javax.servlet.http.ConnectionSession API
      */
 
+
+    @Override
+    public long getCreationTime() {
+        return creationTime.toEpochSecond();
+    }
+
+    @Override
+    public String getId() {
+        return null;
+    }
+
+
+    @Override
+    public long getLastAccessedTime() {
+        return lastAccessedTime.toEpochSecond();
+    }
+
+
+    @Override
+    public ApplicationContext getServletContext() {
+        return context;
+    }
+
+
+    @Override
+    public void setMaxInactiveInterval(int i) {
+        timeoutInterval = i;
+    }
+
+    @Override
+    public int getMaxInactiveInterval() {
+
+        return timeoutInterval;
+
+    }
+
     @Override
     public Object getAttribute(String s) {
         return attributes.get(s);
     }
-
 
 
     @Override
@@ -83,7 +105,11 @@ public class ConnectionSession implements HttpSession {
 
     @Override
     public void invalidate() {
+        if (isInvalidated) {
+            throw new IllegalStateException();
+        }
 
+        isInvalidated = true;
     }
 
     @Override

@@ -197,6 +197,16 @@ public class HttpResponse implements HttpServletResponse {
             throw new IllegalStateException();
         }
 
+        resetBuffer();
+        setStatus(200);
+        statusMessage = "OK";
+        cookies.clear();
+        dateHeaders.clear();
+        headers.clear();
+        intHeaders.clear();
+    }
+
+    public void clear() {
         isError = false;
         msgBodyBuffer = null;
         setStatus(200);
@@ -233,14 +243,13 @@ public class HttpResponse implements HttpServletResponse {
 
     @Override
     public PrintWriter getWriter() {
-
-        if (msgBodyBuffer == null) {
-
-            writerBuffer = new PrintWriter(getOutputStream());
-
-        } else {
-
+        if (writerBuffer == null && msgBodyBuffer != null) {
             throw new IllegalStateException();
+        }
+
+
+        if (msgBodyBuffer == null && writerBuffer == null) {
+            writerBuffer = new PrintWriter(getOutputStream());
         }
 
         return writerBuffer;
@@ -248,6 +257,7 @@ public class HttpResponse implements HttpServletResponse {
 
     @Override
     public ServletOutputStream getOutputStream() {
+
         if (msgBodyBuffer == null) {
 
             if (!HTTP.endsWith("1")) {
@@ -256,9 +266,8 @@ public class HttpResponse implements HttpServletResponse {
                 msgBodyBuffer = new ChunkedResponseBuffer(bufferSize);
             }
 
-        } else {
-            throw new IllegalStateException();
         }
+
         return msgBodyBuffer.toServletOutputStream();
     }
 
@@ -270,7 +279,7 @@ public class HttpResponse implements HttpServletResponse {
             throw new IllegalStateException();
         }
 
-        reset();
+        clear();
         isError = true;
         isCommitted = true;
         statusMessage = msg;

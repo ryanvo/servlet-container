@@ -1,13 +1,12 @@
 package edu.upenn.cis455.webserver.servlet;
 
 
-import edu.upenn.cis455.webserver.engine.ServletConfig;
 import edu.upenn.cis455.webserver.servlet.exception.http.BadRequestException;
-import edu.upenn.cis455.webserver.servlet.http.HttpResponse;
 import edu.upenn.cis455.webserver.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -32,9 +31,11 @@ public class DefaultServlet extends HttpServlet {
     private ServletContext context;
     private String rootDirectory;
     private Map<String, String> initParams = new HashMap<>();
+    private String name;
+    private ServletConfig config;
 
     @Override
-    public void init(javax.servlet.ServletConfig config) throws ServletException {
+    public void init(ServletConfig config) throws ServletException {
 
         Enumeration paramNames = config.getInitParameterNames();
         while (paramNames.hasMoreElements()) {
@@ -42,7 +43,10 @@ public class DefaultServlet extends HttpServlet {
             initParams.put(key, config.getInitParameter(key));
         }
 
+        this.name = config.getServletName();
         this.context = config.getServletContext();
+        this.config = config;
+
         this.rootDirectory = context.getRealPath("/");
     }
 
@@ -87,7 +91,7 @@ public class DefaultServlet extends HttpServlet {
     }
 
 
-    public void doGet(HttpServletRequest request, HttpResponse response) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         File fileRequested = new File(rootDirectory + request.getRequestURI());
 
@@ -147,15 +151,16 @@ public class DefaultServlet extends HttpServlet {
         log.info(String.format("Directory Listing of %s Sent to Client", file.getName()));
     }
 
-    private void handleFile(File file, HttpResponse response) throws IOException {
+    private void handleFile(File file, HttpServletResponse response) throws IOException {
 
         log.info(String.format("DefaultServlet Serving GET Request for %s", file.getName()));
 
 
         response.setContentType(getServletContext().getMimeType(file.getPath()));
         response.getOutputStream();
+
         /* Send file as binary to output stream */
-        FileUtil.copy(file, response.getBuffer().toOutputStream());
+        FileUtil.copy(file, response.getOutputStream());
 
         log.info(String.format("%s Sent to Client", file.getName()));
     }
@@ -169,22 +174,17 @@ public class DefaultServlet extends HttpServlet {
     }
 
 
-    @Override
-    public ServletConfig getServletConfig() {
-        return null;
-    }
 
-    @Override
-    public ServletContext getServletContext() {
-        return context;
-    }
 
-    @Override
-    public String getServletName() {
-        return null;
-    }
 
-    public void handleIfUnmodifiedSince(File file, String ifUnmodifiedDateString, HttpResponse response) throws
+
+
+
+
+
+
+
+    public void handleIfUnmodifiedSince(File file, String ifUnmodifiedDateString, HttpServletResponse response) throws
             ServletException {
 
         ZonedDateTime ifUnmodifiedSinceDate;
@@ -206,6 +206,7 @@ public class DefaultServlet extends HttpServlet {
             } catch (IOException e) {
                 throw new ServletException(e);
             }
+
         } else {
 
             response.setStatus(412);
@@ -214,7 +215,7 @@ public class DefaultServlet extends HttpServlet {
         }
     }
 
-    public void handleIfModifiedSince(File file, String ifModifiedDateString, HttpResponse response) throws
+    public void handleIfModifiedSince(File file, String ifModifiedDateString, HttpServletResponse response) throws
             ServletException, IOException {
 
         ZonedDateTime ifModifiedSinceDate;
@@ -238,5 +239,24 @@ public class DefaultServlet extends HttpServlet {
             response.setStatus(304);
             response.addHeader("Last-Modified", lastModifiedDate.format(HTTP_DATE_FORMAT));
         }
+
     }
+
+
+    @Override
+    public ServletConfig getServletConfig() {
+        return config;
+    }
+
+    @Override
+    public ServletContext getServletContext() {
+        return context;
+    }
+
+    @Override
+    public String getServletName() {
+        return name;
+    }
+
+
 }

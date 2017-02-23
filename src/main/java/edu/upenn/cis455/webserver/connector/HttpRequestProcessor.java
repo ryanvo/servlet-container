@@ -34,9 +34,7 @@ public class HttpRequestProcessor implements RequestProcessor {
         BufferedReader in = request.getReader();
         String line = in.readLine();
 
-        if (line == null) {
-            return;
-        }
+        log.info("Incoming request: " + line);
 
         /* Process status line */
         String[] statusLine = parseStatusLine(line);
@@ -68,7 +66,7 @@ public class HttpRequestProcessor implements RequestProcessor {
             request.setCookies(parseCookies(cookiesField));
         }
 
-        log.info("Processed HTTP Request: " + line);
+        log.info("Processed HTTP Request: status:" + line);
     }
 
     public List<Cookie> parseCookies(String cookieField) throws BadRequestException {

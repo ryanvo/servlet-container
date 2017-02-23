@@ -72,7 +72,6 @@ public class ApplicationContext implements ServletContext {
     public void log(Exception e, String s) {
         log.error(s, e);
     }
-
     @Override
     public void log(String s, Throwable throwable) {
         log.error(s, throwable);
@@ -82,6 +81,7 @@ public class ApplicationContext implements ServletContext {
     public Object getAttribute(String s) {
         return attributes.get(s);
     }
+
 
     @Override
     public void removeAttribute(String s) {

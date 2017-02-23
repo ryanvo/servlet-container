@@ -74,13 +74,12 @@ public class HttpRequest implements HttpServletRequest {
         this.method = method;
     }
 
-    /**
-     * @return method of request e.g. GET, POST...
-     */
+    @Override
     public BufferedReader getReader() {
         if (reader == null) {
             reader = new BufferedReader(new InputStreamReader(in));
         }
+
         return reader;
     }
 
@@ -125,11 +124,10 @@ public class HttpRequest implements HttpServletRequest {
 
      @Override
     public String getHeader(String s) {
-        List<String> values = headers.get(s);
-        if (values == null) {
-            return null;
+        if (headers.containsKey(s)) {
+            return headers.get(s).get(0);
         } else {
-            return values.get(0);
+            return null;
         }
     }
 

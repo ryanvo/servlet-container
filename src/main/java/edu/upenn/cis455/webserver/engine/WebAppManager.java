@@ -30,8 +30,6 @@ public class WebAppManager implements ServletManager {
     private Map<String, HttpServlet> servlets = new ConcurrentHashMap<>();
 
     private HttpServlet defaultServlet;
-    private HttpServlet controlServlet;
-    private HttpServlet shutdownServlet;
 
 
     public WebAppManager(WebXmlHandler webXml, ApplicationContext context) {
@@ -46,10 +44,10 @@ public class WebAppManager implements ServletManager {
         defaultServlet = new DefaultServlet();
         defaultServlet.init(configBuilder.setName("Default").setContext(context).build());
 
-        controlServlet = new ControlServlet();
+        HttpServlet controlServlet = new ControlServlet();
         controlServlet.init(configBuilder.setName("Control").setContext(context).build());
 
-        shutdownServlet = new ShutdownServlet();
+        HttpServlet shutdownServlet = new ShutdownServlet();
         shutdownServlet.init(configBuilder.setName("Shutdown").setContext(context).build());
 
         servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
@@ -104,7 +102,7 @@ public class WebAppManager implements ServletManager {
             Matcher uriMatcher = pattern.matcher(uri);
             if (uriMatcher.matches()) {
 
-                log.info(String.format("Uri:%s mapped to servletName:%s with servletPattern:%s", uri,
+                log.info(String.format("uri:%s | servletName:%s | pattern:%s", uri,
                         servletByPattern.get(pattern).getServletName(), pattern));
 
                 return servletByPattern.get(pattern);
