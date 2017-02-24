@@ -9,6 +9,8 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.http.Cookie;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -71,14 +73,16 @@ public class HttpRequestProcessor implements RequestProcessor {
             String query;
             if (request.getHeader("content-length") != null) {
                 int len = Integer.valueOf(request.getHeader("content-length"));
-                char[] chars = new char[len];
-                in.read(chars, 0, len);
-                query = new String(chars);
+                char[] buf = new char[len];
+                in.read(buf, 0, len);
+                query = new String(buf);
 
             } else {
 
                 StringBuilder sb = new StringBuilder();
-                in.readLine(); //discard blank
+                StringBuffer s = new StringBuffer();
+
+
                 for (line = in.readLine(); line != null && !line.isEmpty(); line = in.readLine()) {
                     sb.append(line);
                     log.debug("Body line: " + line);
@@ -88,7 +92,6 @@ public class HttpRequestProcessor implements RequestProcessor {
             request.setQueryString(query);
             request.setParameters(parseQueryString(query));
         }
-
 
         log.info("Processed HTTP Request: status:" + line);
     }
@@ -119,8 +122,7 @@ public class HttpRequestProcessor implements RequestProcessor {
 
         while (eqIndex >= 0) {
 
-
-            int ampersandIndex = query.substring(eqIndex).indexOf('&');
+            int ampersandIndex = query.indexOf('&');
             ampersandIndex = (ampersandIndex < 0) ? query.length() : ampersandIndex;
 
             String parameter = query.substring(0, eqIndex);
@@ -130,13 +132,14 @@ public class HttpRequestProcessor implements RequestProcessor {
             queryParameters.add(value);
             queryEntries.put(parameter, queryParameters);
 
+            log.info(String.format("Parsed request parameter: param:%s val:%s", parameter, value));
+
             try {
                 query = query.substring(ampersandIndex + 1);
             } catch (IndexOutOfBoundsException  e) {
                 break;
             }
-
-            log.debug(String.format("Parsed request parameter: param:%s val:%s", parameter, value));
+            eqIndex = query.indexOf('=');
         }
 
         return queryEntries;

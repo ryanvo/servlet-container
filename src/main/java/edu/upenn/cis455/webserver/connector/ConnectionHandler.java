@@ -33,7 +33,7 @@ public class ConnectionHandler implements Runnable {
 
     private static Logger log = LogManager.getLogger(ConnectionHandler.class);
 
-    private static final int TIMEOUT = 5000;
+    private static final int TIMEOUT = 30000; //TODO fix to 5
 
     private Socket connection;
     private Container container;

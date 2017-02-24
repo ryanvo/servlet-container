@@ -310,7 +310,14 @@ public class HttpRequest implements HttpServletRequest {
 
      @Override
     public String getParameter(String s) {
-        return parameters.get(s).get(0);
+        if (parameters.containsKey(s)) {
+
+            return parameters.get(s).get(0);
+
+        } else {
+            return null;
+        }
+
     }
 
      @Override

@@ -71,9 +71,14 @@ public class WebAppContainer implements Container {
         contextByAppName.put("Default", context);
 //        webAppByName.put("Default Servlets", webApp); //TODO make sure these are removed on deletion
 
+        HttpServlet launchServlet = new LauncherServlet();
+        launchServlet.init(configBuilder.setName("Launch").setContext(context).build());
+        contextByServletName.put(launchServlet.getServletName(), context);
+
         servletByPattern.put(Pattern.compile("/+control/*$"), controlServlet);
         servletByPattern.put(Pattern.compile("/+shutdown/*$"), shutdownServlet);
         servletByPattern.put(Pattern.compile("/+manage/*$"), manageServlet);
+        servletByPattern.put(Pattern.compile("/+manage/launch/*$"), launchServlet);
 
     }
 

@@ -130,4 +130,20 @@ public class HttpRequestProcessorTest {
 
     }
 
+    @Test
+    public void shouldParseQueryString() throws Exception {
+
+        String query = "contextPath=one&xmlPath=two&warPath=three";
+
+        HttpRequestProcessor processor = new HttpRequestProcessor();
+
+        Map<String, List<String>> parameters = processor.parseQueryString(query);
+
+        assertThat(parameters.get("contextPath"), containsInAnyOrder("one"));
+        assertThat(parameters.get("xmlPath"), containsInAnyOrder("two"));
+        assertThat(parameters.get("warPath"), containsInAnyOrder("three"));
+
+
+    }
+
 }

@@ -3,12 +3,11 @@ package edu.upenn.cis455.webserver.engine.http;
 
 import edu.upenn.cis455.webserver.connector.ConnectionManager;
 import edu.upenn.cis455.webserver.engine.SessionManager;
-import edu.upenn.cis455.webserver.engine.WebApp;
 import edu.upenn.cis455.webserver.engine.WebAppContainer;
+import edu.upenn.cis455.webserver.engine.WebXmlHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.Appender;
-import org.apache.logging.log4j.core.appender.FileAppender;
+import org.xml.sax.SAXException;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -16,13 +15,14 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.*;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class LauncherServlet extends HttpServlet {
@@ -51,69 +51,53 @@ public class LauncherServlet extends HttpServlet {
             initParams.put(key, config.getInitParameter(key));
         }
 
-
         webAppContainer = (WebAppContainer) config.getServletContext().getAttribute("Container");
         connectionManager = (ConnectionManager) config.getServletContext().getAttribute("ConnectionManager");
         sessionManager = (SessionManager) config.getServletContext().getAttribute("SessionManager");
     }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setStatus(200);
-        response.setContentType("text/html");
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        PrintWriter writer = resp.getWriter();
 
-        PrintWriter writer = response.getWriter();
-        writer.print("<!DOCTYPE html><html><head><title>Web Application Manager</title><body>");
-        writer.print("<style>th, td {text-align: left;padding:7px;}</style>");
+        String xmlPath = URLDecoder.decode(req.getParameter("xmlPath"), "UTF-8");
+        String warPath = URLDecoder.decode(req.getParameter("warPath"), "UTF-8");
+        String contextPath = (req.getParameter("contextPath").isEmpty()) ?
+                warPath : URLDecoder.decode(req.getParameter("contextPath"), "UTF-8");
 
-        writer.print("<h1><center>Web Application Manager</center></h1>");
-        Map<String, List<String>> pattern = webAppContainer.getPatternByServletName();
-
-        writer.print("<h3>Error Log</h3>");
-        List<String> logFile = Files.readAllLines(Paths.get(getLoggerFileName("Error")));
-        for (String line : logFile) {
-            writer.println("<pre>" + line + "</pre>");
-        }
-        if (logFile.isEmpty()) {
-            writer.println("<pre>No Errors :)</pre>");
+        if (xmlPath == null || warPath == null) {
+            writer.write("Invalid values. Please try again.");
+            return;
         }
 
-        for (WebApp app : webAppContainer.getWebAppByName().values()) {
 
-            writer.print("<table style=\"width:100%\" border=\"0\"><tr style=\"font-size:20px\"><th><b>Application " +
-                    "Name</b></th><th><b>Path</b></th></tr>");
-
-            writer.print(String.format("<tr style=\"font-size:18px\"><td>%s</td><td>%s</td></tr>", app.getName(), app
-                    .getContext().getRealPath
-                    ("/")));
-            writer.print("<table style=\"width:100%\" border=\"1\"><tr><th>Path</th><th>Servlet " +
-                    "Display Name</th><th>Commands</th></tr>");
-
-            for (String servletName : app.getServlets().keySet()) {
-
-                String servletPatterns = "";
-                writer.print("<tr>");
-
-                for (String pat : pattern.get(servletName)) {
-                    servletPatterns += String.format("<a href=\"%s\">%s</a>", pat, pat);
-                }
-
-                String servletCommands = "START STOP RELOAD";
-
-                writer.print(String.format("<td>%s</td><td>%s</td><td>%s</td>", servletPatterns, servletName,
-                        servletCommands));
-                writer.print("</tr>");
-
-            }
-
-            writer.print("</table>");
+        try {
+            addToClassPath(contextPath);
+            addToClassPath(warPath);
+        } catch (NoSuchMethodException|InvocationTargetException|IllegalAccessException e) {
+            log.error(e);
+            return;
         }
 
-        writer.print("</table>");
-        writer.print("</body></html>");
 
-        log.info("Wrote Manage Page Response to Socket");
+        WebXmlHandler webXml = new WebXmlHandler(xmlPath);
+        try {
+            webXml.parse();
+        } catch (SAXException e) {
+            writer.write("Invalid XML configuration file.");
+            return;
+        }
+
+        try {
+            webAppContainer.startApp(contextPath, webXml);
+        } catch (ReflectiveOperationException e) {
+            writer.write("Unable to start app.");
+            return;
+        }
+
+        writer.write("Successfully loaded app.");
+
     }
 
     @Override
@@ -131,10 +115,16 @@ public class LauncherServlet extends HttpServlet {
         return name;
     }
 
-    public String getLoggerFileName(String type) {
-        org.apache.logging.log4j.core.Logger logger = (org.apache.logging.log4j.core.Logger) log;
-        Appender appender = logger.getAppenders().get(type);
-        return ((FileAppender) appender).getFileName();
+    /**
+     * Using URLClassLoader.addURL and reflection to access addURL method
+     */
+    public void addToClassPath(String path) throws NoSuchMethodException, MalformedURLException, InvocationTargetException, IllegalAccessException {
+        URI uri = new File(path).toURI();
+        URLClassLoader urlClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+        Class<URLClassLoader> urlClass = URLClassLoader.class;
+        Method method = urlClass.getDeclaredMethod("addURL", new Class[]{URL.class});
+        method.setAccessible(true);
+        method.invoke(urlClassLoader, new Object[]{uri.toURL()});
     }
 
 }
