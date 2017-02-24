@@ -61,6 +61,10 @@ public class ConnectionManager implements ProcessManager {
         workerPool.kill();
     }
 
+    /**
+     * Used by the /control page to display the status of each thread
+     * @return a map with threadId and the page it's currently serving (or "waiting")
+     */
     @Override
     public Map<Long, String> getStatus() {
         Map<Long, String> status = new HashMap<>();
@@ -72,6 +76,9 @@ public class ConnectionManager implements ProcessManager {
         return status;
     }
 
+    /**
+     * @return flag indicating if the connection manager has not been shutdown
+     */
     @Override
     public boolean isRunning() {
         return isRunning;

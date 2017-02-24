@@ -16,6 +16,7 @@ import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Represents an HTTP session
  * @author rtv
  */
 public class ConnectionSession implements HttpSession {

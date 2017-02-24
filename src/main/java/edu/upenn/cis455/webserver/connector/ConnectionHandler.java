@@ -23,9 +23,9 @@ import java.util.Map;
  * Serves as the handle for incoming/connections to/from the Http Request Listener.
  * Client requests arrive here first for processing. Valid requests are then dispatched
  * to the appropriate http by the WebAppManager. Once the response is finished,
- * ConnectionHandler writes the headers and message body to to the socket. If the is
- * no activity for 30s, the handler will disconnect. Otherwise, there are persistent
- * connections.
+ * ConnectionHandler writes the headers and message body to to the socket.
+ *
+ * If there'ss no activity for 30s, the handler will disconnect.
  *
  * @author rtv
  */
@@ -33,7 +33,7 @@ public class ConnectionHandler implements Runnable {
 
     private static Logger log = LogManager.getLogger(ConnectionHandler.class);
 
-    private static final int TIMEOUT = 30000; //TODO fix to 5
+    private static final int TIMEOUT = 5000; //TODO fix to 5
 
     private Socket connection;
     private Container container;
@@ -88,9 +88,11 @@ public class ConnectionHandler implements Runnable {
 
             try {
 
+                /* Set necessary fields for request */
                 request.setInputStream(connection.getInputStream());
                 request.setSessionManager(sessionManager);
 
+                /* Process the headers and body */
                 try {
                     requestProcessor.process(request);
                 } catch (NullPointerException e) {
@@ -153,7 +155,7 @@ public class ConnectionHandler implements Runnable {
             }
 
             /*
-             * Send
+             * Send the response back the the client
              */
             try {
                 responseProcessor.process(response, connection.getOutputStream());
@@ -178,6 +180,12 @@ public class ConnectionHandler implements Runnable {
         }
     }
 
+    /**
+     * Immediately respond to 100 continue request before proceeding
+     * @param request
+     * @param out
+     * @throws IOException
+     */
     public void handle100ContinueRequest(HttpRequest request, OutputStream out) throws IOException {
 
         if (!request.getProtocol().endsWith("1")) {

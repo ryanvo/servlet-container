@@ -25,6 +25,10 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Used to deploy a new web app instance based on fields
+ * received in a POST request
+ */
 public class LauncherServlet extends HttpServlet {
 
     private static Logger log = LogManager.getLogger(LauncherServlet.class);

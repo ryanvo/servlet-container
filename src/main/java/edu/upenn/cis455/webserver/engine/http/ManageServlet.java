@@ -25,6 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Serves the /manage page
+ */
 public class ManageServlet extends HttpServlet {
 
     private static Logger log = LogManager.getLogger(ManageServlet.class);

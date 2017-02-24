@@ -72,6 +72,8 @@ public class ConnectionManagerTest {
         verify(mockWorkerPool).offer(mockRunnable);
     }
 
+
+
     @Test(expected=IllegalStateException.class)
     public void shouldStopAcceptingConnectionsUponShutdown() {
 

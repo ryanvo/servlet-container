@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
 /**
+ * Manages all the servlets contained within a single web application
  * @author rtv
  */
 public class WebApp implements ServletManager {
@@ -29,6 +30,12 @@ public class WebApp implements ServletManager {
         this.name = context.getServletContextName();
     }
 
+    /**
+     * Uses the webXml configuration file to load and start all servlets
+     * @param webXmlHandler
+     * @throws ServletException
+     * @throws ReflectiveOperationException
+     */
     public void launchServlets(WebXmlHandler webXmlHandler) throws ServletException, ReflectiveOperationException {
 
         for (String servletName : webXmlHandler.getServletNames()) {
@@ -40,6 +47,14 @@ public class WebApp implements ServletManager {
         }
     }
 
+    /**
+     * Used to launch an individual servlet
+     * @param servletName
+     * @param webXml
+     * @return HTTPServlet that was started
+     * @throws ServletException
+     * @throws ReflectiveOperationException
+     */
     @Override
     public HttpServlet launch(String servletName, WebXmlHandler webXml) throws ServletException, ReflectiveOperationException {
 
@@ -86,7 +101,6 @@ public class WebApp implements ServletManager {
     public Map<String, HttpServlet> getServlets() {
         return servlets;
     }
-
 
     public AppContext getContext() {
         return context;

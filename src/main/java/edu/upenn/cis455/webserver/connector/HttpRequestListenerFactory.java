@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Assembles the components of the multithreaded server
+ * Assembles the components of the request listener
  */
 public class HttpRequestListenerFactory {
 

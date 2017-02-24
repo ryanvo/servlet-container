@@ -17,6 +17,9 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Services the /control page
+ */
 public class ControlServlet extends HttpServlet {
 
     private static Logger log = LogManager.getLogger(ControlServlet.class);
@@ -40,12 +43,6 @@ public class ControlServlet extends HttpServlet {
         }
 
         manager = (ConnectionManager) config.getServletContext().getAttribute("ConnectionManager");
-    }
-
-    @Override
-    public void destroy() {
-
-
     }
 
     @Override

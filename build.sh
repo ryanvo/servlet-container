@@ -11,3 +11,6 @@ sleep 2
 bash ../../test.sh
 
 curl http://localhost:8080/shutdown
+
+
+java -classpath lib/*:classes/. edu.upenn.cis455.webserver.HttpServer 8080 /Users/ryan/workspace/servlet-container/conf /Users/ryan/workspace/servlet-container/conf/WEB-INF/web.xml 20 1000 &

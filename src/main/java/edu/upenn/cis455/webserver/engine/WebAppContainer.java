@@ -40,6 +40,13 @@ public class WebAppContainer implements Container {
         this.sessionManager = sessionManager;
     }
 
+    /**
+     * Initializes the web container with the default servlets. This includes the
+     * default file handling servlet, the control page, shutdown page, and management
+     * page.
+     * @param rootDirectory
+     * @throws ServletException
+     */
     public void init(String rootDirectory) throws ServletException {
 
         AppContextBuilder contextBuilder = new AppContextBuilder();
@@ -69,7 +76,6 @@ public class WebAppContainer implements Container {
         contextByServletName.put(manageServlet.getServletName(), context);
 
         contextByAppName.put("Default", context);
-//        webAppByName.put("Default Servlets", webApp); //TODO make sure these are removed on deletion
 
         HttpServlet launchServlet = new LauncherServlet();
         launchServlet.init(configBuilder.setName("Launch").setContext(context).build());
@@ -82,6 +88,14 @@ public class WebAppContainer implements Container {
 
     }
 
+    /**
+     * Starts a web application at the provided context path with the specified web xml file
+     * @param contextPath
+     * @param webXml
+     * @return the web app object
+     * @throws ServletException
+     * @throws ReflectiveOperationException
+     */
     @Override
     public WebApp startApp(String contextPath, WebXmlHandler webXml) throws ServletException,
             ReflectiveOperationException {
@@ -129,6 +143,12 @@ public class WebAppContainer implements Container {
     }
 
 
+    /**
+     * Finds the appropriate matching servlet for a request uri. If there is no
+     * match, then the default servlet is used.
+     * @param uri from request
+     * @return HTTPServlet that serves the request uri
+     */
     @Override
     public HttpServlet match(String uri) {
 

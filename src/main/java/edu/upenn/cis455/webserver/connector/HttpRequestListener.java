@@ -10,6 +10,13 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 
+/**
+ * Listens for new requests on the specified port. When it receives a client connection
+ * it creates a ConnectionHandler and passes it off to the ConnectionManager
+ *
+ * @rtv
+ *
+ */
 public class HttpRequestListener implements SocketListener {
 
     private static Logger log = LogManager.getLogger(HttpRequestListener.class);

@@ -320,7 +320,6 @@ public class HttpResponse implements HttpServletResponse {
         statusMessage = "Found";
         addHeader("Location", s);
         flushBuffer();
-        isCommitted = true;
     }
 
     @Override

@@ -18,7 +18,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Processes a request before handling it to the container
+ * Populates the HttpRequest object. Throws an exception if the
+ * incoming request is malformed.
  * @author rtv
  */
 public class HttpRequestProcessor implements RequestProcessor {
@@ -96,6 +97,12 @@ public class HttpRequestProcessor implements RequestProcessor {
         log.info("Processed HTTP Request: status:" + line);
     }
 
+    /**
+     * Creates a cookie list based on the "Set-cookie" header
+     * @param cookieField
+     * @return list of cookies in request header
+     * @throws BadRequestException
+     */
     public List<Cookie> parseCookies(String cookieField) throws BadRequestException {
         List<Cookie> cookies = new ArrayList<>();
 
@@ -114,6 +121,12 @@ public class HttpRequestProcessor implements RequestProcessor {
         return cookies;
     }
 
+    /**
+     * Creates a parameters map from the body of a post request
+     * @param query
+     * @return map of parameter key to values
+     * @throws BadRequestException
+     */
     public Map<String, List<String>> parseQueryString(String query) throws BadRequestException {
 
         Map<String, List<String>> queryEntries = new HashMap<>();

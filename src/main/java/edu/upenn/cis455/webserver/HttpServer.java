@@ -17,12 +17,6 @@ import java.io.IOException;
 public class HttpServer {
 
     private static Logger log = LogManager.getLogger(HttpServer.class);
-//    private static Logger log;
-//
-//    static {
-//        System.setProperty("logFile",);
-//        log = LogManager.getLogger();
-//    }
 
     public static void main(String args[]) {
 
@@ -69,7 +63,6 @@ public class HttpServer {
 
 
 
-
         /*
          * Start the container at the specified directory then launch
          * all servlets specified in initial web.xml
@@ -83,6 +76,7 @@ public class HttpServer {
             log.error("Error starting servlets", e);
             System.exit(1);
         }
+
 
 
         /*

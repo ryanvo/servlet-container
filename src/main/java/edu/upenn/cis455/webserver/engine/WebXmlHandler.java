@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.*;
 
 /**
+ * Parses the web xml file and provides indexed access to
+ * relevant fields
  * @author rtv
  */
 public class WebXmlHandler extends DefaultHandler {
@@ -41,6 +43,13 @@ public class WebXmlHandler extends DefaultHandler {
         this.webXmlPath = webXmlPath;
     }
 
+
+    /**
+     * Calling this method will begin the parsing operation. The constructor does
+     * not start any parsing.
+     * @throws IOException
+     * @throws SAXException
+     */
     public void parse() throws IOException, SAXException {
 
         log.debug("Opening web.xml file: " + webXmlPath);
@@ -66,6 +75,14 @@ public class WebXmlHandler extends DefaultHandler {
         buffer.setLength(0);
     }
 
+
+    /**
+     * Set fields based on the end tags
+     * @param uri
+     * @param localName
+     * @param qName
+     * @throws SAXException
+     */
     @Override
     public void endElement(String uri, String localName, String qName) throws SAXException {
 

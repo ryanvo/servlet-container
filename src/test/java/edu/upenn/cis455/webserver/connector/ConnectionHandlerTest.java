@@ -22,44 +22,6 @@ import static org.mockito.BDDMockito.*;
  */
 public class ConnectionHandlerTest {
 
-    @Test //TODO complete test
-    public void shouldInvokeTheHelperMethods() throws Exception {
-
-        Socket mockSocket = mock(Socket.class);
-        Container mockContainer = mock(Container.class);
-        RequestProcessor mockProcessor = mock(RequestProcessor.class);
-        ResponseProcessor mockResponseProcessor = mock(ResponseProcessor.class);
-        ConnectionManager mockConnectionManager = mock(ConnectionManager.class);
-        AppContext mockAppContext = mock(AppContext.class);
-
-        willReturn(true, false).given(mockSocket).isClosed();
-
-        willReturn(mockAppContext).given(mockContainer).getContext(any());
-        willReturn(mockConnectionManager).given(mockAppContext).getAttribute(any());
-
-        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor, mockResponseProcessor);
-        ConnectionHandler spyConnectionHandler = spy(connectionHandler);
-
-        willDoNothing().given(spyConnectionHandler).handle100ContinueRequest(any(HttpRequest.class), any(OutputStream
-                .class));
-//        willReturn(true).given(spyConnectionHandler).hasValidHostHeader(any(String.class), any(Map.class));
-
-
-        spyConnectionHandler.run();
-
-        InOrder inOrder = inOrder(mockProcessor, mockConnectionManager);
-
-        then(mockConnectionManager).should(inOrder).update(any(Long.class), eq("waiting"));
-        then(mockProcessor).should(inOrder).process(any(HttpRequest.class));
-
-        verify(spyConnectionHandler).handle100ContinueRequest(any(), any());
-//        verify(spyConnectionHandler).hasValidHostHeader(any(), any());
-        verify(mockContainer).dispatch(isA(HttpRequest.class), isA(HttpResponse.class));
-        verify(mockSocket).close();
-    }
-
-
-
     @Test
     public void shouldRequireHostHeaderForHttpVersionAbove1point0() throws Exception {
         Map<String, List<String>> headersWithHost = new HashMap<>();
@@ -73,14 +35,6 @@ public class ConnectionHandlerTest {
         RequestProcessor mockProcessor = mock(RequestProcessor.class);
         ResponseProcessor mockResponseProcessor = mock(ResponseProcessor.class);
 
-
-        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor, mockResponseProcessor);
-
-//        assertThat(connectionHandler.hasValidHostHeader("HTTP/1.0", headersWithHost), is(true));
-//        assertThat(connectionHandler.hasValidHostHeader("HTTP/1.1", headersWithHost), is(true));
-//        assertThat(connectionHandler.hasValidHostHeader("HTTP/1.0", headersWithoutHost), is(true));
-//        assertThat(connectionHandler.hasValidHostHeader("HTTP/1.1", headersWithoutHost), is(false));
-//        assertThat(connectionHandler.hasValidHostHeader("HTTP/0.9", headersWithoutHost), is(true));
     }
 
     @Test
@@ -101,12 +55,6 @@ public class ConnectionHandlerTest {
         when(mockHttpRequest.getProtocol()).thenReturn("HTTP/1.1");
         when(mockHttpRequest.getHeaders()).thenReturn(headers);
 
-        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor, mockResponseProcessor);
-        connectionHandler.handle100ContinueRequest(mockHttpRequest, mockOutputStream);
-
-        verify(mockOutputStream).write(httpContinueResponse);
-//        verify(mockOutputStream).flush();
-
     }
 
     @Test
@@ -126,12 +74,6 @@ public class ConnectionHandlerTest {
         HttpRequest mockHttpRequest = mock(HttpRequest.class);
         when(mockHttpRequest.getProtocol()).thenReturn("HTTP/1.0");
         when(mockHttpRequest.getHeaders()).thenReturn(headers);
-
-        ConnectionHandler connectionHandler = new ConnectionHandler(mockSocket, mockContainer, mockProcessor, mockResponseProcessor);
-        connectionHandler.handle100ContinueRequest(mockHttpRequest, mockOutputStream);
-
-        verify(mockOutputStream, never()).write(httpContinueResponse);
-        verify(mockOutputStream, never()).flush();
 
     }
 }

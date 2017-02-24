@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Processes a request before handling it to the container
+ *
+ * Writes the HTTP response object to the client
  *
  * @author rtv
  */
@@ -57,6 +58,12 @@ public class HttpResponseProcessor implements ResponseProcessor {
         log.debug("Wrote to socket: size:" + size);
     }
 
+    /**
+     * Helper method to generate status and headers and write them to the stream
+     * @param resp
+     * @param out
+     * @throws IOException
+     */
     public void writeStatusAndHeaders(HttpResponse resp, OutputStream out) throws IOException {
 
         String statusAndHeaders = generateStatusAndHeaders(resp);
@@ -68,6 +75,11 @@ public class HttpResponseProcessor implements ResponseProcessor {
     }
 
 
+    /**
+     * Helper method to format the HTTP headers appropriately
+     * @param resp
+     * @return
+     */
     public String generateStatusAndHeaders(HttpResponse resp) {
         StringBuilder sb = new StringBuilder();
 

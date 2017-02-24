@@ -11,10 +11,18 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 /**
+ * Utility class for File operators
  * @author rtv
  */
 public class FileUtil {
 
+
+    /**
+     * Given a relative path and the absolute, this returns a single absolute path
+     * @param absPath
+     * @param absRoot
+     * @return
+     */
     public static String relativizePath(String absPath, String absRoot) {
         String relativePath = absPath.replaceFirst(absRoot, "");
 
@@ -25,6 +33,12 @@ public class FileUtil {
         return relativePath;
     }
 
+    /**
+     * Given a url from an HTTP request, parses out the relative path. This
+     * is useful for HTTP request with an absolute url.
+     * @param url
+     * @return relative path
+     */
     public static String getUrlPath(String url) {
 
         final String protocol = "http://";
@@ -45,6 +59,15 @@ public class FileUtil {
         return urlWithoutProtocol.substring(indexOfUrlPath);
     }
 
+    /**
+     * Normalizes all the paths for consistency. Removes all unnecessary slashes
+     * and ensures that files do not end with a trailing slash, but that directories
+     * do end with a trailing slash. This is helpful so that only one path can
+     * represent any given directory
+     * @param path
+     * @return normalized path
+     * @throws IllegalFilePathException
+     */
     public static String normalizePath(String path) throws IllegalFilePathException {
         if (path.isEmpty()) {
             throw new IllegalFilePathException();
@@ -98,14 +121,12 @@ public class FileUtil {
         return normalizedPath;
     }
 
-    public static void copy(InputStream in, OutputStream out) throws IOException {
-        byte[] buf = new byte[0x1000];
-        int bytesRead;
-        while ((bytesRead = in.read(buf, 0, buf.length)) > 0) {
-            out.write(buf, 0, bytesRead);
-        }
-    }
-
+    /**
+     * Copies a file to an output stream
+     * @param file
+     * @param out
+     * @throws IOException
+     */
     public static void copy(File file, OutputStream out) throws IOException {
         int len = Long.valueOf(file.length()).intValue();
         InputStream fileInputStream = new FileInputStream(file);
@@ -116,6 +137,11 @@ public class FileUtil {
         }
     }
 
+    /**
+     * Returns the GMT time that a file was last modified
+     * @param file
+     * @return time in GMT
+     */
     public static ZonedDateTime getLastModifiedGmt(File file) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(file.lastModified()), ZoneId.of("GMT"));
     }

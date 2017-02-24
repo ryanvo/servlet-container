@@ -16,17 +16,6 @@ import static org.hamcrest.Matchers.is;
 public class HttpRequestProcessorTest {
 
     @Test(expected = BadRequestException.class)
-    public void shouldThrowBadRequestIfNoStatusLine() throws Exception {
-
-        final String statusLine = null;
-
-        HttpRequestProcessor processor = new HttpRequestProcessor();
-
-        processor.parseStatusLine(statusLine);
-
-    }
-
-    @Test(expected = BadRequestException.class)
     public void shouldThrowBadRequestIfStatusLineContainsTooFewArgs() throws Exception {
 
         final String notEnoughArgs = "GET /index.html";
