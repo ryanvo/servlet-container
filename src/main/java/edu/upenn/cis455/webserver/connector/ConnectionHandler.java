@@ -164,6 +164,11 @@ public class ConnectionHandler implements Runnable {
 
 
             log.info(String.format("Successfully handled method:%s : uri:%s", request.getMethod(), request.getRequestURI()));
+
+            if (request.getProtocol().endsWith("0")) {
+                break;
+            }
+
             response = new HttpResponse();
             request = new HttpRequest();
         }
