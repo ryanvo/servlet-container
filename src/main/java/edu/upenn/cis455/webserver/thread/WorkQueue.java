@@ -26,7 +26,7 @@ public class WorkQueue {
             }
         }
 
-        queue.add(request);
+        queue.offer(request);
         notify();
     }
 
@@ -35,8 +35,9 @@ public class WorkQueue {
             wait();
         }
 
+        Runnable work = queue.poll();
         notify();
-        return queue.remove();
+        return work;
     }
 
     public boolean isEmpty() {

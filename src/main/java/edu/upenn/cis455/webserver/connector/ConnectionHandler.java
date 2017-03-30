@@ -105,6 +105,10 @@ public class ConnectionHandler implements Runnable {
 
                 /* Update response with the protocol version and context */
                 response.setHTTP(request.getProtocol());
+                if (request.getHeader("connection") != null) {
+                    response.setHeader("Connection", request.getHeader("connection"));
+                }
+
                 request.setContext(container.getContextByRequestUri(request.getRequestURI()));
 
                 /* Update the status of the thread */
@@ -119,8 +123,7 @@ public class ConnectionHandler implements Runnable {
 
                 /* Exceptions throw by http are caught under ServletException */
                 container.dispatch(request, response);
-                log.info(String.format("Dispatched method:%s : uri:%s",
-                        request.getMethod(), request.getRequestURI()));
+                log.info(String.format("Dispatched method:%s : uri:%s", request.getMethod(), request.getRequestURI()));
 
                 /* If the servlet requested a session, attach the JSESSIONID cookie to response */
                 if (request.hasAccessedSession()) {
@@ -138,7 +141,7 @@ public class ConnectionHandler implements Runnable {
                 }
 
             } catch (SocketException e) {
-                log.error("Broken pipe");
+                log.error("Broken pipe during request phase", e);
                 return;
             } catch (IllegalStateException e) {
                 log.info("Server IO Error", e);

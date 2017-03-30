@@ -81,9 +81,6 @@ public class HttpRequestProcessor implements RequestProcessor {
             } else {
 
                 StringBuilder sb = new StringBuilder();
-                StringBuffer s = new StringBuffer();
-
-
                 for (line = in.readLine(); line != null && !line.isEmpty(); line = in.readLine()) {
                     sb.append(line);
                     log.debug("Body line: " + line);

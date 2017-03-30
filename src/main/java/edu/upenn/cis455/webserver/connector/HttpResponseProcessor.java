@@ -55,6 +55,7 @@ public class HttpResponseProcessor implements ResponseProcessor {
         /* Write message body buffer to socket */
         buffer.writeTo(socket);
         socket.flush();
+
         log.debug("Wrote to socket: size:" + size);
     }
 
