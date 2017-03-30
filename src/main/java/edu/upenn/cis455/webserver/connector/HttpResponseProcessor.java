@@ -46,8 +46,11 @@ public class HttpResponseProcessor implements ResponseProcessor {
         }
 
         /* Set persistent connection for HTTP/1.1 */
-        String connectionHeaderValue = isHttp1dot1 ? "keep-alive" : "close";
-        resp.addHeader("Connection", connectionHeaderValue);
+//        String connectionHeaderValue = isHttp1dot1 ? "keep-alive" : "close";
+//        resp.addHeader("Connection", connectionHeaderValue);
+        if (isHttp1dot1) {
+            resp.addHeader("Connection", "keep-alive");
+        }
 
         /* Write status line, headers, and CRLF to socket */
         writeStatusAndHeaders(resp, socket);

@@ -249,10 +249,10 @@ public class HttpResponse implements HttpServletResponse {
 
         if (msgBodyBuffer == null) {
 
-            if (!HTTP.endsWith("1")) {
-                msgBodyBuffer = new ResponseBuffer(bufferSize);
-            } else {
+            if (HTTP.endsWith("1")) {
                 msgBodyBuffer = new ChunkedResponseBuffer(bufferSize);
+            } else {
+                msgBodyBuffer =  new ResponseBuffer(bufferSize);
             }
 
         }

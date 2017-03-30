@@ -162,20 +162,28 @@ public class ConnectionHandler implements Runnable {
              */
             try {
                 responseProcessor.process(response, connection.getOutputStream());
+            } catch (SocketException e) {
+                log.error("Socket in process", e);
+                break;
             } catch (IOException e) {
-                log.error(e);
+                log.error("IO", e);
+            }
+
+            log.info(String.format("Successfully handled method:%s : uri:%s", request.getMethod(), request.getRequestURI()));
+
+            if (request.getProtocol().endsWith("0")) {
                 break;
             }
 
-
-            log.info(String.format("Successfully handled method:%s : uri:%s", request.getMethod(), request.getRequestURI()));
             response = new HttpResponse();
             request = new HttpRequest();
         }
 
 
         try {
-            connection.close();
+            if (!connection.isClosed()) {
+                connection.close();
+            }
             connectionManager.update(Thread.currentThread().getId(), "waiting");
             log.debug("Socket closed");
         } catch (IOException e) {
